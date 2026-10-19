@@ -5,14 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f5f5f2">
   <title>Daymark — Gregorian & Chinese Calendar</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Daymark">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main class="shell">
     <header class="topbar">
       <div class="brand"><span class="brand-mark" aria-hidden="true">日</span><span>Daymark Calendar</span></div>
-      <div class="top-note">A little more context for every day</div>
+      <button class="today-btn" id="install-app" type="button">Install app</button>
     </header>
+    <dialog id="install-help" aria-labelledby="install-title">
+      <h2 id="install-title">Install Daymark</h2>
+      <p id="install-instructions"></p>
+      <p>Notes stay on this device. Export a backup before switching browsers or installing, then import it if your notes do not appear.</p>
+      <form method="dialog"><button class="today-btn">Done</button></form>
+    </dialog>
+    <section class="backup-panel" aria-label="Note backups">
+      <details><summary>Notes &amp; backups</summary>
+        <p>Notes are saved only in this browser on this device. They are not synced or encrypted by this app. Clearing browser data can erase them. Export backups regularly.</p>
+        <div class="note-actions"><button class="today-btn" id="export-notes">Export backup</button>
+        <label class="today-btn file-label">Import backup<input id="import-notes" type="file" accept="application/json,.json"></label></div>
+        <div id="import-preview" hidden><p id="import-summary"></p>
+          <label for="import-conflicts">Dates already containing a note</label>
+          <select id="import-conflicts"><option value="keep">Keep existing notes</option><option value="replace">Replace with imported notes</option></select>
+          <div class="note-actions"><button class="today-btn" id="confirm-import">Import notes</button><button class="today-btn" id="cancel-import">Cancel</button></div>
+        </div>
+        <p id="backup-status" role="status"></p>
+      </details>
+    </section>
     <section id="calendar-page">
     <section class="heading" aria-labelledby="page-title">
       <div><div class="eyebrow">Your calendars, together</div><h1 id="page-title">Calendar</h1><p class="sub" id="date-summary">Switch between Gregorian and Chinese lunar dates.</p></div>
@@ -62,6 +85,15 @@
         <h1 id="detail-title" tabindex="-1"></h1>
         <p class="sub" id="detail-subtitle"></p>
       </header>
+      <section class="detail-card note-card" aria-labelledby="note-title">
+        <h2 id="note-title">Daily note</h2>
+        <form id="note-form">
+          <label for="daily-note">Your note for this date</label>
+          <textarea id="daily-note" rows="6" maxlength="20000" placeholder="Write about your day…" disabled></textarea>
+          <div class="note-actions"><button class="today-btn" id="save-note" type="submit" disabled>Save note</button><button class="today-btn" id="delete-note" type="button" disabled>Delete note</button></div>
+          <p id="note-status" role="status">Loading notes…</p>
+        </form>
+      </section>
       <div class="detail-grid">
         <article class="detail-card">
           <div class="detail-label">Gregorian date</div>
@@ -85,6 +117,8 @@
       <aside class="detail-info" id="detail-solar-term"></aside>
     </section>
   </main>
+  <script src="notes.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="install.js" defer></script>
 </body>
 </html>

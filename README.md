@@ -32,7 +32,7 @@ Then visit http://localhost:8000.
 
 ## Agreed health scope
 
-Start with daily notes only: one free-text note per Gregorian date, editable and deletable from day details. Show a small indicator on dates with notes. No symptom, sleep, medication, or clinical interpretation fields in the initial scope. This scope is agreed; note entry is not implemented yet, pending the storage choice below.
+Start with daily notes only: one free-text note per Gregorian date, editable and deletable from day details. Show a small indicator on dates with notes. No symptom, sleep, medication, or clinical interpretation fields in the initial scope. Implemented with IndexedDB storage, explicit Save/Delete controls, calendar note indicators, and validated JSON backups. Unsaved drafts survive navigation within the current page; save before closing or reloading.
 
 ## Storage and backup recommendation (step 4)
 
@@ -62,7 +62,7 @@ Covers leap-day navigation, date search and return, saved preference reload, ran
 
 ## Baseline limitations
 
-Chinese lunar formatting depends on browser `Intl` support. Dates use the device’s local timezone. There is no backend, account system, event storage, or health tracking yet. The app captures “today” on load; reload after midnight to refresh it.
+Chinese lunar formatting depends on browser `Intl` support. Dates use the device’s local timezone. There is no backend, account system, or cloud synchronization. Daily notes are stored locally. The app captures “today” on load; reload after midnight to refresh it.
 
 ## Mobile design priority
 
@@ -70,4 +70,20 @@ Phones, especially iPhones, are the primary target. Mobile controls have at leas
 
 ## GitHub Pages
 
-The `.github/workflows/pages.yml` workflow publishes the three calendar assets on pushes to `main`. In repository **Settings → Pages**, choose **GitHub Actions** as the source. The reference prototype and test files are kept in the repository but excluded from the deployed site.
+The `.github/workflows/pages.yml` workflow publishes the calendar and install/offline assets on pushes to `main`. In repository **Settings → Pages**, choose **GitHub Actions** as the source. The reference prototype and test files are kept in the repository but excluded from the deployed site.
+
+## Daily notes and installation
+
+Open any date to write, save, edit, or delete its note. A dot marks dates with a saved note. Notes are plain text, limited to 20,000 characters, and saved in this device/browser’s IndexedDB. They are never sent to GitHub. Storage failures are shown without claiming a successful save.
+
+Use **Notes & backups** to export a versioned JSON file or import one. Imports validate all records before writing, preview the count and conflicts, and default to keeping existing notes. Choosing replacement affects conflicting dates only. Unsaved drafts must be saved before an import. Export files contain your note text; keep them somewhere appropriate.
+
+**Install app** opens the browser install prompt when available. On iPhone it explains Safari’s Share → Add to Home Screen flow (keep Open as Web App enabled if shown). See [Apple’s instructions](https://support.apple.com/en-eg/guide/iphone/iphea86e5236/ios) and [MDN’s install prompt documentation](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/How_to/Trigger_install_prompt). Export before moving to an installed app or another browser, and import if the notes are absent there.
+
+A relative-path manifest supports GitHub Pages hosting. A service worker caches the app shell for offline use after a successful online load. Notes are kept separately from that cache. First use requires a connection; offline storage is not a backup. Real iPhone installation and native picker behavior still require device testing.
+
+Additional integration test (serve the project on localhost:8769):
+
+```sh
+PLAYWRIGHT_PATH=/path/to/playwright node tests/notes-install.cjs
+```

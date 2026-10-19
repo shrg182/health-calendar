@@ -151,6 +151,7 @@
       const boundaryDate = new Date(pillars.term.instant);
       termInfo.textContent = `The current solar-term period began with ${pillars.term.name} (${pillars.term.english}) on ${fmtDate(boundaryDate)}. Solar-term times are estimates.`;
     }
+    window.dispatchEvent(new CustomEvent('daymark:day', { detail:dateKey(date) }));
     $('#detail-title').focus();
   }
   function renderPage() {
@@ -193,6 +194,10 @@
       cell.disabled = date.getFullYear() < MIN_YEAR || date.getFullYear() > MAX_YEAR;
       cell.className = `day${outside ? ' outside' : ''}${isToday ? ' today' : ''}`;
       cell.dataset.date = dateKey(date);
+      if (window.DaymarkNotes?.dates.has(cell.dataset.date)) {
+        cell.classList.add('has-note');
+        cell.setAttribute('aria-description', 'Has a saved note');
+      }
       cell.title = 'Open day details';
       cell.setAttribute('aria-label', `${weekdayFormatter.format(date)}, ${fmtDate(date)}, Chinese lunar ${lunar.month}${lunar.day}; traditional calendar markers ${pillars.year}, ${pillars.month}, ${sexagenaryDay(date)}${isToday ? ', today' : ''}`);
       cell.addEventListener('click', () => openDay(date));
@@ -218,6 +223,7 @@
     }
     daysEl.replaceChildren(frag);
   }
+  window.addEventListener('daymark:notes', () => { if (!$('#calendar-page').hidden) render(); });
   $('#month-form').addEventListener('submit', event => {
     event.preventDefault();
     if (!event.currentTarget.reportValidity()) return;
