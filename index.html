@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f5f2">
+  <title>Daymark — Gregorian & Chinese Calendar</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">日</span><span>Daymark Calendar</span></div>
+      <div class="top-note">A little more context for every day</div>
+    </header>
+    <section id="calendar-page">
+    <section class="heading" aria-labelledby="page-title">
+      <div><div class="eyebrow">Your calendars, together</div><h1 id="page-title">Calendar</h1><p class="sub" id="date-summary">Switch between Gregorian and Chinese lunar dates.</p></div>
+    </section>
+    <section aria-label="Calendar controls">
+      <div class="toolbar">
+        <div class="month-controls">
+          <button class="icon-btn" id="prev" aria-label="Previous month">‹</button>
+          <div class="month-title" id="month-title" aria-live="polite"></div>
+          <button class="icon-btn" id="next" aria-label="Next month">›</button>
+          <button class="today-btn" id="today">Today</button>
+        </div>
+        <div class="view-switch" role="group" aria-label="Calendar view">
+          <button class="view-btn" data-view="gregorian" aria-pressed="false">Gregorian</button>
+          <button class="view-btn" data-view="lunar" aria-pressed="false">Chinese lunar</button>
+          <button class="view-btn" data-view="combined" aria-pressed="true">Combined</button>
+        </div>
+      </div>
+      <div class="date-navigation">
+        <form id="month-form" class="date-form">
+          <label for="jump-month">Month</label>
+          <select id="jump-month" name="month"></select>
+          <label for="jump-year">Year</label>
+          <input id="jump-year" name="year" inputmode="numeric" type="number" min="1901" max="2100" required>
+          <button class="today-btn" type="submit">Go</button>
+        </form>
+        <form id="date-form" class="date-form">
+          <label for="find-date">Find date</label>
+          <input id="find-date" name="date" type="date" min="1901-01-01" max="2100-12-31" required>
+          <button class="today-btn" type="submit">Open day</button>
+        </form>
+      </div>
+      <p id="preference-status" class="calendar-instruction" role="status"></p>
+      <p class="calendar-instruction">Select any date to open its day details.</p>
+      <div class="calendar-card" id="calendar-card">
+        <div class="weekdays" aria-hidden="true"><div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div></div>
+        <div class="days" id="days" aria-label="Monthly calendar"></div>
+        <div class="calendar-footer"><div class="legend"><span class="legend-item"><i class="dot"></i>Today</span><span class="legend-item"><i class="dot gold"></i>Chinese lunar date</span></div><span id="calendar-note">Dates shown in your device’s local time.</span></div>
+      </div>
+      <aside class="hint"><span class="hint-icon" aria-hidden="true">ⓘ</span><span><b>About Chinese dates:</b> Lunar labels use your browser’s Chinese calendar; almanac recommendations are not included.</span></aside>
+    </section>
+    </section>
+    <section id="detail-page" hidden aria-labelledby="detail-title">
+      <button class="detail-back" id="back-to-calendar" type="button">← <span>Back to calendar</span></button>
+      <header class="detail-heading">
+        <div class="eyebrow">Day details</div>
+        <h1 id="detail-title" tabindex="-1"></h1>
+        <p class="sub" id="detail-subtitle"></p>
+      </header>
+      <div class="detail-grid">
+        <article class="detail-card">
+          <div class="detail-label">Gregorian date</div>
+          <div class="detail-value" id="detail-gregorian"></div>
+          <p class="detail-note" id="detail-weekday"></p>
+        </article>
+        <article class="detail-card">
+          <div class="detail-label">Chinese lunar date</div>
+          <div class="detail-value" id="detail-lunar"></div>
+          <p class="detail-note">Traditional lunisolar date</p>
+        </article>
+      </div>
+      <article class="detail-card pillars-card">
+        <h2>Calendar markers</h2>
+        <div class="pillar-list">
+          <div class="pillar"><span class="pillar-name">Year · 年</span><strong class="pillar-value" id="detail-year-pillar"></strong></div>
+          <div class="pillar"><span class="pillar-name">Month · 月</span><strong class="pillar-value" id="detail-month-pillar"></strong></div>
+          <div class="pillar"><span class="pillar-name">Day · 日</span><strong class="pillar-value" id="detail-day-pillar"></strong></div>
+        </div>
+      </article>
+      <aside class="detail-info" id="detail-solar-term"></aside>
+    </section>
+  </main>
+  <script src="app.js" defer></script>
+</body>
+</html>

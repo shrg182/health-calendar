@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f5f2">
+  <title>Daymark — Gregorian & Chinese Calendar</title>
+  <style>
+    :root { color-scheme: light; --ink:#1e2925; --muted:#728078; --line:#e7ebe6; --paper:#fff; --canvas:#f5f6f3; --green:#245d49; --green-soft:#e8f1eb; --gold:#b27b35; --gold-soft:#f8f0e3; }
+    * { box-sizing:border-box }
+    [hidden] { display:none !important }
+    body { margin:0; background:var(--canvas); color:var(--ink); font:15px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    button { color:inherit; font:inherit; cursor:pointer }
+    .shell { max-width:1180px; margin:auto; padding:26px 36px 40px }
+    .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:34px }
+    .brand { display:flex; gap:11px; align-items:center; font-weight:700; letter-spacing:-.3px }
+    .brand-mark { width:34px; height:34px; display:grid; place-items:center; border-radius:11px; color:#fff; background:var(--green); font-size:17px }
+    .top-note { color:var(--muted); font-size:13px }
+    .heading { display:flex; justify-content:space-between; align-items:flex-end; gap:20px; margin-bottom:23px }
+    .eyebrow { color:var(--green); text-transform:uppercase; letter-spacing:1.6px; font-size:11px; font-weight:700; margin-bottom:7px }
+    h1 { font-size:32px; line-height:1.1; letter-spacing:-1.1px; margin:0 }
+    .sub { color:var(--muted); margin:8px 0 0; font-size:14px }
+    .toolbar { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:17px }
+    .month-controls,.view-switch { display:flex; align-items:center; gap:8px }
+    .month-title { min-width:158px; text-align:center; font-size:18px; font-weight:650; letter-spacing:-.3px }
+    .icon-btn,.today-btn,.view-btn { border:1px solid var(--line); background:var(--paper); border-radius:9px; height:38px; padding:0 12px; transition:.15s ease }
+    .icon-btn { width:38px; padding:0; font-size:20px; color:#52635b }
+    .icon-btn:hover,.today-btn:hover,.view-btn:hover { border-color:#bac9bf; background:#fbfdfb }
+    .today-btn { color:var(--green); font-size:13px; font-weight:650 }
+    .view-switch { background:#e9ece8; padding:4px; border-radius:11px; gap:2px }
+    .view-btn { background:transparent; border:0; height:32px; padding:0 13px; font-size:13px; color:#66736c; white-space:nowrap }
+    .view-btn[aria-pressed="true"] { color:var(--green); background:#fff; box-shadow:0 1px 3px #1d33251a; font-weight:650 }
+    .calendar-card { border:1px solid var(--line); background:var(--paper); border-radius:16px; box-shadow:0 8px 28px #20372a08; overflow:hidden }
+    .weekdays,.days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)) }
+    .weekdays { padding:0 13px; border-bottom:1px solid var(--line); background:#fcfdfb }
+    .weekday { min-height:43px; display:grid; place-items:center; color:#849088; font-size:11px; font-weight:650; text-transform:uppercase; letter-spacing:.7px }
+    .day { min-height:107px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:11px 10px; position:relative; transition:background .12s }
+    button.day { display:block; width:100%; border-top:0; border-left:0; border-radius:0; appearance:none; text-align:left; background:transparent; font:inherit; color:inherit }
+    .day:nth-child(7n) { border-right:0 }
+    .day:hover { background:#fafcf9 }
+    .day.outside { background:#fbfcfb; color:#aeb7b1 }
+    .day.outside .greg-number { color:#aeb7b1 }
+    .day.today { background:#f4faf5 }
+    .day.today:before { content:""; position:absolute; top:0; left:0; right:0; height:3px; background:var(--green) }
+    .greg-row { display:flex; justify-content:space-between; align-items:center; gap:3px; margin-bottom:8px }
+    .greg-number { font-size:14px; font-weight:650 }
+    .today-label { border-radius:20px; padding:2px 6px; color:var(--green); background:var(--green-soft); font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.5px }
+    .open-indicator { display:inline-grid; place-items:center; width:19px; height:19px; border-radius:6px; color:var(--green); background:#edf4ef; font-size:12px; font-weight:700; line-height:1 }
+    .calendar-instruction { margin:-4px 0 11px; color:var(--muted); font-size:12px }
+    .lunar { color:#69776f; font-size:12px; line-height:1.35 }
+    .lunar .month { color:var(--gold); font-weight:650 }
+    .lunar .dayname { color:#35463d }
+    .ganzhi { margin-top:5px; color:#66756c; font-size:10px; letter-spacing:.1px; white-space:normal; line-height:1.2 }
+    .ganzhi span { white-space:nowrap }
+    .ganzhi b { color:#52675b; font-weight:650 }
+    .lunar-only .greg-row { margin-bottom:7px }
+    .lunar-only .lunar { font-size:13px }
+    .lunar-only .lunar .dayname { font-size:16px; color:#35463d; font-weight:650 }
+    .lunar-only .greg-number { font-size:12px; color:#7f8c84; font-weight:500 }
+    .greg-only .lunar,.greg-only .ganzhi { display:none }
+    .lunar-only .ganzhi { display:none }
+    .greg-only .day { min-height:118px }
+    .greg-only .greg-number { font-size:17px }
+    .calendar-footer { display:flex; justify-content:space-between; align-items:center; padding:14px 17px; color:var(--muted); font-size:12px; gap:12px }
+    .legend { display:flex; gap:16px; align-items:center; flex-wrap:wrap }
+    .legend-item { display:flex; gap:7px; align-items:center }
+    .dot { width:8px; height:8px; border-radius:50%; background:var(--green) }
+    .dot.gold { background:var(--gold) }
+    .hint { display:flex; gap:9px; align-items:flex-start; margin-top:16px; padding:12px 14px; border:1px solid #e5ebe5; border-radius:11px; color:#647269; background:#fbfcfa; font-size:12px }
+    .hint b { color:#34473c }
+    .hint-icon { font-size:15px }
+    .detail-back { display:inline-flex; align-items:center; gap:8px; height:38px; padding:0 13px; margin:0 0 24px; border:1px solid var(--line); border-radius:9px; background:#fff; color:var(--green); font-weight:650 }
+    .detail-back:hover { background:#f7faf7; border-color:#bac9bf }
+    .detail-heading { margin-bottom:23px }
+    .detail-heading h1 { font-size:32px }
+    .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px }
+    .detail-card { padding:20px; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 6px 24px #20372a06 }
+    .detail-label { color:var(--muted); font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase }
+    .detail-value { margin-top:7px; font-size:21px; font-weight:650; letter-spacing:-.4px }
+    .detail-note { margin:6px 0 0; color:var(--muted); font-size:13px }
+    .pillars-card h2 { margin:0 0 15px; font-size:18px; letter-spacing:-.3px }
+    .pillar-list { display:grid; grid-template-columns:repeat(3,1fr); gap:10px }
+    .pillar { padding:13px 14px; background:#f8faf8; border:1px solid #e9eee9; border-radius:10px }
+    .pillar-name { display:block; color:var(--muted); font-size:12px }
+    .pillar-value { display:block; margin-top:4px; color:var(--green); font-size:22px; font-weight:700; letter-spacing:1px }
+    .detail-info { margin-top:14px; padding:15px 17px; border:1px solid #e5ebe5; border-radius:11px; color:#647269; background:#fbfcfa; font-size:13px }
+    .detail-info b { color:#34473c }
+    @media(max-width:760px) { .shell{padding:20px 14px 28px}.topbar{margin-bottom:26px}.heading{align-items:flex-start;flex-direction:column;margin-bottom:19px}h1{font-size:28px}.toolbar{align-items:flex-start}.view-switch{order:2;width:100%;justify-content:space-between}.view-btn{flex:1;padding:0 5px}.month-controls{width:100%;justify-content:space-between}.month-title{flex:1}.day{min-height:82px;padding:8px 5px}.greg-row{margin-bottom:6px}.greg-number{font-size:12px}.lunar{font-size:10px}.ganzhi{font-size:8px;letter-spacing:-.2px}.today-label{font-size:8px;padding:2px 4px}.weekday{min-height:38px;font-size:9px}.weekdays{padding:0 4px}.calendar-footer{align-items:flex-start;flex-direction:column}.greg-only .day{min-height:92px}.lunar-only .lunar .dayname{font-size:13px} }
+    @media(max-width:760px) { .detail-grid{grid-template-columns:1fr}.detail-heading h1{font-size:28px}.detail-card{padding:16px}.detail-back{margin-bottom:20px} }
+    @media(max-width:390px) { .day{min-height:72px;padding:7px 3px}.lunar{font-size:9px}.ganzhi{font-size:7px;letter-spacing:-.3px}.today-label{display:none}.weekday{letter-spacing:0}.greg-only .day{min-height:82px} }
+    button:focus-visible { outline:3px solid #8bb49e; outline-offset:2px }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">日</span><span>Daymark Calendar</span></div>
+      <div class="top-note">A little more context for every day</div>
+    </header>
+    <section id="calendar-page">
+    <section class="heading" aria-labelledby="page-title">
+      <div><div class="eyebrow">Your calendars, together</div><h1 id="page-title">Calendar</h1><p class="sub" id="date-summary">Switch between Gregorian and Chinese lunar dates.</p></div>
+    </section>
+    <section aria-label="Calendar controls">
+      <div class="toolbar">
+        <div class="month-controls">
+          <button class="icon-btn" id="prev" aria-label="Previous month">‹</button>
+          <div class="month-title" id="month-title" aria-live="polite"></div>
+          <button class="icon-btn" id="next" aria-label="Next month">›</button>
+          <button class="today-btn" id="today">Today</button>
+        </div>
+        <div class="view-switch" role="group" aria-label="Calendar view">
+          <button class="view-btn" data-view="gregorian" aria-pressed="false">Gregorian</button>
+          <button class="view-btn" data-view="lunar" aria-pressed="false">Chinese lunar</button>
+          <button class="view-btn" data-view="combined" aria-pressed="true">Combined</button>
+        </div>
+      </div>
+      <p class="calendar-instruction">Select any date to open its day details.</p>
+      <div class="calendar-card" id="calendar-card">
+        <div class="weekdays" aria-hidden="true"><div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div></div>
+        <div class="days" id="days" aria-label="Monthly calendar"></div>
+        <div class="calendar-footer"><div class="legend"><span class="legend-item"><i class="dot"></i>Today</span><span class="legend-item"><i class="dot gold"></i>Chinese lunar date</span></div><span id="calendar-note">Dates shown in your device’s local time.</span></div>
+      </div>
+      <aside class="hint"><span class="hint-icon" aria-hidden="true">ⓘ</span><span><b>About Chinese dates:</b> Lunar labels use your browser’s Chinese calendar; almanac recommendations are not included.</span></aside>
+    </section>
+    </section>
+    <section id="detail-page" hidden aria-labelledby="detail-title">
+      <button class="detail-back" id="back-to-calendar" type="button">← <span>Back to calendar</span></button>
+      <header class="detail-heading">
+        <div class="eyebrow">Day details</div>
+        <h1 id="detail-title" tabindex="-1"></h1>
+        <p class="sub" id="detail-subtitle"></p>
+      </header>
+      <div class="detail-grid">
+        <article class="detail-card">
+          <div class="detail-label">Gregorian date</div>
+          <div class="detail-value" id="detail-gregorian"></div>
+          <p class="detail-note" id="detail-weekday"></p>
+        </article>
+        <article class="detail-card">
+          <div class="detail-label">Chinese lunar date</div>
+          <div class="detail-value" id="detail-lunar"></div>
+          <p class="detail-note">Traditional lunisolar date</p>
+        </article>
+      </div>
+      <article class="detail-card pillars-card">
+        <h2>Calendar markers</h2>
+        <div class="pillar-list">
+          <div class="pillar"><span class="pillar-name">Year · 年</span><strong class="pillar-value" id="detail-year-pillar"></strong></div>
+          <div class="pillar"><span class="pillar-name">Month · 月</span><strong class="pillar-value" id="detail-month-pillar"></strong></div>
+          <div class="pillar"><span class="pillar-name">Day · 日</span><strong class="pillar-value" id="detail-day-pillar"></strong></div>
+        </div>
+      </article>
+      <aside class="detail-info" id="detail-solar-term"></aside>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const $ = (s) => document.querySelector(s);
+      const daysEl = $('#days');
+      const monthTitle = $('#month-title');
+      const summary = $('#date-summary');
+      const todayDate = new Date();
+      let shown = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
+      let view = 'combined';
+      let focusAfterCalendar = false;
+      let focusDateKey = null;
+      let activeDateKey = null;
+      let forceCalendar = false;
+      let detailRouteAvailable = false;
+      const monthFormatter = new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' });
+      const lunarFormatter = new Intl.DateTimeFormat('zh-CN-u-ca-chinese-nu-latn', { month: 'long', day: 'numeric' });
+      const lunarMonthFormatter = new Intl.DateTimeFormat('zh-CN-u-ca-chinese', { month: 'long' });
+      const weekdayFormatter = new Intl.DateTimeFormat(undefined, { weekday: 'long' });
+      const stems = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+      const branches = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+      const lunarDayNames = ['', '初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十', '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十', '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'];
+      const jieTerms = [
+        { longitude:285, month:0, day:6, offset:11, name:'小寒', english:'Xiaohan' }, { longitude:315, month:1, day:4, offset:0, name:'立春', english:'Lichun' },
+        { longitude:345, month:2, day:6, offset:1, name:'惊蛰', english:'Jingzhe' }, { longitude:15, month:3, day:5, offset:2, name:'清明', english:'Qingming' },
+        { longitude:45, month:4, day:6, offset:3, name:'立夏', english:'Lixia' }, { longitude:75, month:5, day:6, offset:4, name:'芒种', english:'Mangzhong' },
+        { longitude:105, month:6, day:7, offset:5, name:'小暑', english:'Xiaoshu' }, { longitude:135, month:7, day:8, offset:6, name:'立秋', english:'Liqiu' },
+        { longitude:165, month:8, day:8, offset:7, name:'白露', english:'Bailu' }, { longitude:195, month:9, day:8, offset:8, name:'寒露', english:'Hanlu' },
+        { longitude:225, month:10, day:7, offset:9, name:'立冬', english:'Lidong' }, { longitude:255, month:11, day:7, offset:10, name:'大雪', english:'Daxue' }
+      ];
+      const termCache = new Map();
+      const fmtDate = (d) => new Intl.DateTimeFormat(undefined, { year:'numeric', month:'long', day:'numeric' }).format(d);
+      function lunarParts(date) {
+        const parts = lunarFormatter.formatToParts(date);
+        const month = parts.find(p => p.type === 'month')?.value ?? '';
+        const dayNumber = Number(parts.find(p => p.type === 'day')?.value);
+        return { month, day: lunarDayNames[dayNumber] ?? String(dayNumber) };
+      }
+      function sexagenaryDay(date) {
+        const jdn = Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86400000) + 2440588;
+        const cycle = ((jdn + 49) % 60 + 60) % 60;
+        return stems[cycle % 10] + branches[cycle % 12];
+      }
+      function mod(n, m) { return ((n % m) + m) % m; }
+      function apparentSolarLongitude(timestamp) {
+        const jd = timestamp / 86400000 + 2440587.5;
+        const d = jd - 2451545.0;
+        const g = (357.529 + 0.98560028 * d) * Math.PI / 180;
+        const q = 280.459 + 0.98564736 * d;
+        return mod(q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g), 360);
+      }
+      function signedAngleDifference(longitude, target) {
+        return mod(longitude - target + 180, 360) - 180;
+      }
+      function solarTermInstant(year, term) {
+        const guess = Date.UTC(year, term.month, term.day, 12);
+        let low = guess - 7 * 86400000;
+        let high = guess + 7 * 86400000;
+        const lowDelta = signedAngleDifference(apparentSolarLongitude(low), term.longitude);
+        const highDelta = signedAngleDifference(apparentSolarLongitude(high), term.longitude);
+        if (!(lowDelta <= 0 && highDelta >= 0)) return guess;
+        for (let i = 0; i < 42; i++) {
+          const mid = (low + high) / 2;
+          if (signedAngleDifference(apparentSolarLongitude(mid), term.longitude) < 0) low = mid;
+          else high = mid;
+        }
+        return (low + high) / 2;
+      }
+      function termsForYear(year) {
+        if (!termCache.has(year)) termCache.set(year, jieTerms.map(term => ({ ...term, year, instant: solarTermInstant(year, term) })));
+        return termCache.get(year);
+      }
+      function timestampAtLocalNoon(date) {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12).getTime();
+      }
+      function pillarsFor(date) {
+        const noon = timestampAtLocalNoon(date);
+        const terms = [];
+        for (let year = date.getFullYear() - 1; year <= date.getFullYear() + 1; year++) terms.push(...termsForYear(year));
+        const term = terms.filter(item => item.instant <= noon).sort((a,b) => b.instant - a.instant)[0];
+        const lichun = termsForYear(term.year).find(item => item.offset === 0);
+        const solarYear = noon < lichun.instant ? term.year - 1 : term.year;
+        const yearCycle = mod(solarYear - 4, 60);
+        const yearIndex = yearCycle % 10;
+        const yearPillar = stems[yearIndex] + branches[yearCycle % 12];
+        const firstMonthStem = mod((yearIndex % 5) * 2 + 2, 10);
+        const monthPillar = stems[mod(firstMonthStem + term.offset, 10)] + branches[mod(2 + term.offset, 12)];
+        return { year: yearPillar, month: monthPillar, term };
+      }
+      function dateKey(date) {
+        const pad = value => String(value).padStart(2, '0');
+        return `${String(date.getFullYear()).padStart(4, '0')}-${pad(date.getMonth()+1)}-${pad(date.getDate())}`;
+      }
+      function dateFromKey(key) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) return null;
+        const [year, month, day] = key.split('-').map(Number);
+        const date = new Date(year, month-1, day, 12);
+        return date.getFullYear() === year && date.getMonth() === month-1 && date.getDate() === day ? date : null;
+      }
+      function openDay(date) {
+        const key = dateKey(date);
+        focusDateKey = key;
+        focusAfterCalendar = true;
+        activeDateKey = key;
+        forceCalendar = false;
+        try {
+          history.pushState({ view:'day', date:key, fromCalendar:true }, '', `#day=${key}`);
+          detailRouteAvailable = true;
+        } catch (error) {
+          detailRouteAvailable = false;
+        }
+        renderPage();
+      }
+      function renderDayDetails(date) {
+        const lunar = lunarParts(date);
+        const pillars = pillarsFor(date);
+        const weekday = weekdayFormatter.format(date);
+        const title = `${weekday}, ${fmtDate(date)}`;
+        $('#detail-title').textContent = title;
+        document.title = `Daymark Calendar — ${title}`;
+        $('#detail-subtitle').textContent = 'Chinese lunar date and traditional calendar markers';
+        $('#detail-gregorian').textContent = fmtDate(date);
+        $('#detail-weekday').textContent = weekday;
+        $('#detail-lunar').textContent = `农历${lunar.month}${lunar.day}`;
+        $('#detail-year-pillar').textContent = pillars.year;
+        $('#detail-month-pillar').textContent = pillars.month;
+        $('#detail-day-pillar').textContent = sexagenaryDay(date);
+        const nearbyTerms = [];
+        for (let year=date.getFullYear()-1; year<=date.getFullYear()+1; year++) nearbyTerms.push(...termsForYear(year));
+        const termOnDate = nearbyTerms.find(term => dateKey(new Date(term.instant)) === dateKey(date));
+        const termInfo = $('#detail-solar-term');
+        if (termOnDate) {
+          const boundaryTime = new Intl.DateTimeFormat(undefined, { hour:'numeric', minute:'2-digit' }).format(new Date(termOnDate.instant));
+          termInfo.textContent = `Solar-term boundary: ${termOnDate.name} (${termOnDate.english}), at approximately ${boundaryTime} local time. The time is an estimate.`;
+        } else {
+          const boundaryDate = new Date(pillars.term.instant);
+          termInfo.textContent = `The current solar-term period began with ${pillars.term.name} (${pillars.term.english}) on ${fmtDate(boundaryDate)}. Solar-term times are estimates.`;
+        }
+        $('#detail-title').focus();
+      }
+      function renderPage() {
+        const match = location.hash.match(/^#day=(\d{4}-\d{2}-\d{2})$/);
+        const detailDate = forceCalendar ? null : dateFromKey(activeDateKey || (match ? match[1] : ''));
+        $('#calendar-page').hidden = Boolean(detailDate);
+        $('#detail-page').hidden = !detailDate;
+        if (detailDate) renderDayDetails(detailDate);
+        else {
+          document.title = 'Daymark — Gregorian & Chinese Calendar';
+          render();
+          if (focusAfterCalendar) {
+            document.querySelector(`[data-date="${focusDateKey}"]`)?.focus();
+            focusAfterCalendar = false;
+          }
+        }
+      }
+      function render() {
+        monthTitle.textContent = monthFormatter.format(shown);
+        const thisLunar = lunarParts(todayDate);
+        const todayPillars = pillarsFor(todayDate);
+        summary.textContent = `Today · ${fmtDate(todayDate)} · ${todayPillars.year} · 农历${lunarMonthFormatter.format(todayDate)}${thisLunar.day} · ${todayPillars.month} · ${sexagenaryDay(todayDate)}`;
+        $('#calendar-card').className = `calendar-card ${view === 'gregorian' ? 'greg-only' : ''} ${view === 'lunar' ? 'lunar-only' : ''}`;
+        document.querySelectorAll('.view-btn').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.view === view)));
+        const first = new Date(shown.getFullYear(), shown.getMonth(), 1);
+        const start = new Date(first.getFullYear(), first.getMonth(), 1 - first.getDay());
+        const frag = document.createDocumentFragment();
+        for (let i=0; i<42; i++) {
+          const date = new Date(start.getFullYear(), start.getMonth(), start.getDate()+i, 12);
+          const outside = date.getMonth() !== shown.getMonth();
+          const isToday = date.getFullYear() === todayDate.getFullYear() && date.getMonth() === todayDate.getMonth() && date.getDate() === todayDate.getDate();
+          const lunar = lunarParts(date);
+          const pillars = pillarsFor(date);
+          const cell = document.createElement('button');
+          cell.type = 'button';
+          cell.className = `day${outside ? ' outside' : ''}${isToday ? ' today' : ''}`;
+          cell.dataset.date = dateKey(date);
+          cell.title = 'Open day details';
+          cell.setAttribute('aria-label', `${weekdayFormatter.format(date)}, ${fmtDate(date)}, Chinese lunar ${lunar.month}${lunar.day}; traditional calendar markers ${pillars.year}, ${pillars.month}, ${sexagenaryDay(date)}${isToday ? ', today' : ''}`);
+          cell.addEventListener('click', () => openDay(date));
+          const row = document.createElement('div'); row.className='greg-row';
+          const num = document.createElement('span'); num.className='greg-number'; num.textContent=date.getDate(); row.append(num);
+          const indicator=document.createElement('span'); indicator.className='open-indicator'; indicator.setAttribute('aria-hidden','true'); indicator.textContent='↗';
+          if (isToday) { const label=document.createElement('span'); label.className='today-label'; label.textContent='Today'; row.append(label,indicator); }
+          else row.append(indicator);
+          const lunarEl=document.createElement('div'); lunarEl.className='lunar';
+          if (lunar.day === '初一') {
+            const m=document.createElement('span'); m.className='month'; m.textContent=lunar.month;
+            const d=document.createElement('span'); d.className='dayname'; d.textContent='初一'; lunarEl.append(m, document.createTextNode(' · '), d);
+          } else {
+            const d=document.createElement('span'); d.className='dayname'; d.textContent=lunar.day; lunarEl.append(d);
+          }
+          const ganzhiEl=document.createElement('div'); ganzhiEl.className='ganzhi';
+          ganzhiEl.title=`年 ${pillars.year} · 月 ${pillars.month} · 日 ${sexagenaryDay(date)}`;
+          const yearPillar=document.createElement('b'); yearPillar.textContent=pillars.year;
+          const monthPillar=document.createElement('span'); monthPillar.textContent=` · ${pillars.month}`;
+          const dayPillar=document.createElement('span'); dayPillar.textContent=` · ${sexagenaryDay(date)}`;
+          ganzhiEl.append(yearPillar,monthPillar,dayPillar);
+          cell.append(row,lunarEl,ganzhiEl); frag.append(cell);
+        }
+        daysEl.replaceChildren(frag);
+      }
+      $('#prev').addEventListener('click', () => { shown = new Date(shown.getFullYear(), shown.getMonth()-1, 1); render(); });
+      $('#next').addEventListener('click', () => { shown = new Date(shown.getFullYear(), shown.getMonth()+1, 1); render(); });
+      $('#today').addEventListener('click', () => { shown = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1); render(); });
+      $('#back-to-calendar').addEventListener('click', () => {
+        if (detailRouteAvailable && history.state?.fromCalendar) {
+          activeDateKey = null;
+          detailRouteAvailable = false;
+          history.back();
+        }
+        else {
+          activeDateKey = null;
+          forceCalendar = true;
+          try { history.replaceState({ view:'calendar' }, '', `${location.pathname}${location.search}#calendar`); }
+          catch (error) { try { location.hash = '#calendar'; } catch (ignored) {} }
+          renderPage();
+        }
+      });
+      document.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', () => { view=btn.dataset.view; render(); }));
+      window.addEventListener('popstate', () => { activeDateKey = null; forceCalendar = false; detailRouteAvailable = false; renderPage(); });
+      if (!history.state?.view) {
+        const directDay = location.hash.match(/^#day=(\d{4}-\d{2}-\d{2})$/);
+        activeDateKey = directDay ? directDay[1] : null;
+        try { history.replaceState({ view:directDay ? 'day' : 'calendar', fromCalendar:false }, '', location.href); } catch (error) {}
+      }
+      try { lunarFormatter.format(todayDate); renderPage(); }
+      catch (err) { summary.textContent='Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'; daysEl.replaceChildren(); }
+    })();
+  </script>
+</body>
+</html>
