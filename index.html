@@ -23,9 +23,28 @@
       <p>Notes stay on this device. Export a backup before switching browsers or installing, then import it if your notes do not appear.</p>
       <form method="dialog"><button class="today-btn">Done</button></form>
     </dialog>
+    <section class="backup-panel account-panel" aria-labelledby="account-title">
+      <h2 id="account-title">Account &amp; sync</h2>
+      <p id="account-label">Local notes · this browser only</p>
+      <p>Sign in to sync private notes across your devices. Cloud sync sends note contents to our Supabase provider; this app does not provide end-to-end encryption. Sign out on shared devices.</p>
+      <form id="account-form">
+        <label for="account-email">Email</label><input id="account-email" type="email" autocomplete="username" required>
+        <label for="account-password">Password</label><input id="account-password" type="password" autocomplete="current-password" minlength="8" required>
+        <div class="note-actions"><button class="today-btn" type="submit">Sign in</button><button class="today-btn" type="button" id="sign-up">Create account</button></div>
+      </form>
+      <div class="note-actions" id="account-actions" hidden><button class="today-btn" id="sync-now">Sync now</button><button class="today-btn" id="sign-out">Sign out</button></div>
+      <p id="sync-status" role="status"></p>
+      <div id="sync-conflict" hidden>
+        <h3 id="conflict-title">Conflicting edits</h3>
+        <p>Both versions are kept on this device until you choose. Export a backup to preserve your local version first.</p>
+        <p>This device</p><pre id="conflict-local"></pre>
+        <p>Cloud</p><pre id="conflict-cloud"></pre>
+        <div class="note-actions"><button class="today-btn" id="keep-local">Keep this device's version</button><button class="today-btn" id="keep-cloud">Use cloud version</button></div>
+      </div>
+    </section>
     <section class="backup-panel" aria-label="Note backups">
       <details><summary>Notes &amp; backups</summary>
-        <p>Notes are saved only in this browser on this device. They are not synced or encrypted by this app. Clearing browser data can erase them. Export backups regularly.</p>
+        <p>Local notes stay in this browser. Signed-in notes also sync to your account when connected. Export backups regularly. To move existing local notes into an account, export them before signing in, then import the backup while signed in.</p>
         <div class="note-actions"><button class="today-btn" id="export-notes">Export backup</button>
         <label class="today-btn file-label">Import backup<input id="import-notes" type="file" accept="application/json,.json"></label></div>
         <div id="import-preview" hidden><p id="import-summary"></p>
@@ -117,6 +136,8 @@
       <aside class="detail-info" id="detail-solar-term"></aside>
     </section>
   </main>
+  <script src="sync-config.js" defer></script>
+  <script src="sync.js" defer></script>
   <script src="notes.js" defer></script>
   <script src="app.js" defer></script>
   <script src="install.js" defer></script>

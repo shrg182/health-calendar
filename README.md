@@ -38,7 +38,7 @@ Start with daily notes only: one free-text note per Gregorian date, editable and
 
 For the first version, store notes locally in IndexedDB under Gregorian `YYYY-MM-DD` keys, with created/updated timestamps and a versioned record schema. Offer explicit Save/Delete controls and visible save confirmation. Use a stable localhost address or hosted origin; opening files directly is unsuitable for dependable record storage.
 
-Ship JSON export and validated JSON import with a preview and conflict choices alongside note entry. Include a readable Markdown export if useful. Explain that browser data can be cleared and does not synchronize between devices. Local storage is not encryption; avoid describing it as a secure vault. Keep cloud synchronization out of the first version, and revisit it if cross-device access becomes a requirement.
+Ship JSON export and validated JSON import with a preview and conflict choices alongside note entry. Include a readable Markdown export if useful. Explain that browser data can be cleared and does not synchronize between devices. Local storage is not encryption; avoid describing it as a secure vault. Optional account-based synchronization is now implemented; see the setup below.
 
 ## Calendar validation recommendation (step 5)
 
@@ -62,7 +62,7 @@ Covers leap-day navigation, date search and return, saved preference reload, ran
 
 ## Baseline limitations
 
-Chinese lunar formatting depends on browser `Intl` support. Dates use the device’s local timezone. There is no backend, account system, or cloud synchronization. Daily notes are stored locally. The app captures “today” on load; reload after midnight to refresh it.
+Chinese lunar formatting depends on browser `Intl` support. Dates use the device’s local timezone. Cloud synchronization is optional and requires the Supabase setup below. Without configuration, daily notes stay local. The app captures “today” on load; reload after midnight to refresh it.
 
 ## Mobile design priority
 
@@ -74,7 +74,7 @@ The `.github/workflows/pages.yml` workflow publishes the calendar and install/of
 
 ## Daily notes and installation
 
-Open any date to write, save, edit, or delete its note. A dot marks dates with a saved note. Notes are plain text, limited to 20,000 characters, and saved in this device/browser’s IndexedDB. They are never sent to GitHub. Storage failures are shown without claiming a successful save.
+Open any date to write, save, edit, or delete its note. A dot marks dates with a saved note. Notes are plain text, limited to 20,000 characters, and saved in this device/browser’s IndexedDB. They are never sent to GitHub. When signed in, account notes are sent to the configured Supabase project. Storage failures are shown without claiming a successful save.
 
 Use **Notes & backups** to export a versioned JSON file or import one. Imports validate all records before writing, preview the count and conflicts, and default to keeping existing notes. Choosing replacement affects conflicting dates only. Unsaved drafts must be saved before an import. Export files contain your note text; keep them somewhere appropriate.
 
@@ -87,3 +87,37 @@ Additional integration test (serve the project on localhost:8769):
 ```sh
 PLAYWRIGHT_PATH=/path/to/playwright node tests/notes-install.cjs
 ```
+
+## Multiple users and cloud sync
+
+The app supports optional Supabase email/password accounts. Each account has private daily notes, enforced by database ownership rules, and its own IndexedDB database. The public calendar needs no account. Local mode is a shared browser notebook, not a private account: anyone using that browser profile can see its local notes.
+
+### Enable synchronization
+
+1. Create a Supabase project and run [supabase/schema.sql](supabase/schema.sql) in its SQL editor. This is an initial migration; run it once on a fresh project.
+2. Enable email/password authentication and email confirmation. Configure your production Site URL, allowed confirmation redirects, and mail delivery in Supabase. After confirmation, users return to the app and sign in with their password. Tokens from email links are not consumed by the app.
+3. Set the project URL and **publishable key** (or legacy `anon` key) in [sync-config.js](sync-config.js). These are public browser settings. Never use a service-role or secret key. Use a separate project for testing.
+4. Deploy the updated static files. GitHub Pages packaging and the offline cache include the new scripts.
+5. Run [supabase/verify.sql](supabase/verify.sql) against a test project to check account isolation and revision behavior, then verify with two real accounts and devices. The SQL script rolls back its fixtures.
+
+The Daymark project URL and public publishable key are configured in this repository. The database schema is installed. A rollback-only live database test passed on October 20, 2026: owner isolation, rejected direct writes, revision conflicts, deletion conflicts, and denied anonymous access. Existing-account synchronization between browsers was also confirmed by the user. Real phone testing remains outstanding. Official references: [password authentication](https://supabase.com/docs/guides/auth/passwords), [row-level security](https://supabase.com/docs/guides/database/postgres/row-level-security), and [database functions](https://supabase.com/docs/guides/database/functions).
+
+### Saving, conflicts, and account changes
+
+- Saving commits to IndexedDB first. Sync runs after saves/imports/deletions, when connectivity returns, when the window gains focus, every minute, and through **Sync now**. The app must be open; it does not run background sync after closing.
+- The server assigns revisions and timestamps. Writes compare the last known revision atomically. Conflicts retain the local and cloud versions for review; neither is silently overwritten. A lost response may produce a reviewable conflict on retry.
+- Deletions remain as cloud tombstones, so an offline device cannot silently resurrect a note.
+- Existing local notes are never automatically assigned or uploaded. Export them in local mode, sign in to the intended account, and import after reviewing conflicts.
+- Unsaved drafts block account changes. Signing out clears that account's cached notes and in-memory credentials. Pending changes must be synced or backed up; discarding them requires explicit confirmation. Signing out affects this session, not other devices.
+- Credentials are held in memory only. Reloading or reopening requires online sign-in again; offline editing works within an already signed-in page. Saved pending changes survive reload in the account-specific cache and resume after signing in again. Closing a tab does not erase its account cache; sign out on shared devices.
+- A Web Lock permits only one tab per account in the same browser profile, preventing competing local writers and cache removal races. Current browsers with Web Locks support are required for cloud accounts. Other accounts can use separate tabs.
+- Account caches are separated for ordinary app use, but browser storage is not encrypted or protected from someone with access to the browser's developer tools. Cloud notes are not end-to-end encrypted. JSON backups contain plain text.
+- Dates remain Gregorian date keys without timezone conversion. Changing device timezone does not move a saved note.
+
+Browser integration test with a mocked Supabase API (does not validate deployed SQL policies):
+
+```sh
+PLAYWRIGHT_PATH=/path/to/playwright node tests/account-sync.cjs
+```
+
+Covers two-account separation, two-device synchronization, legacy notes, sign-out cache removal, tab locking, offline queuing, conflict resolution, and deletion propagation. Live database and real iPhone checks remain necessary before release.

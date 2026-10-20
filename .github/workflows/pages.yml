@@ -22,12 +22,15 @@ jobs:
         run: |
           node --check app.js
           node --check notes.js
+          node --check sync.js
+          node --check sync-config.js
           node --check install.js
           node --check service-worker.js
+          node tests/auth-callback.cjs
       - name: Prepare website
         run: |
           mkdir _site
-          cp index.html styles.css app.js notes.js install.js service-worker.js manifest.webmanifest _site/
+          cp index.html styles.css app.js notes.js sync.js sync-config.js install.js service-worker.js manifest.webmanifest _site/
           cp -R icons _site/
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5

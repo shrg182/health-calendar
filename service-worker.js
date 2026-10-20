@@ -1,5 +1,5 @@
-const CACHE = 'daymark-shell-v1';
-const ASSETS = ['./', './index.html', './styles.css', './app.js', './notes.js', './install.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
+const CACHE = 'daymark-shell-v3';
+const ASSETS = ['./', './index.html', './styles.css', './app.js', './notes.js', './sync.js', './sync-config.js', './install.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
 });
