@@ -29,7 +29,11 @@
       <p>Sign in to sync private notes across your devices. Cloud sync sends note contents to our Supabase provider; this app does not provide end-to-end encryption. Sign out on shared devices.</p>
       <form id="account-form">
         <label for="account-email">Email</label><input id="account-email" type="email" autocomplete="username" required>
-        <label for="account-password">Password</label><input id="account-password" type="password" autocomplete="current-password" minlength="8" required>
+        <label for="account-password">Password</label>
+        <div class="password-field">
+          <input id="account-password" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" minlength="8" required>
+          <button class="today-btn" id="toggle-password" type="button" aria-controls="account-password">Show password</button>
+        </div>
         <div class="note-actions"><button class="today-btn" type="submit">Sign in</button><button class="today-btn" type="button" id="sign-up">Create account</button></div>
       </form>
       <div class="note-actions" id="account-actions" hidden><button class="today-btn" id="sync-now">Sync now</button><button class="today-btn" id="sign-out">Sign out</button></div>

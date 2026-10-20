@@ -199,11 +199,24 @@
       synchronize();
     });
   }
+  function hidePassword() {
+    $('#account-password').type = 'password';
+    $('#toggle-password').textContent = 'Show password';
+  }
+  $('#toggle-password').addEventListener('click', () => {
+    const reveal = $('#account-password').type === 'password';
+    $('#account-password').type = reveal ? 'text' : 'password';
+    $('#toggle-password').textContent = reveal ? 'Hide password' : 'Show password';
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) hidePassword();
+  });
   function accountUI() {
     $('#account-label').textContent = account ? `Signed in as ${account.email}` : 'Local notes · this browser only';
     $('#account-form').hidden = Boolean(account);
     $('#account-actions').hidden = !account;
     $('#account-password').value = '';
+    hidePassword();
   }
   async function switchStore(user) {
     const previous = await dbReady;
@@ -235,6 +248,7 @@
   $('#account-form').addEventListener('submit', async event => {
     event.preventDefault();
     if (!canSwitch()) return;
+    hidePassword();
     switching = true; showNote();
     try {
       await ready;
@@ -257,6 +271,7 @@
   });
   $('#sign-up').addEventListener('click', async () => {
     if (!canSwitch() || !$('#account-form').reportValidity()) return;
+    hidePassword();
     switching = true;
     try { status(await cloud.signUp($('#account-email').value.trim(), $('#account-password').value)); }
     catch (error) { status(error.message); }
