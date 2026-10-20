@@ -1,4 +1,5 @@
 (() => {
+  const {setText} = window.DaymarkI18n;
   const button = document.querySelector('#install-app');
   let installPrompt = null;
   const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
@@ -15,14 +16,14 @@
   });
   function showHelp() {
     const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    document.querySelector('#install-instructions').textContent = ios
+    setText('#install-instructions', ios
       ? 'In Safari, open the Share menu (you may need the More button first), choose Add to Home Screen, keep Open as Web App enabled if shown, then tap Add.'
-      : 'Open your browser’s menu and choose Install app or Add to Home screen. On desktop Safari, choose File → Add to Dock. If the option is unavailable, try opening this site in Safari or Chrome.';
+      : 'Open your browser’s menu and choose Install app or Add to Home screen. On desktop Safari, choose File → Add to Dock. If the option is unavailable, try opening this site in Safari or Chrome.');
     document.querySelector('#install-help').showModal();
   }
   if ('serviceWorker' in navigator && ['https:', 'http:'].includes(location.protocol)) {
     navigator.serviceWorker.register('./service-worker.js').catch(() => {
-      document.querySelector('#backup-status').textContent = 'Offline setup is unavailable. You can still use the calendar online.';
+      setText('#backup-status', 'Offline setup is unavailable. You can still use the calendar online.');
     });
   }
 })();

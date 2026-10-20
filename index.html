@@ -15,8 +15,13 @@
   <main class="shell">
     <header class="topbar">
       <div class="brand"><span class="brand-mark" aria-hidden="true">日</span><span>Daymark Calendar</span></div>
-      <button class="today-btn" id="install-app" type="button">Install app</button>
+      <div class="header-actions">
+        <label class="language-label" for="language-choice">Language</label>
+        <select id="language-choice"><option value="zh" lang="zh-CN">中文</option><option value="en" lang="en">English</option><option value="ru" lang="ru">Русский</option></select>
+        <button class="today-btn" id="install-app" type="button">Install app</button>
+      </div>
     </header>
+    <p id="language-status" role="status"></p>
     <dialog id="install-help" aria-labelledby="install-title">
       <h2 id="install-title">Install Daymark</h2>
       <p id="install-instructions"></p>
@@ -131,6 +136,7 @@
       </div>
       <article class="detail-card pillars-card">
         <h2>Calendar markers</h2>
+        <p class="detail-note">GanZhi combines ten Heavenly Stems and twelve Earthly Branches in a 60-part cycle. Chinese characters are retained; pronunciation is shown alongside them.</p>
         <div class="pillar-list">
           <div class="pillar"><span class="pillar-name">Year · 年</span><strong class="pillar-value" id="detail-year-pillar"></strong></div>
           <div class="pillar"><span class="pillar-name">Month · 月</span><strong class="pillar-value" id="detail-month-pillar"></strong></div>
@@ -140,6 +146,8 @@
       <aside class="detail-info" id="detail-solar-term"></aside>
     </section>
   </main>
+  <script src="translations.js" defer></script>
+  <script src="i18n.js" defer></script>
   <script src="sync-config.js" defer></script>
   <script src="sync.js" defer></script>
   <script src="notes.js" defer></script>

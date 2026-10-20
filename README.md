@@ -21,6 +21,7 @@ Then visit http://localhost:8000.
 
 ## Current features
 
+- Chinese, English, and Russian interface choices, remembered per browser, with localized dates and GanZhi pronunciation in day details
 - Monthly calendar with previous, next, and Today navigation
 - Month/year selection and date search (1901–2100)
 - Calendar-view preference saved on this browser, with a fallback when storage is unavailable
@@ -121,3 +122,17 @@ PLAYWRIGHT_PATH=/path/to/playwright node tests/account-sync.cjs
 ```
 
 Covers two-account separation, two-device synchronization, legacy notes, sign-out cache removal, tab locking, offline queuing, conflict resolution, and deletion propagation. Live database and real iPhone checks remain necessary before release.
+
+## Languages
+
+Use the language selector at the top of the app: **中文 / English / Русский**. First use follows the browser's preferred supported language; later visits remember your choice in this browser. Changes apply without reloading or signing out. Notes, drafts, backup data, and Gregorian date keys retain their original contents.
+
+Chinese retains traditional lunar labels. English and Russian use numeric lunar months/days and explicitly identify leap months. GanZhi characters remain the reference notation, with pinyin in English day details and Cyrillic pronunciation in Russian. Solar-term explanations and estimate labels are translated. The calendar calculations and Sunday-first week layout are unchanged.
+
+See [language implementation notes](docs/languages.md). Validate with:
+
+```sh
+node tests/translation-catalog.cjs
+PLAYWRIGHT_PATH=/path/to/playwright node tests/languages.cjs
+TEST_ENGINE=webkit PLAYWRIGHT_PATH=/path/to/playwright node tests/languages.cjs
+```

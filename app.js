@@ -1,5 +1,7 @@
 (() => {
   const $ = (s) => document.querySelector(s);
+  const i18n = window.DaymarkI18n;
+  const {t, setText} = i18n;
   const daysEl = $('#days');
   const monthTitle = $('#month-title');
   const summary = $('#date-summary');
@@ -14,24 +16,30 @@
     const savedView = localStorage.getItem(VIEW_KEY);
     if (validViews.includes(savedView)) view = savedView;
   } catch (error) {
-    $('#preference-status').textContent = 'View preferences cannot be saved in this browser session.';
+    setText('#preference-status', 'View preferences cannot be saved in this browser session.');
   }
-  const monthNames = new Intl.DateTimeFormat(undefined, { month:'long' });
-  for (let month = 0; month < 12; month++) {
-    const option = document.createElement('option');
-    option.value = month;
-    option.textContent = monthNames.format(new Date(2026, month, 1));
-    $('#jump-month').append(option);
+  function updateMonthNames() {
+    const names = new Intl.DateTimeFormat(i18n.locale, {month:'long'});
+    const selected = $('#jump-month').value;
+    $('#jump-month').replaceChildren();
+    for (let month = 0; month < 12; month++) {
+      const option = document.createElement('option');
+      option.value = month;
+      option.textContent = names.format(new Date(2026, month, 1));
+      $('#jump-month').append(option);
+    }
+    $('#jump-month').value = selected;
   }
+  updateMonthNames();
   let focusAfterCalendar = false;
   let focusDateKey = null;
   let activeDateKey = null;
   let forceCalendar = false;
   let detailRouteAvailable = false;
-  const monthFormatter = new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' });
+  let monthFormatter = new Intl.DateTimeFormat(i18n.locale, { month: 'long', year: 'numeric' });
   const lunarFormatter = new Intl.DateTimeFormat('zh-CN-u-ca-chinese-nu-latn', { month: 'long', day: 'numeric' });
-  const lunarMonthFormatter = new Intl.DateTimeFormat('zh-CN-u-ca-chinese', { month: 'long' });
-  const weekdayFormatter = new Intl.DateTimeFormat(undefined, { weekday: 'long' });
+  const lunarNumericFormatter = new Intl.DateTimeFormat('en-u-ca-chinese-nu-latn', {month:'numeric', day:'numeric'});
+  let weekdayFormatter = new Intl.DateTimeFormat(i18n.locale, { weekday: 'long' });
   const stems = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
   const branches = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
   const lunarDayNames = ['', '初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十', '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十', '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'];
@@ -44,13 +52,42 @@
     { longitude:225, month:10, day:7, offset:9, name:'立冬', english:'Lidong' }, { longitude:255, month:11, day:7, offset:10, name:'大雪', english:'Daxue' }
   ];
   const termCache = new Map();
-  const fmtDate = (d) => new Intl.DateTimeFormat(undefined, { year:'numeric', month:'long', day:'numeric' }).format(d);
+  const fmtDate = (d) => new Intl.DateTimeFormat(i18n.locale, { year:'numeric', month:'long', day:'numeric' }).format(d);
   function lunarParts(date) {
     const parts = lunarFormatter.formatToParts(date);
     const month = parts.find(p => p.type === 'month')?.value ?? '';
     const dayNumber = Number(parts.find(p => p.type === 'day')?.value);
-    return { month, day: lunarDayNames[dayNumber] ?? String(dayNumber) };
+    const numeric = lunarNumericFormatter.formatToParts(date).find(p => p.type === 'month').value;
+    const monthNumber = Number.parseInt(numeric, 10);
+    const leap = numeric.includes('bis');
+    const full = i18n.language === 'zh' ? `农历${month}${lunarDayNames[dayNumber]}`
+      : t(leap ? 'Leap lunar month {month}, day {day}' : 'Lunar month {month}, day {day}', {month:monthNumber, day:dayNumber});
+    return {month:i18n.language === 'zh' ? month : t(leap ? 'Leap {month}' : 'M{month}', {month:monthNumber}),
+      day:i18n.language === 'zh' ? lunarDayNames[dayNumber] : String(dayNumber), dayNumber, full};
   }
+  const pinyinStems = ['Jiǎ','Yǐ','Bǐng','Dīng','Wù','Jǐ','Gēng','Xīn','Rén','Guǐ'];
+  const pinyinBranches = ['Zǐ','Chǒu','Yín','Mǎo','Chén','Sì','Wǔ','Wèi','Shēn','Yǒu','Xū','Hài'];
+  const russianStems = ['Цзя','И','Бин','Дин','У','Цзи','Гэн','Синь','Жэнь','Гуй'];
+  const russianBranches = ['цзы','чоу','инь','мао','чэнь','сы','у','вэй','шэнь','ю','сюй','хай'];
+  function marker(value) {
+    if (i18n.language === 'zh') return value;
+    const stem = stems.indexOf(value[0]), branch = branches.indexOf(value[1]);
+    const names = i18n.language === 'ru' ? [russianStems, russianBranches] : [pinyinStems, pinyinBranches];
+    return `${value} · ${names[0][stem]}-${names[1][branch]}`;
+  }
+  const termMeanings = ['Minor Cold','Beginning of Spring','Awakening of Insects','Pure Brightness','Beginning of Summer','Grain in Ear','Minor Heat','Beginning of Autumn','White Dew','Cold Dew','Beginning of Winter','Major Snow'];
+  function termLabel(term) {
+    if (i18n.language === 'zh') return term.name;
+    const index = jieTerms.findIndex(item => item.name === term.name);
+    return `${term.name} · ${t(termMeanings[index])} (${term.english})`;
+  }
+  function updateWeekdays() {
+    const formatter = new Intl.DateTimeFormat(i18n.locale, {weekday:'short'});
+    document.querySelectorAll('.weekday').forEach((element,index) => {
+      element.textContent = formatter.format(new Date(2026,0,4+index));
+    });
+  }
+  updateWeekdays();
   function sexagenaryDay(date) {
     const jdn = Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86400000) + 2440588;
     const cycle = ((jdn + 49) % 60 + 60) % 60;
@@ -126,42 +163,42 @@
     }
     renderPage();
   }
-  function renderDayDetails(date) {
+  function renderDayDetails(date, focus = true) {
     const lunar = lunarParts(date);
     const pillars = pillarsFor(date);
     const weekday = weekdayFormatter.format(date);
     const title = `${weekday}, ${fmtDate(date)}`;
     $('#detail-title').textContent = title;
-    document.title = `Daymark Calendar — ${title}`;
-    $('#detail-subtitle').textContent = 'Chinese lunar date and traditional calendar markers';
+    document.title = `${t('Daymark Calendar')} — ${title}`;
+    $('#detail-subtitle').textContent = t('Chinese lunar date and traditional calendar markers');
     $('#detail-gregorian').textContent = fmtDate(date);
     $('#detail-weekday').textContent = weekday;
-    $('#detail-lunar').textContent = `农历${lunar.month}${lunar.day}`;
-    $('#detail-year-pillar').textContent = pillars.year;
-    $('#detail-month-pillar').textContent = pillars.month;
-    $('#detail-day-pillar').textContent = sexagenaryDay(date);
+    $('#detail-lunar').textContent = lunar.full;
+    $('#detail-year-pillar').textContent = marker(pillars.year);
+    $('#detail-month-pillar').textContent = marker(pillars.month);
+    $('#detail-day-pillar').textContent = marker(sexagenaryDay(date));
     const nearbyTerms = [];
     for (let year=date.getFullYear()-1; year<=date.getFullYear()+1; year++) nearbyTerms.push(...termsForYear(year));
     const termOnDate = nearbyTerms.find(term => dateKey(new Date(term.instant)) === dateKey(date));
     const termInfo = $('#detail-solar-term');
     if (termOnDate) {
-      const boundaryTime = new Intl.DateTimeFormat(undefined, { hour:'numeric', minute:'2-digit' }).format(new Date(termOnDate.instant));
-      termInfo.textContent = `Solar-term boundary: ${termOnDate.name} (${termOnDate.english}), at approximately ${boundaryTime} local time. The time is an estimate.`;
+      const boundaryTime = new Intl.DateTimeFormat(i18n.locale, { hour:'numeric', minute:'2-digit' }).format(new Date(termOnDate.instant));
+      termInfo.textContent = t('Solar-term boundary: {term}, at approximately {time} local time. The time is an estimate.', {term:termLabel(termOnDate),time:boundaryTime});
     } else {
       const boundaryDate = new Date(pillars.term.instant);
-      termInfo.textContent = `The current solar-term period began with ${pillars.term.name} (${pillars.term.english}) on ${fmtDate(boundaryDate)}. Solar-term times are estimates.`;
+      termInfo.textContent = t('The current solar-term period began with {term} on {date}. Solar-term times are estimates.', {term:termLabel(pillars.term),date:fmtDate(boundaryDate)});
     }
     window.dispatchEvent(new CustomEvent('daymark:day', { detail:dateKey(date) }));
-    $('#detail-title').focus();
+    if (focus) $('#detail-title').focus();
   }
-  function renderPage() {
+  function renderPage(focusDetails = true) {
     const match = location.hash.match(/^#day=(\d{4}-\d{2}-\d{2})$/);
     const detailDate = forceCalendar ? null : dateFromKey(activeDateKey || (match ? match[1] : ''));
     $('#calendar-page').hidden = Boolean(detailDate);
     $('#detail-page').hidden = !detailDate;
-    if (detailDate) renderDayDetails(detailDate);
+    if (detailDate) renderDayDetails(detailDate, focusDetails);
     else {
-      document.title = 'Daymark — Gregorian & Chinese Calendar';
+      document.title = t('Daymark — Gregorian & Chinese Calendar');
       render();
       if (focusAfterCalendar) {
         document.querySelector(`[data-date="${focusDateKey}"]`)?.focus();
@@ -177,7 +214,7 @@
     $('#next').disabled = shown.getFullYear() === MAX_YEAR && shown.getMonth() === 11;
     const thisLunar = lunarParts(todayDate);
     const todayPillars = pillarsFor(todayDate);
-    summary.textContent = `Today · ${fmtDate(todayDate)} · ${todayPillars.year} · 农历${lunarMonthFormatter.format(todayDate)}${thisLunar.day} · ${todayPillars.month} · ${sexagenaryDay(todayDate)}`;
+    summary.textContent = `${t('Today')} · ${fmtDate(todayDate)} · ${todayPillars.year} · ${thisLunar.full} · ${todayPillars.month} · ${sexagenaryDay(todayDate)}`;
     $('#calendar-card').className = `calendar-card ${view === 'gregorian' ? 'greg-only' : ''} ${view === 'lunar' ? 'lunar-only' : ''}`;
     document.querySelectorAll('.view-btn').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.view === view)));
     const first = new Date(shown.getFullYear(), shown.getMonth(), 1);
@@ -196,25 +233,25 @@
       cell.dataset.date = dateKey(date);
       if (window.DaymarkNotes?.dates.has(cell.dataset.date)) {
         cell.classList.add('has-note');
-        cell.setAttribute('aria-description', 'Has a saved note');
+        cell.setAttribute('aria-description', t('Has a saved note'));
       }
-      cell.title = 'Open day details';
-      cell.setAttribute('aria-label', `${weekdayFormatter.format(date)}, ${fmtDate(date)}, Chinese lunar ${lunar.month}${lunar.day}; traditional calendar markers ${pillars.year}, ${pillars.month}, ${sexagenaryDay(date)}${isToday ? ', today' : ''}`);
+      cell.title = t('Open day details');
+      cell.setAttribute('aria-label', t('{weekday}, {date}, {lunar}; traditional calendar markers {year}, {month}, {day}{today}', {weekday:weekdayFormatter.format(date),date:fmtDate(date),lunar:lunar.full,year:marker(pillars.year),month:marker(pillars.month),day:marker(sexagenaryDay(date)),today:isToday ? t(', today') : ''}));
       cell.addEventListener('click', () => openDay(date));
       const row = document.createElement('div'); row.className='greg-row';
       const num = document.createElement('span'); num.className='greg-number'; num.textContent=date.getDate(); row.append(num);
       const indicator=document.createElement('span'); indicator.className='open-indicator'; indicator.setAttribute('aria-hidden','true'); indicator.textContent='↗';
-      if (isToday) { const label=document.createElement('span'); label.className='today-label'; label.textContent='Today'; row.append(label,indicator); }
+      if (isToday) { const label=document.createElement('span'); label.className='today-label'; label.textContent=t('Today'); row.append(label,indicator); }
       else row.append(indicator);
       const lunarEl=document.createElement('div'); lunarEl.className='lunar';
-      if (lunar.day === '初一') {
+      if (lunar.dayNumber === 1) {
         const m=document.createElement('span'); m.className='month'; m.textContent=lunar.month;
-        const d=document.createElement('span'); d.className='dayname'; d.textContent='初一'; lunarEl.append(m, document.createTextNode(' '), d);
+        const d=document.createElement('span'); d.className='dayname'; d.textContent=lunar.day; lunarEl.append(m, document.createTextNode(' '), d);
       } else {
         const d=document.createElement('span'); d.className='dayname'; d.textContent=lunar.day; lunarEl.append(d);
       }
       const ganzhiEl=document.createElement('div'); ganzhiEl.className='ganzhi';
-      ganzhiEl.title=`年 ${pillars.year} · 月 ${pillars.month} · 日 ${sexagenaryDay(date)}`;
+      ganzhiEl.title=`${t('Year')} ${marker(pillars.year)} · ${t('Month')} ${marker(pillars.month)} · ${t('Day')} ${marker(sexagenaryDay(date))}`;
       const yearPillar=document.createElement('b'); yearPillar.textContent=pillars.year;
       const monthPillar=document.createElement('span'); monthPillar.textContent=` · ${pillars.month}`;
       const dayPillar=document.createElement('span'); dayPillar.textContent=` · ${sexagenaryDay(date)}`;
@@ -258,9 +295,9 @@
   document.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', () => { view=btn.dataset.view;
     try {
       localStorage.setItem(VIEW_KEY, view);
-      $('#preference-status').textContent = '';
+      setText('#preference-status', '');
     } catch (error) {
-      $('#preference-status').textContent = 'View changed for this session; your browser could not save the preference.';
+      setText('#preference-status', 'View changed for this session; your browser could not save the preference.');
     }
     render(); }));
   window.addEventListener('popstate', () => { activeDateKey = null; forceCalendar = false; detailRouteAvailable = false; renderPage(); });
@@ -269,6 +306,12 @@
     activeDateKey = directDay ? directDay[1] : null;
     try { history.replaceState({ view:directDay ? 'day' : 'calendar', fromCalendar:false }, '', location.href); } catch (error) {}
   }
+  window.addEventListener('daymark:language', () => {
+    monthFormatter = new Intl.DateTimeFormat(i18n.locale, {month:'long',year:'numeric'});
+    weekdayFormatter = new Intl.DateTimeFormat(i18n.locale, {weekday:'long'});
+    updateMonthNames(); updateWeekdays();
+    try { renderPage(false); } catch { setText(summary,'Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'); }
+  });
   try { lunarFormatter.format(todayDate); renderPage(); }
-  catch (err) { summary.textContent='Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'; daysEl.replaceChildren(); }
+  catch (err) { setText(summary,'Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'); daysEl.replaceChildren(); }
 })();

@@ -1,5 +1,6 @@
 (() => {
   const $ = s => document.querySelector(s);
+  const {t, setText} = window.DaymarkI18n;
   const dates = new Set();
   window.DaymarkNotes = { dates };
   const drafts = new Map();
@@ -49,7 +50,7 @@
     $('#daily-note').disabled = switching;
     $('#save-note').disabled = busy || syncing || switching;
     $('#delete-note').disabled = busy || syncing || switching || !saved;
-    $('#note-status').textContent = drafts.has(current) ? 'Unsaved changes. Tap Save note to keep them.' : saved ? (account ? (stored.pending ? 'Saved on this device. Waiting to sync.' : 'Synced.') : 'Saved on this device.') : 'No note yet.';
+    setText('#note-status', drafts.has(current) ? 'Unsaved changes. Tap Save note to keep them.' : saved ? (account ? (stored.pending ? 'Saved on this device. Waiting to sync.' : 'Synced.') : 'Saved on this device.') : 'No note yet.');
   }
   const ready = transaction('readonly', store => store.getAll()).then(all => {
     records = new Map(all.map(record => [record.date, record]));
@@ -57,14 +58,14 @@
     showNote();
   });
   ready.catch(() => {
-    $('#note-status').textContent = 'Notes storage is unavailable. Try a regular browser window and reload.';
-    $('#backup-status').textContent = 'Notes storage is unavailable; no notes can be saved or imported.';
+    setText('#note-status', 'Notes storage is unavailable. Try a regular browser window and reload.');
+    setText('#backup-status', 'Notes storage is unavailable; no notes can be saved or imported.');
   });
   window.addEventListener('daymark:day', event => { current = event.detail; ready.then(showNote).catch(() => {}); });
   $('#daily-note').addEventListener('input', () => {
     if ($('#daily-note').value === (records.get(current)?.text ?? '')) drafts.delete(current);
     else drafts.set(current, $('#daily-note').value);
-    $('#note-status').textContent = drafts.has(current) ? 'Unsaved changes. Tap Save note to keep them.' : 'No unsaved changes.';
+    setText('#note-status', drafts.has(current) ? 'Unsaved changes. Tap Save note to keep them.' : 'No unsaved changes.');
   });
   window.addEventListener('beforeunload', event => { if (drafts.size) { event.preventDefault(); event.returnValue = ''; } });
   $('#note-form').addEventListener('submit', async event => {
@@ -72,7 +73,7 @@
     if (!current || busy || syncing || switching) return;
     const key = current;
     const text = $('#daily-note').value;
-    if (!text.trim()) { $('#note-status').textContent = 'Write a note, or use Delete note to remove the saved note.'; return; }
+    if (!text.trim()) { setText('#note-status', 'Write a note, or use Delete note to remove the saved note.'); return; }
     busy = true; $('#save-note').disabled = true;
     try {
       const now = new Date().toISOString();
@@ -81,12 +82,12 @@
       records.set(key, record);
       if (drafts.get(key) === text) drafts.delete(key);
       refreshDates();
-      if (current === key) $('#note-status').textContent = drafts.has(key) ? 'Saved. New edits are not saved yet.' : (account ? 'Saved on this device. Waiting to sync.' : 'Saved on this device.');
-    } catch { $('#note-status').textContent = 'Could not save. Your draft is still here; export a backup of saved notes and try again.'; }
+      if (current === key) setText('#note-status', drafts.has(key) ? 'Saved. New edits are not saved yet.' : (account ? 'Saved on this device. Waiting to sync.' : 'Saved on this device.'));
+    } catch { setText('#note-status', 'Could not save. Your draft is still here; export a backup of saved notes and try again.'); }
     finally { busy = false; showNote(); if (account) synchronize(); }
   });
   $('#delete-note').addEventListener('click', async () => {
-    if (!current || busy || syncing || switching || !confirm(account ? 'Delete this date’s note from your account and synced devices?' : 'Delete this date’s note from this device?')) return;
+    if (!current || busy || syncing || switching || !confirm(t(account ? 'Delete this date’s note from your account and synced devices?' : 'Delete this date’s note from this device?'))) return;
     const key = current;
     busy = true;
     try {
@@ -94,8 +95,8 @@
         const note = { ...records.get(key), text:'', deleted:true, pending:true, updatedAt:new Date().toISOString() };
         await transaction('readwrite', store => store.put(note)); records.set(key, note);
       } else { await transaction('readwrite', store => store.delete(key)); records.delete(key); } drafts.delete(key); refreshDates();
-      if (current === key) { showNote(); $('#note-status').textContent = 'Note deleted.'; }
-    } catch { $('#note-status').textContent = 'Could not delete the note. Please try again.'; }
+      if (current === key) { showNote(); setText('#note-status', 'Note deleted.'); }
+    } catch { setText('#note-status', 'Could not delete the note. Please try again.'); }
     finally { busy = false; showNote(); if (account) synchronize(); }
   });
   $('#export-notes').addEventListener('click', async () => {
@@ -106,8 +107,8 @@
       const url = URL.createObjectURL(new Blob([JSON.stringify(data,null,2)], { type:'application/json' }));
       const link = document.createElement('a'); link.href = url; link.download = `daymark-notes-${new Date().toISOString().slice(0,10)}.json`; link.click();
       setTimeout(() => URL.revokeObjectURL(url), 60000);
-      $('#backup-status').textContent = `Backup prepared: ${records.size} saved notes. Unsaved drafts are not included.`;
-    } catch { $('#backup-status').textContent = 'Could not export notes.'; }
+      setText('#backup-status', 'Backup prepared: {count} saved notes. Unsaved drafts are not included.', {count:data.notes.length});
+    } catch { setText('#backup-status', 'Could not export notes.'); }
   });
   $('#import-notes').addEventListener('change', async event => {
     if (switching || busy || syncing) return;
@@ -128,16 +129,16 @@
       }
       pendingImport = data.notes.map(({date,text,createdAt,updatedAt}) => ({date,text,createdAt,updatedAt}));
       const conflicts = pendingImport.filter(note => records.has(note.date)).length;
-      $('#import-summary').textContent = `${pendingImport.length} notes ready to import; ${conflicts} dates already have notes. Review before importing.`;
+      setText('#import-summary', '{count} notes ready to import; {conflicts} dates already have notes. Review before importing.', {count:pendingImport.length, conflicts});
       $('#import-conflicts').value = 'keep'; $('#import-preview').hidden = false;
-      $('#backup-status').textContent = '';
-    } catch (error) { $('#backup-status').textContent = error instanceof SyntaxError ? 'Invalid JSON backup. Nothing was imported.' : error.message; }
+      setText('#backup-status', '');
+    } catch (error) { setText('#backup-status', error instanceof SyntaxError ? 'Invalid JSON backup. Nothing was imported.' : error.message); }
     finally { event.target.value = ''; }
   });
   $('#cancel-import').addEventListener('click', () => { pendingImport = null; $('#import-preview').hidden = true; });
   $('#confirm-import').addEventListener('click', async () => {
     if (!pendingImport || busy || syncing || switching) return;
-    if (drafts.size) { $('#backup-status').textContent = 'Save your unsaved notes before importing.'; return; }
+    if (drafts.size) { setText('#backup-status', 'Save your unsaved notes before importing.'); return; }
     const replace = $('#import-conflicts').value === 'replace';
     const items = pendingImport.filter(note => replace || !records.has(note.date) || records.get(note.date).deleted)
       .map(note => ({...records.get(note.date), ...note, deleted:false, ...(account ? {pending:true} : {})}));
@@ -147,11 +148,11 @@
       for (const note of items) records.set(note.date, note);
       pendingImport = null; $('#import-preview').hidden = true;
       refreshDates(); showNote();
-      $('#backup-status').textContent = `Imported ${items.length} notes on this device.`;
-    } catch { $('#backup-status').textContent = 'Import failed. No changes were committed.'; }
+      setText('#backup-status', 'Imported {count} notes on this device.', {count:items.length});
+    } catch { setText('#backup-status', 'Import failed. No changes were committed.'); }
     finally { busy = false; $('#confirm-import').disabled = false; if (current) showNote(); if (account) synchronize(); }
   });
-  const status = message => { $('#sync-status').textContent = message; };
+  const status = message => { setText('#sync-status', message); };
   function fromCloud(note) {
     return {date:note.date, text:note.text, deleted:note.deleted, revision:note.revision,
       createdAt:note.created_at, updatedAt:note.updated_at, pending:false};
@@ -160,9 +161,9 @@
     const note = [...records.values()].find(n => n.conflict);
     $('#sync-conflict').hidden = !note;
     if (!note) return;
-    $('#conflict-title').textContent = `Conflicting edits · ${note.date}`;
-    $('#conflict-local').textContent = note.deleted ? '(Deleted)' : note.text;
-    $('#conflict-cloud').textContent = note.conflict.deleted ? '(Deleted)' : note.conflict.text;
+    setText('#conflict-title', 'Conflicting edits · {date}', {date:note.date});
+    $('#conflict-local').textContent = note.deleted ? t('(Deleted)') : note.text;
+    $('#conflict-cloud').textContent = note.conflict.deleted ? t('(Deleted)') : note.conflict.text;
   }
   async function synchronize() {
     if (!account || syncing || switching || busy) return;
@@ -181,7 +182,7 @@
         await transaction('readwrite', store => store.put(note)); records.set(note.date, note);
       }
       status([...records.values()].some(n => n.conflict) ? 'Review conflicting edits below.' : 'Synced.');
-    } catch (error) { status(`Sync failed. Saved changes remain on this device. ${error.message}`); }
+    } catch (error) { setText('#sync-status', 'Sync failed. Saved changes remain on this device. {error}', {error:error.message}); }
     finally { syncing = false; refreshDates(); showNote(); showConflict(); }
   }
   for (const [id, localChoice] of [['keep-local', true], ['keep-cloud', false]]) {
@@ -201,18 +202,19 @@
   }
   function hidePassword() {
     $('#account-password').type = 'password';
-    $('#toggle-password').textContent = 'Show password';
+    setText('#toggle-password', 'Show password');
   }
   $('#toggle-password').addEventListener('click', () => {
     const reveal = $('#account-password').type === 'password';
     $('#account-password').type = reveal ? 'text' : 'password';
-    $('#toggle-password').textContent = reveal ? 'Hide password' : 'Show password';
+    setText('#toggle-password', reveal ? 'Hide password' : 'Show password');
   });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) hidePassword();
   });
   function accountUI() {
-    $('#account-label').textContent = account ? `Signed in as ${account.email}` : 'Local notes · this browser only';
+    if (account) setText('#account-label', 'Signed in as {email}', {email:account.email});
+    else setText('#account-label', 'Local notes · this browser only');
     $('#account-form').hidden = Boolean(account);
     $('#account-actions').hidden = !account;
     $('#account-password').value = '';
@@ -235,7 +237,7 @@
     dbReady = Promise.resolve(nextDB);
     account = user; drafts.clear(); pendingImport = null;
     $('#import-preview').hidden = true;
-    $('#backup-status').textContent = '';
+    setText('#backup-status', '');
     $('#daily-note').value = '';
     records = new Map(all.map(note => [note.date, note]));
     accountUI(); refreshDates(); showConflict();
@@ -281,7 +283,7 @@
     if (!canSwitch()) return;
     if ([...records.values()].some(n => n.pending || n.conflict)) {
       status('Sync or export your pending notes first. Signing out removes this account’s cached notes.');
-      if (!confirm('Unsynced notes will be removed from this device. Continue only if you have exported a backup. Sign out and discard them?')) return;
+      if (!confirm(t('Unsynced notes will be removed from this device. Continue only if you have exported a backup. Sign out and discard them?'))) return;
     }
     switching = true; showNote();
     try {
@@ -293,6 +295,7 @@
     } catch { status('Could not finish signing out. Try again.'); }
     finally { switching = false; showNote(); }
   });
+  window.addEventListener('daymark:language', showConflict);
   $('#sync-now').addEventListener('click', synchronize);
   window.addEventListener('online', synchronize);
   window.addEventListener('focus', synchronize);
