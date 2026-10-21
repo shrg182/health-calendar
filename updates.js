@@ -31,6 +31,7 @@
   function showWaiting() {
     if (!registration?.waiting) return;
     $('#update-notice').hidden = false;
+    $('#calendar-update').hidden = false;
     setText('#update-status', 'An update is ready.');
   }
   function watchWorker() {
@@ -76,6 +77,7 @@
       if (canReload()) location.reload();
       else {
         $('#update-notice').hidden = true;
+        $('#calendar-update').hidden = true;
         setText('#update-status', 'Update installed. Save and sync your notes, then reload when ready.');
       }
     });

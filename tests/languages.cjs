@@ -1,3 +1,4 @@
+const {openSettings, closeSettings} = require('./ui.cjs');
 const playwright = require(process.env.PLAYWRIGHT_PATH || 'playwright');
 const assert = require('node:assert/strict');
 (async () => {
@@ -45,11 +46,13 @@ const assert = require('node:assert/strict');
   await page.reload();assert.equal(await page.locator('#language-choice').inputValue(),'zh');
   await page.waitForFunction(()=>!document.querySelector('#daily-note').disabled);
   assert.equal(await page.locator('#daily-note').inputValue(),'Calendar — 今天 — Сегодня');
+  await openSettings(page);
   await page.locator('#account-email').fill('test@example.invalid');await page.locator('#account-password').fill('test-password');
   await page.locator('#language-choice').selectOption('ru');
   assert.equal(await page.locator('#account-password').inputValue(),'test-password');
   await page.locator('#language-choice').selectOption('zh');
   await page.locator('#account-form button[type=submit]').click();await page.waitForFunction(()=>document.querySelector('#sync-status').textContent==='已同步。');
+  await closeSettings(page);
   await page.locator('#daily-note').fill('Unchanged account draft');
   await page.locator('#language-choice').selectOption('ru');
   assert.equal(await page.locator('#account-label').textContent(),'Вы вошли как test@example.invalid');

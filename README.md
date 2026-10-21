@@ -77,7 +77,7 @@ The `.github/workflows/pages.yml` workflow publishes the calendar and install/of
 
 Open any date to write, save, edit, or delete its note. A dot marks dates with a saved note. Notes are plain text, limited to 20,000 characters, and saved in this device/browser’s IndexedDB. They are never sent to GitHub. When signed in, account notes are sent to the configured Supabase project. Storage failures are shown without claiming a successful save.
 
-Use **Notes & backups** to export a versioned JSON file or import one. Imports validate all records before writing, preview the count and conflicts, and default to keeping existing notes. Choosing replacement affects conflicting dates only. Unsaved drafts must be saved before an import. Export files contain your note text; keep them somewhere appropriate.
+Use **Settings → Sync & backups → Notes & backups** to export a versioned JSON file or import one. Imports validate all records before writing, preview the count and conflicts, and default to keeping existing notes. Choosing replacement affects conflicting dates only. Unsaved drafts must be saved before an import. Export files contain your note text; keep them somewhere appropriate.
 
 **Install app** opens the browser install prompt when available. On iPhone it explains Safari’s Share → Add to Home Screen flow (keep Open as Web App enabled if shown). See [Apple’s instructions](https://support.apple.com/en-eg/guide/iphone/iphea86e5236/ios) and [MDN’s install prompt documentation](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/How_to/Trigger_install_prompt). Export before moving to an installed app or another browser, and import if the notes are absent there.
 
@@ -139,8 +139,16 @@ TEST_ENGINE=webkit PLAYWRIGHT_PATH=/path/to/playwright node tests/languages.cjs
 
 ## Development versions and updates
 
-The header shows the current development version (starting with `0.1.0-dev.1`). **What’s new** opens translated release notes; a **New** badge remains until those notes are opened in this browser. **Check for updates** checks for a new offline app bundle. A downloaded update shows **Refresh to update**. Refresh is explicit and blocked while notes have drafts, pending account changes, unresolved conflicts, or active storage/sync operations. Only the requesting tab reloads; other tabs keep their drafts and sessions. After refresh, account users sign in again.
+Settings → App shows the current development version (the first numbered release was `0.1.0-dev.1`). **What’s new** opens translated release notes; a **New** badge remains until those notes are opened in this browser. **Check for updates** checks for a new offline app bundle. A downloaded update shows **Refresh to update**. Refresh is explicit and blocked while notes have drafts, pending account changes, unresolved conflicts, or active storage/sync operations. Only the requesting tab reloads; other tabs keep their drafts and sessions. After refresh, account users sign in again.
 
 For every publication, increment `version` in [release.js](release.js), update its date and changes, and add Chinese/Russian translations for new release-note messages. The service worker imports that same metadata to name its offline cache, so version and cache identity share one source. `daymark.seenRelease` stores the version whose notes were read on this device. If browser storage is unavailable, read status lasts only for the current page.
 
 Run `tests/updates.cjs` with Playwright (Chrome or `TEST_ENGINE=webkit`) to verify an actual waiting-worker update, release-note tracking, draft protection, note/date preservation, other-tab protection, and offline messages. A browser may update on its own after all app tabs close; the explicit refresh protection applies to the app's update button. Existing older tabs need one online reload to acquire this update UI.
+
+## Calendar and Settings navigation
+
+The main screen starts with a calendar icon, language selector, and Settings gear, followed by the Calendar heading, compact sync status, month navigation, and month grid. Date searches and month/year jumps sit below the grid. The visible Language label is removed; its screen-reader label is retained.
+
+Settings (`#settings`) is a separate view within the same document, so navigation keeps account sessions and note drafts. It groups Account, Sync & backups, Calendar display, and App controls. The display selector and version/update controls live there. Sync errors and downloaded updates link from the calendar directly to `#settings-sync` or `#settings-app`. Signed-out local status links to `#settings-account`. Sign-in errors and sign-up results appear beside the account form.
+
+Use the Back to calendar button or calendar icon to return to the month grid; browser Back can return to an open day. Direct Settings URLs work on static hosting and offline. Validate with `tests/settings.cjs` (Chrome or WebKit), plus the account, language, offline, navigation, and update regression checks.

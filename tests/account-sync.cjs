@@ -1,3 +1,4 @@
+const {openSettings, closeSettings} = require('./ui.cjs');
 const { chromium } = require(process.env.PLAYWRIGHT_PATH || 'playwright');
 const assert = require('node:assert/strict');
 (async () => {
@@ -39,10 +40,18 @@ const assert = require('node:assert/strict');
  }
  const synced = p => p.waitForFunction(()=>document.querySelector('#sync-status').textContent==='Synced.');
  async function login(p,id) {
+  await openSettings(p);
   await p.locator('#account-email').fill(`${id}@test.com`);
   await p.locator('#account-password').fill('password123');
   await p.locator('#account-form button[type=submit]').click(); await synced(p);
+  await closeSettings(p);
  }
+ async function signout(p) {
+  await openSettings(p); await p.locator('#sign-out').click();
+  await p.waitForFunction(()=>document.querySelector('#account-label').textContent.startsWith('Local notes'));
+  await closeSettings(p);
+ }
+ async function sync(p) {await openSettings(p); await p.locator('#sync-now').click(); await synced(p); await closeSettings(p);}
  async function save(p,text) {
   await p.waitForFunction(()=>!document.querySelector('#save-note').disabled);
   await p.locator('#daily-note').fill(text); await p.locator('#save-note').click();
@@ -56,10 +65,11 @@ const assert = require('node:assert/strict');
   assert.equal(await b.locator('#daily-note').inputValue(),'Alice private');
   // A second tab in the same browser must not race the account cache.
   const tab = await ctx.newPage(); await tab.goto(a.url());
+  await openSettings(tab);
   await tab.locator('#account-email').fill('alice@test.com'); await tab.locator('#account-password').fill('password123');
   await tab.locator('#account-form button[type=submit]').click();
   await tab.waitForFunction(()=>document.querySelector('#sync-status').textContent.includes('another tab')); await tab.close();
-  await a.locator('#sign-out').click();
+  await signout(a);
   await a.waitForFunction(()=>document.querySelector('#account-label').textContent.startsWith('Local notes'));
   assert.equal(await a.locator('#daily-note').inputValue(),'Legacy local note');
   const cached = await a.evaluate(async()=>new Promise((resolve,reject)=>{const r=indexedDB.open('daymark-account-alice');r.onsuccess=()=>{const db=r.result;const q=db.transaction('notes').objectStore('notes').getAll();q.onsuccess=()=>{resolve(q.result);db.close()};q.onerror=reject}}));
@@ -67,7 +77,7 @@ const assert = require('node:assert/strict');
   await login(a,'bob'); assert.equal(await a.locator('#daily-note').inputValue(),'');
   await save(a,'Bob private'); await synced(a);
   assert.equal(rows.get('alice').values().next().value.text,'Alice private');
-  await a.locator('#sign-out').click(); await a.locator('#account-form').waitFor({state:'visible'});
+  await signout(a);
   await login(a,'alice');
   unavailable = true;
   await save(a,'Offline Alice');
@@ -76,23 +86,24 @@ const assert = require('node:assert/strict');
   assert.equal(await a.evaluate(()=>window.DaymarkNotes.canReload()),false,'Pending account notes must block update reloads');
   unavailable = false;
   await save(b,'Other device Alice'); await synced(b);
-  await a.locator('#sync-now').click(); await a.locator('#sync-conflict').waitFor({state:'visible'});
+  await openSettings(a); await a.locator('#sync-now').click(); await a.locator('#sync-conflict').waitFor({state:'visible'});
   assert.equal(await a.locator('#conflict-local').textContent(),'Offline Alice');
   assert.equal(await a.locator('#conflict-cloud').textContent(),'Other device Alice');
-  await a.locator('#keep-local').click(); await synced(a);
-  await b.locator('#sync-now').click(); await synced(b);
+  await a.locator('#keep-local').click(); await synced(a); await closeSettings(a);
+  await sync(b);
   assert.equal(await b.locator('#daily-note').inputValue(),'Offline Alice');
   // A background pull must not advance the base revision of an unsaved draft.
   await a.locator('#daily-note').fill('Unsaved draft');
   await save(b,'New remote version'); await synced(b);
-  await a.locator('#sync-now').click(); await synced(a);
+  await sync(a);
   assert.equal(await a.locator('#daily-note').inputValue(),'Unsaved draft');
   await a.locator('#save-note').click();
+  await openSettings(a);
   await a.locator('#sync-conflict').waitFor({state:'visible'});
-  await a.locator('#keep-cloud').click(); await synced(a);
+  await a.locator('#keep-cloud').click(); await synced(a); await closeSettings(a);
   assert.equal(await a.locator('#daily-note').inputValue(),'New remote version');
   a.once('dialog',d=>d.accept()); await a.locator('#delete-note').click(); await synced(a);
-  await b.locator('#sync-now').click(); await synced(b);
+  await sync(b);
   assert.equal(await b.locator('#daily-note').inputValue(),'');
   assert.equal(await a.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   assert.deepEqual(errors,[]);

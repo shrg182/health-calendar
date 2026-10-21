@@ -715,5 +715,57 @@ window.DAYMARK_TRANSLATIONS = {
   "Visible development versions and update notices.": {
     "zh": "显示开发版本及更新提示。",
     "ru": "Номер версии разработки и уведомления об обновлениях."
+  },
+  "Settings": {
+    "zh": "设置",
+    "ru": "Настройки"
+  },
+  "Account": {
+    "zh": "账户",
+    "ru": "Аккаунт"
+  },
+  "Sync & backups": {
+    "zh": "同步与备份",
+    "ru": "Синхронизация и копии"
+  },
+  "Calendar display": {
+    "zh": "日历显示",
+    "ru": "Отображение календаря"
+  },
+  "App": {
+    "zh": "应用",
+    "ru": "Приложение"
+  },
+  "Local notes": {
+    "zh": "本地笔记",
+    "ru": "Локальные заметки"
+  },
+  "Sync needs attention": {
+    "zh": "同步需要处理",
+    "ru": "Проверьте синхронизацию"
+  },
+  "Waiting to sync": {
+    "zh": "等待同步",
+    "ru": "Ожидание синхронизации"
+  },
+  "An update is ready. Review update": {
+    "zh": "更新已就绪，查看更新",
+    "ru": "Обновление готово. Подробнее"
+  },
+  "Calendar first, with account and app controls in Settings.": {
+    "zh": "以日历为主屏幕，账户与应用操作移至设置。",
+    "ru": "Календарь на главном экране; управление аккаунтом и приложением — в настройках."
+  },
+  "Compact calendar icon and language selector.": {
+    "zh": "简洁的日历图标和语言选择器。",
+    "ru": "Компактный значок календаря и выбор языка."
+  },
+  "Quick links for sync issues and downloaded updates.": {
+    "zh": "快速查看同步问题和已下载的更新。",
+    "ru": "Быстрый переход к проблемам синхронизации и готовым обновлениям."
+  },
+  "Calendar view preferences grouped with display settings.": {
+    "zh": "日历视图选项集中在显示设置中。",
+    "ru": "Выбор вида календаря в настройках отображения."
   }
 };

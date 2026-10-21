@@ -14,23 +14,27 @@
 <body>
   <main class="shell">
     <header class="topbar">
-      <div class="brand"><span class="brand-mark" aria-hidden="true">日</span><span>Daymark Calendar</span></div>
+      <a class="calendar-logo" id="calendar-home" href="#calendar" aria-label="Calendar">
+        <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true" fill="none">
+          <rect x="5" y="8" width="30" height="28" rx="7" fill="currentColor"/>
+          <path d="M5 17h30" stroke="white" stroke-opacity=".6" stroke-width="1.5"/>
+          <path d="M13 5v7m14-7v7" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <path d="M13 23h2m6 0h2m-10 6h2m6 0h2" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="29" cy="29" r="3" fill="#e5b568"/>
+        </svg>
+      </a>
       <div class="header-actions">
-        <label class="language-label" for="language-choice">Language</label>
+        <label class="sr-only" for="language-choice">Language</label>
         <select id="language-choice"><option value="zh" lang="zh-CN">中文</option><option value="en" lang="en">English</option><option value="ru" lang="ru">Русский</option></select>
-        <button class="today-btn" id="install-app" type="button">Install app</button>
+        <button class="icon-btn settings-button" id="open-settings" type="button" aria-label="Settings" data-open-settings="">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m9 3-.6 2.3-2 .9-2.1-.7-2 3.5L4 10.6v2.8L2.3 15l2 3.5 2.1-.7 2 .9L9 21h4l.6-2.3 2-.9 2.1.7 2-3.5-1.7-1.6v-2.8L19.7 9l-2-3.5-2.1.7-2-.9L13 3Z"/>
+            <circle cx="11" cy="12" r="3"/>
+          </svg>
+        </button>
       </div>
     </header>
-    <section class="release-bar" aria-label="App version and updates">
-      <div class="release-actions"><span id="app-version"></span><span class="development-label">Development</span>
-        <button class="today-btn" id="whats-new" type="button"><span>What’s new</span> <span id="release-new" class="new-badge">New</span></button>
-        <button class="today-btn" id="check-updates" type="button" disabled>Check for updates</button>
-      </div>
-      <div id="update-notice" hidden><p>An update is ready. Refreshing will require signing in again if you are signed in.</p>
-        <button class="today-btn" id="apply-update" type="button">Refresh to update</button>
-      </div>
-      <p id="update-status" role="status"></p>
-    </section>
+
     <dialog id="release-help" aria-labelledby="release-title">
       <h2 id="release-title">What’s new</h2>
       <p><strong id="release-version"></strong> · <time id="release-date"></time></p>
@@ -44,8 +48,14 @@
       <p>Notes stay on this device. Export a backup before switching browsers or installing, then import it if your notes do not appear.</p>
       <form method="dialog"><button class="today-btn">Done</button></form>
     </dialog>
-    <section class="backup-panel account-panel" aria-labelledby="account-title">
-      <h2 id="account-title">Account &amp; sync</h2>
+
+
+    <section id="settings-page" hidden aria-labelledby="settings-title">
+      <button class="detail-back" id="settings-back" type="button">← <span>Back to calendar</span></button>
+      <h1 id="settings-title" tabindex="-1">Settings</h1>
+      <div class="settings-grid">
+    <section id="settings-account" class="settings-card account-panel" tabindex="-1" aria-labelledby="account-title">
+      <h2 id="account-title">Account</h2>
       <p id="account-label">Local notes · this browser only</p>
       <p>Sign in to sync private notes across your devices. Cloud sync sends note contents to our Supabase provider; this app does not provide end-to-end encryption. Sign out on shared devices.</p>
       <form id="account-form">
@@ -57,7 +67,12 @@
         </div>
         <div class="note-actions"><button class="today-btn" type="submit">Sign in</button><button class="today-btn" type="button" id="sign-up">Create account</button></div>
       </form>
-      <div class="note-actions" id="account-actions" hidden><button class="today-btn" id="sync-now">Sync now</button><button class="today-btn" id="sign-out">Sign out</button></div>
+      <p id="account-status" role="status"></p>
+      <div class="note-actions" id="account-actions" hidden><button class="today-btn sign-out-button" id="sign-out">Sign out</button></div>
+    </section>
+    <section id="settings-sync" class="settings-card" tabindex="-1" aria-labelledby="settings-sync-title">
+      <h2 id="settings-sync-title">Sync &amp; backups</h2>
+      <div id="sync-actions" class="note-actions" hidden><button class="today-btn" id="sync-now">Sync now</button></div>
       <p id="sync-status" role="status"></p>
       <div id="sync-conflict" hidden>
         <h3 id="conflict-title">Conflicting edits</h3>
@@ -66,8 +81,7 @@
         <p>Cloud</p><pre id="conflict-cloud"></pre>
         <div class="note-actions"><button class="today-btn" id="keep-local">Keep this device's version</button><button class="today-btn" id="keep-cloud">Use cloud version</button></div>
       </div>
-    </section>
-    <section class="backup-panel" aria-label="Note backups">
+        <section class="backup-panel" aria-label="Note backups">
       <details><summary>Notes &amp; backups</summary>
         <p>Local notes stay in this browser. Signed-in notes also sync to your account when connected. Export backups regularly. To move existing local notes into an account, export them before signing in, then import the backup while signed in.</p>
         <div class="note-actions"><button class="today-btn" id="export-notes">Export backup</button>
@@ -80,10 +94,35 @@
         <p id="backup-status" role="status"></p>
       </details>
     </section>
+    </section>
+    <section id="settings-display" class="settings-card" tabindex="-1" aria-labelledby="settings-display-title">
+      <h2 id="settings-display-title">Calendar display</h2>
+        <div class="view-switch" role="group" aria-label="Calendar view">
+          <button class="view-btn" data-view="gregorian" aria-pressed="false">Gregorian</button>
+          <button class="view-btn" data-view="lunar" aria-pressed="false">Chinese lunar</button>
+          <button class="view-btn" data-view="combined" aria-pressed="true">Combined</button>
+        </div>
+      <p id="preference-status" class="calendar-instruction" role="status"></p>
+    </section>
+    <section id="settings-app" class="settings-card release-bar" tabindex="-1" aria-label="App version and updates">
+      <h2>App</h2>
+      <button class="today-btn" id="install-app" type="button">Install app</button>
+      <div class="release-actions"><span id="app-version"></span><span class="development-label">Development</span>
+        <button class="today-btn" id="whats-new" type="button"><span>What’s new</span> <span id="release-new" class="new-badge">New</span></button>
+        <button class="today-btn" id="check-updates" type="button" disabled>Check for updates</button>
+      </div>
+      <div id="update-notice" hidden><p>An update is ready. Refreshing will require signing in again if you are signed in.</p>
+        <button class="today-btn" id="apply-update" type="button">Refresh to update</button>
+      </div>
+      <p id="update-status" role="status"></p>
+    </section>
+      </div>
+    </section>
     <section id="calendar-page">
     <section class="heading" aria-labelledby="page-title">
-      <div><div class="eyebrow">Your calendars, together</div><h1 id="page-title">Calendar</h1><p class="sub" id="date-summary">Switch between Gregorian and Chinese lunar dates.</p></div>
+      <div class="calendar-heading-content"><div class="heading-row"><h1 id="page-title" tabindex="-1">Calendar</h1><button class="sync-summary" id="calendar-sync" type="button" data-open-settings="account">Local notes</button></div><p class="sub" id="date-summary">Switch between Gregorian and Chinese lunar dates.</p></div>
     </section>
+    <button id="calendar-update" class="calendar-notice" type="button" data-open-settings="app" hidden>An update is ready. Review update</button>
     <section aria-label="Calendar controls">
       <div class="toolbar">
         <div class="month-controls">
@@ -92,11 +131,15 @@
           <button class="icon-btn" id="next" aria-label="Next month">›</button>
           <button class="today-btn" id="today">Today</button>
         </div>
-        <div class="view-switch" role="group" aria-label="Calendar view">
-          <button class="view-btn" data-view="gregorian" aria-pressed="false">Gregorian</button>
-          <button class="view-btn" data-view="lunar" aria-pressed="false">Chinese lunar</button>
-          <button class="view-btn" data-view="combined" aria-pressed="true">Combined</button>
-        </div>
+
+      </div>
+
+
+      <p class="calendar-instruction">Select any date to open its day details.</p>
+      <div class="calendar-card" id="calendar-card">
+        <div class="weekdays" aria-hidden="true"><div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div></div>
+        <div class="days" id="days" aria-label="Monthly calendar"></div>
+        <div class="calendar-footer"><div class="legend"><span class="legend-item"><i class="dot"></i>Today</span><span class="legend-item"><i class="dot gold"></i>Chinese lunar date</span></div><span id="calendar-note">Dates shown in your device’s local time.</span></div>
       </div>
       <div class="date-navigation">
         <form id="month-form" class="date-form">
@@ -111,13 +154,6 @@
           <input id="find-date" name="date" type="date" min="1901-01-01" max="2100-12-31" required>
           <button class="today-btn" type="submit">Open day</button>
         </form>
-      </div>
-      <p id="preference-status" class="calendar-instruction" role="status"></p>
-      <p class="calendar-instruction">Select any date to open its day details.</p>
-      <div class="calendar-card" id="calendar-card">
-        <div class="weekdays" aria-hidden="true"><div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div></div>
-        <div class="days" id="days" aria-label="Monthly calendar"></div>
-        <div class="calendar-footer"><div class="legend"><span class="legend-item"><i class="dot"></i>Today</span><span class="legend-item"><i class="dot gold"></i>Chinese lunar date</span></div><span id="calendar-note">Dates shown in your device’s local time.</span></div>
       </div>
       <aside class="hint"><span class="hint-icon" aria-hidden="true">ⓘ</span><span><b>About Chinese dates:</b> Lunar labels use your browser’s Chinese calendar; almanac recommendations are not included.</span></aside>
     </section>

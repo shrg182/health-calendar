@@ -192,11 +192,23 @@
     if (focus) $('#detail-title').focus();
   }
   function renderPage(focusDetails = true) {
+    const settings = location.hash.match(/^#settings(?:-(account|sync|display|app))?$/);
+    $('#settings-page').hidden = !settings;
+    $('#open-settings').setAttribute('aria-expanded', String(Boolean(settings)));
     const match = location.hash.match(/^#day=(\d{4}-\d{2}-\d{2})$/);
-    const detailDate = forceCalendar ? null : dateFromKey(activeDateKey || (match ? match[1] : ''));
-    $('#calendar-page').hidden = Boolean(detailDate);
+    const detailDate = settings || forceCalendar ? null : dateFromKey(activeDateKey || (match ? match[1] : ''));
+    $('#calendar-page').hidden = Boolean(detailDate || settings);
     $('#detail-page').hidden = !detailDate;
-    if (detailDate) renderDayDetails(detailDate, focusDetails);
+    if (settings) {
+      render();
+      document.title = `${t('Settings')} · Daymark`;
+      if (focusDetails) {
+        const target = settings[1] ? $(`#settings-${settings[1]}`) : $('#settings-title');
+        target.focus();
+        if (settings[1]) target.scrollIntoView({block:'start'});
+      }
+    }
+    else if (detailDate) renderDayDetails(detailDate, focusDetails);
     else {
       document.title = t('Daymark — Gregorian & Chinese Calendar');
       render();
@@ -300,6 +312,27 @@
       setText('#preference-status', 'View changed for this session; your browser could not save the preference.');
     }
     render(); }));
+  function navigateSettings(section) {
+    activeDateKey = null; forceCalendar = false;
+    const hash = section ? `#settings-${section}` : '#settings';
+    try { history.pushState({view:'settings'}, '', hash); }
+    catch { location.hash = hash; }
+    renderPage();
+    if (!section) window.scrollTo(0,0);
+  }
+  document.querySelectorAll('[data-open-settings]').forEach(button => button.addEventListener('click', () => {
+    navigateSettings(button.dataset.openSettings);
+  }));
+  function returnToCalendar(event) {
+    event?.preventDefault();
+    activeDateKey = null; forceCalendar = true; detailRouteAvailable = false;
+    try { history.pushState({view:'calendar'}, '', '#calendar'); }
+    catch { location.hash = '#calendar'; }
+    renderPage(false); $('#page-title').focus(); window.scrollTo(0,0);
+  }
+  $('#settings-back').addEventListener('click', returnToCalendar);
+  $('#calendar-home').addEventListener('click', returnToCalendar);
+  window.addEventListener('hashchange', () => {activeDateKey = null; forceCalendar = false; renderPage(false);});
   window.addEventListener('popstate', () => { activeDateKey = null; forceCalendar = false; detailRouteAvailable = false; renderPage(); });
   if (!history.state?.view) {
     const directDay = location.hash.match(/^#day=(\d{4}-\d{2}-\d{2})$/);

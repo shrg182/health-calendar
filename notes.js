@@ -16,6 +16,7 @@
   };
   let account = null;
   let syncing = false;
+  let syncError = false;
   let switching = false;
   let releaseAccountLock = null;
   const cloud = window.DaymarkSync;
@@ -42,7 +43,17 @@
     for (const [key, note] of records) if (!note.deleted) dates.add(key);
     window.dispatchEvent(new Event('daymark:notes'));
   }
+  function refreshSummary() {
+    const conflict = [...records.values()].some(note => note.conflict);
+    const pending = [...records.values()].some(note => note.pending);
+    const key = !account ? 'Local notes' : syncing ? 'Synchronizing…'
+      : syncError || conflict ? 'Sync needs attention' : pending ? 'Waiting to sync' : 'Synced.';
+    setText('#calendar-sync', key);
+    $('#calendar-sync').dataset.openSettings = account ? 'sync' : 'account';
+    $('#calendar-sync').classList.toggle('needs-attention', Boolean(account && (syncError || conflict)));
+  }
   function showNote() {
+    refreshSummary();
     if (!current) return;
     const stored = records.get(current);
     const saved = stored?.deleted ? null : stored;
@@ -152,7 +163,11 @@
     } catch { setText('#backup-status', 'Import failed. No changes were committed.'); }
     finally { busy = false; $('#confirm-import').disabled = false; if (current) showNote(); if (account) synchronize(); }
   });
-  const status = message => { setText('#sync-status', message); };
+  const status = (message, showInAccount = false) => {
+    setText('#sync-status', message);
+    setText('#account-status', !account && showInAccount ? message : '');
+    refreshSummary();
+  };
   function fromCloud(note) {
     return {date:note.date, text:note.text, deleted:note.deleted, revision:note.revision,
       createdAt:note.created_at, updatedAt:note.updated_at, pending:false};
@@ -181,8 +196,9 @@
         if (local?.pending || drafts.has(note.date)) continue;
         await transaction('readwrite', store => store.put(note)); records.set(note.date, note);
       }
+      syncError = false;
       status([...records.values()].some(n => n.conflict) ? 'Review conflicting edits below.' : 'Synced.');
-    } catch (error) { setText('#sync-status', 'Sync failed. Saved changes remain on this device. {error}', {error:error.message}); }
+    } catch (error) { syncError = true; setText('#sync-status', 'Sync failed. Saved changes remain on this device. {error}', {error:error.message}); }
     finally { syncing = false; refreshDates(); showNote(); showConflict(); }
   }
   for (const [id, localChoice] of [['keep-local', true], ['keep-cloud', false]]) {
@@ -217,6 +233,8 @@
     else setText('#account-label', 'Local notes · this browser only');
     $('#account-form').hidden = Boolean(account);
     $('#account-actions').hidden = !account;
+    $('#sync-actions').hidden = !account;
+    syncError = false; refreshSummary();
     $('#account-password').value = '';
     hidePassword();
   }
@@ -244,7 +262,7 @@
   }
   function canSwitch() {
     if (busy || syncing || switching) return false;
-    if (drafts.size) { status('Save your unsaved notes before changing accounts.'); return false; }
+    if (drafts.size) { status('Save your unsaved notes before changing accounts.', true); return false; }
     return true;
   }
   $('#account-form').addEventListener('submit', async event => {
@@ -266,7 +284,7 @@
       status('Account opened. Existing local notes were not uploaded.');
     } catch (error) {
       if (!account) { releaseAccountLock?.(); releaseAccountLock = null; await cloud.signOut().catch(() => {}); }
-      status(error.message);
+      status(error.message, true);
     }
     finally { switching = false; accountUI(); showNote(); }
     synchronize();
@@ -275,8 +293,8 @@
     if (!canSwitch() || !$('#account-form').reportValidity()) return;
     hidePassword();
     switching = true;
-    try { status(await cloud.signUp($('#account-email').value.trim(), $('#account-password').value)); }
-    catch (error) { status(error.message); }
+    try { status(await cloud.signUp($('#account-email').value.trim(), $('#account-password').value), true); }
+    catch (error) { status(error.message, true); }
     finally { switching = false; $('#account-password').value = ''; }
   });
   $('#sign-out').addEventListener('click', async () => {
@@ -304,6 +322,6 @@
   setInterval(synchronize, 60000);
   if (!cloud?.enabled) {
     for (const element of $('#account-form').elements) element.disabled = true;
-    status('Cloud sync is not configured. Local notes and backups remain available.');
+    status('Cloud sync is not configured. Local notes and backups remain available.', true);
   } else status(cloud.callbackMessage || 'Sign in to access your account notes. On shared devices, local notes are visible to anyone using this browser.');
 })();

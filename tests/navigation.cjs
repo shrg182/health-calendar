@@ -1,3 +1,4 @@
+const {openSettings, closeSettings} = require('./ui.cjs');
 const { chromium } = require(process.env.PLAYWRIGHT_PATH || 'playwright');
 const { pathToFileURL } = require('node:url');
 const path = require('node:path');
@@ -18,9 +19,11 @@ const path = require('node:path');
     if (!page.url().endsWith('#day=2028-02-29')) throw Error('Incorrect date route');
     await page.locator('#back-to-calendar').click();
     await page.locator('#calendar-page').waitFor({ state: 'visible' });
+    await openSettings(page);
     await page.locator('[data-view="lunar"]').click();
     await page.reload();
     if (await page.locator('[data-view="lunar"]').getAttribute('aria-pressed') !== 'true') throw Error('Preference not restored');
+    await closeSettings(page);
     for (const [year, month, button] of [['1901', '0', '#prev'], ['2100', '11', '#next']]) {
       await page.locator('#jump-year').fill(year);
       await page.locator('#jump-month').selectOption(month);
@@ -30,10 +33,14 @@ const path = require('node:path');
     for (const width of [320, 375, 390, 430]) {
       await page.setViewportSize({ width, height: 844 });
       for (const view of ['gregorian', 'lunar', 'combined']) {
+        await openSettings(page);
         await page.locator(`[data-view="${view}"]`).click();
+        const viewBounds = await page.locator('.view-btn').first().boundingBox();
+        if (viewBounds.height < 44) throw Error('Small view control');
+        await closeSettings(page);
         if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error(`Overflow at ${width}px in ${view}`);
       }
-      for (const selector of ['#prev', '#next', '#today', '.view-btn', '#jump-month', '#jump-year', '#find-date']) {
+      for (const selector of ['#prev', '#next', '#today', '#jump-month', '#jump-year', '#find-date']) {
         const bounds = await page.locator(selector).first().boundingBox();
         if (bounds.height < 44) throw Error(`Small control: ${selector}`);
       }
