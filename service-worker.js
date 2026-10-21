@@ -1,7 +1,11 @@
-const CACHE = 'daymark-shell-v5';
-const ASSETS = ['./', './index.html', './styles.css', './app.js', './translations.js', './i18n.js', './notes.js', './sync.js', './sync-config.js', './install.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
+importScripts('./release.js');
+const CACHE = `daymark-shell-${self.DAYMARK_RELEASE.version}`;
+const ASSETS = ['./', './index.html', './styles.css', './app.js', './translations.js', './i18n.js', './notes.js', './sync.js', './sync-config.js', './install.js', './release.js', './updates.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
+});
+self.addEventListener('message', event => {
+  if (event.data?.type === 'DAYMARK_ACTIVATE_UPDATE') event.waitUntil(self.skipWaiting());
 });
 self.addEventListener('activate', event => {
   event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('daymark-shell-') && key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim()));

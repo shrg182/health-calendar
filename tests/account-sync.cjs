@@ -73,6 +73,7 @@ const assert = require('node:assert/strict');
   await save(a,'Offline Alice');
   await a.waitForFunction(()=>document.querySelector('#sync-status').textContent.startsWith('Sync failed'));
   assert.equal(await a.locator('#daily-note').inputValue(),'Offline Alice');
+  assert.equal(await a.evaluate(()=>window.DaymarkNotes.canReload()),false,'Pending account notes must block update reloads');
   unavailable = false;
   await save(b,'Other device Alice'); await synced(b);
   await a.locator('#sync-now').click(); await a.locator('#sync-conflict').waitFor({state:'visible'});

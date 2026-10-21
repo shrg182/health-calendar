@@ -295,6 +295,8 @@
     } catch { status('Could not finish signing out. Try again.'); }
     finally { switching = false; showNote(); }
   });
+  window.DaymarkNotes.canReload = () => !drafts.size && !busy && !syncing && !switching
+    && !(account && [...records.values()].some(note => note.pending || note.conflict));
   window.addEventListener('daymark:language', showConflict);
   $('#sync-now').addEventListener('click', synchronize);
   window.addEventListener('online', synchronize);

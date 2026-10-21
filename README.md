@@ -136,3 +136,11 @@ node tests/translation-catalog.cjs
 PLAYWRIGHT_PATH=/path/to/playwright node tests/languages.cjs
 TEST_ENGINE=webkit PLAYWRIGHT_PATH=/path/to/playwright node tests/languages.cjs
 ```
+
+## Development versions and updates
+
+The header shows the current development version (starting with `0.1.0-dev.1`). **What’s new** opens translated release notes; a **New** badge remains until those notes are opened in this browser. **Check for updates** checks for a new offline app bundle. A downloaded update shows **Refresh to update**. Refresh is explicit and blocked while notes have drafts, pending account changes, unresolved conflicts, or active storage/sync operations. Only the requesting tab reloads; other tabs keep their drafts and sessions. After refresh, account users sign in again.
+
+For every publication, increment `version` in [release.js](release.js), update its date and changes, and add Chinese/Russian translations for new release-note messages. The service worker imports that same metadata to name its offline cache, so version and cache identity share one source. `daymark.seenRelease` stores the version whose notes were read on this device. If browser storage is unavailable, read status lasts only for the current page.
+
+Run `tests/updates.cjs` with Playwright (Chrome or `TEST_ENGINE=webkit`) to verify an actual waiting-worker update, release-note tracking, draft protection, note/date preservation, other-tab protection, and offline messages. A browser may update on its own after all app tabs close; the explicit refresh protection applies to the app's update button. Existing older tabs need one online reload to acquire this update UI.

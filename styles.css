@@ -189,3 +189,15 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
 @media(max-width:760px) {
   html[lang^="ru"] .view-switch { display:grid; grid-template-columns:1.6fr 1.1fr .8fr }
 }
+
+.release-bar { margin:-10px 0 22px; padding:12px 0; border-bottom:1px solid var(--line); color:var(--muted); font-size:13px }
+.release-actions { display:flex; align-items:center; flex-wrap:wrap; gap:8px }
+#app-version { color:var(--green); font-weight:650; overflow-wrap:anywhere }
+.development-label { font-size:12px }
+.release-actions .today-btn,#apply-update { min-height:44px; height:auto }
+.new-badge { display:inline-block; padding:2px 6px; margin:2px; border-radius:8px; background:var(--green-soft); color:var(--green); font-size:11px }
+#update-status:empty { display:none }
+#update-notice { margin-top:12px; padding:12px; background:var(--green-soft); border-radius:9px }
+#update-notice p { margin-top:0 }
+#release-changes { padding-left:22px }
+#release-changes li { margin:10px 0 }

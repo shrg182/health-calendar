@@ -13,4 +13,9 @@ for (const [key,translation] of Object.entries(messages)) {
   assert.deepEqual(parameters(translation[language]),parameters(key),`${language}: placeholders ${key}`);
  }
 }
+vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../release.js'),'utf8'),context);
+const release = context.DAYMARK_RELEASE;
+assert(/^\d+\.\d+\.\d+-dev\.\d+$/.test(release.version));
+assert.equal(new Date(release.date).toISOString().slice(0,10),release.date);
+for (const key of release.changes) assert(messages[key],`Missing translated release note: ${key}`);
 console.log(`Passed: ${Object.keys(messages).length} complete translations with matching placeholders in Chinese and Russian.`);

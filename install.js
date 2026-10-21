@@ -21,9 +21,4 @@
       : 'Open your browser’s menu and choose Install app or Add to Home screen. On desktop Safari, choose File → Add to Dock. If the option is unavailable, try opening this site in Safari or Chrome.');
     document.querySelector('#install-help').showModal();
   }
-  if ('serviceWorker' in navigator && ['https:', 'http:'].includes(location.protocol)) {
-    navigator.serviceWorker.register('./service-worker.js').catch(() => {
-      setText('#backup-status', 'Offline setup is unavailable. You can still use the calendar online.');
-    });
-  }
 })();

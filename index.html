@@ -21,6 +21,22 @@
         <button class="today-btn" id="install-app" type="button">Install app</button>
       </div>
     </header>
+    <section class="release-bar" aria-label="App version and updates">
+      <div class="release-actions"><span id="app-version"></span><span class="development-label">Development</span>
+        <button class="today-btn" id="whats-new" type="button"><span>What’s new</span> <span id="release-new" class="new-badge">New</span></button>
+        <button class="today-btn" id="check-updates" type="button" disabled>Check for updates</button>
+      </div>
+      <div id="update-notice" hidden><p>An update is ready. Refreshing will require signing in again if you are signed in.</p>
+        <button class="today-btn" id="apply-update" type="button">Refresh to update</button>
+      </div>
+      <p id="update-status" role="status"></p>
+    </section>
+    <dialog id="release-help" aria-labelledby="release-title">
+      <h2 id="release-title">What’s new</h2>
+      <p><strong id="release-version"></strong> · <time id="release-date"></time></p>
+      <ul id="release-changes"></ul>
+      <form method="dialog"><button class="today-btn">Done</button></form>
+    </dialog>
     <p id="language-status" role="status"></p>
     <dialog id="install-help" aria-labelledby="install-title">
       <h2 id="install-title">Install Daymark</h2>
@@ -146,6 +162,7 @@
       <aside class="detail-info" id="detail-solar-term"></aside>
     </section>
   </main>
+  <script src="release.js" defer></script>
   <script src="translations.js" defer></script>
   <script src="i18n.js" defer></script>
   <script src="sync-config.js" defer></script>
@@ -153,5 +170,6 @@
   <script src="notes.js" defer></script>
   <script src="app.js" defer></script>
   <script src="install.js" defer></script>
+  <script src="updates.js" defer></script>
 </body>
 </html>

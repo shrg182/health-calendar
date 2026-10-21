@@ -631,5 +631,89 @@ window.DAYMARK_TRANSLATIONS = {
   "Offline setup is unavailable. You can still use the calendar online.": {
     "zh": "离线设置不可用，仍可联网使用日历。",
     "ru": "Не удалось настроить автономный режим. Календарь доступен при подключении к сети."
+  },
+  "App version and updates": {
+    "zh": "应用版本与更新",
+    "ru": "Версия и обновления"
+  },
+  "Development": {
+    "zh": "开发版",
+    "ru": "В разработке"
+  },
+  "What’s new": {
+    "zh": "更新内容",
+    "ru": "Что нового"
+  },
+  "New": {
+    "zh": "新",
+    "ru": "Новое"
+  },
+  "Check for updates": {
+    "zh": "检查更新",
+    "ru": "Проверить обновления"
+  },
+  "Refresh to update": {
+    "zh": "刷新以更新",
+    "ru": "Обновить приложение"
+  },
+  "An update is ready. Refreshing will require signing in again if you are signed in.": {
+    "zh": "更新已就绪。如果当前已登录，刷新后需重新登录。",
+    "ru": "Обновление готово. Если вы вошли в аккаунт, после обновления потребуется войти снова."
+  },
+  "An update is ready.": {
+    "zh": "更新已就绪。",
+    "ru": "Обновление готово."
+  },
+  "Checking for updates…": {
+    "zh": "正在检查更新……",
+    "ru": "Проверка обновлений…"
+  },
+  "Downloading update…": {
+    "zh": "正在下载更新……",
+    "ru": "Загрузка обновления…"
+  },
+  "You are using the latest version.": {
+    "zh": "当前已是最新版本。",
+    "ru": "У вас последняя версия."
+  },
+  "Could not download the update. Try again when online.": {
+    "zh": "无法下载更新，请联网后重试。",
+    "ru": "Не удалось загрузить обновление. Повторите попытку при подключении к сети."
+  },
+  "Could not check for updates. Connect to the internet and try again.": {
+    "zh": "无法检查更新，请连接网络后重试。",
+    "ru": "Не удалось проверить обновления. Подключитесь к интернету и повторите попытку."
+  },
+  "Save your drafts and finish syncing or resolving conflicts before updating.": {
+    "zh": "更新前请保存草稿，并完成同步或处理冲突。",
+    "ru": "Перед обновлением сохраните черновики, завершите синхронизацию и разрешите конфликты."
+  },
+  "Applying update…": {
+    "zh": "正在应用更新……",
+    "ru": "Применение обновления…"
+  },
+  "Update installed. Save and sync your notes, then reload when ready.": {
+    "zh": "更新已安装。请先保存并同步笔记，再刷新页面。",
+    "ru": "Обновление установлено. Сохраните и синхронизируйте заметки, затем перезагрузите страницу."
+  },
+  "Update checks are unavailable. Reload while online to get the latest version.": {
+    "zh": "无法检查更新。请联网后刷新以获取最新版本。",
+    "ru": "Проверка обновлений недоступна. Перезагрузите страницу при подключении к сети."
+  },
+  "Chinese, English, and Russian interfaces.": {
+    "zh": "支持中文、英文和俄文界面。",
+    "ru": "Интерфейс на китайском, английском и русском языках."
+  },
+  "Private account notes synchronized across devices.": {
+    "zh": "个人账户笔记可跨设备同步。",
+    "ru": "Личные заметки аккаунта синхронизируются между устройствами."
+  },
+  "Show or hide your password while typing.": {
+    "zh": "输入密码时可切换显示或隐藏。",
+    "ru": "При вводе пароль можно показать или скрыть."
+  },
+  "Visible development versions and update notices.": {
+    "zh": "显示开发版本及更新提示。",
+    "ru": "Номер версии разработки и уведомления об обновлениях."
   }
 };
