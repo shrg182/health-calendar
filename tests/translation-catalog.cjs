@@ -7,7 +7,7 @@ vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../translations.js'),'ut
 const messages = context.window.DAYMARK_TRANSLATIONS;
 const parameters = value => [...new Set([...value.matchAll(/\{(\w+)\}/g)].map(match=>match[1]))].sort();
 for (const [key,translation] of Object.entries(messages)) {
- for (const language of ['zh','ru']) {
+ for (const language of ['zh','ru','fr']) {
   assert.equal(typeof translation[language],'string',`${language}: ${key}`);
   assert(translation[language].trim(),`${language}: empty message ${key}`);
   assert.deepEqual(parameters(translation[language]),parameters(key),`${language}: placeholders ${key}`);
@@ -18,4 +18,4 @@ const release = context.DAYMARK_RELEASE;
 assert(/^\d+\.\d+\.\d+-dev\.\d+$/.test(release.version));
 assert.equal(new Date(release.date).toISOString().slice(0,10),release.date);
 for (const key of release.changes) assert(messages[key],`Missing translated release note: ${key}`);
-console.log(`Passed: ${Object.keys(messages).length} complete translations with matching placeholders in Chinese and Russian.`);
+console.log(`Passed: ${Object.keys(messages).length} complete translations with matching placeholders in Chinese, Russian, and French.`);

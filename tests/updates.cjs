@@ -34,7 +34,7 @@ const http = require('node:http');
   assert.equal(await page.locator('#app-version').textContent(),`v${originalVersion}`);
   assert(await page.locator('#release-new').isVisible());
   await page.locator('#whats-new').click();assert(await page.locator('#release-help').isVisible());
-  assert.equal(await page.locator('#release-changes li').count(),4);
+  assert.equal(await page.locator('#release-changes li').count(),await page.evaluate(()=>window.DAYMARK_RELEASE.changes.length));
   assert(await page.locator('#release-new').isHidden());
   await page.locator('#release-help button').click();
   await page.evaluate(()=>navigator.serviceWorker.ready);

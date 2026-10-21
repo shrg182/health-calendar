@@ -12,7 +12,7 @@ const assert=require('node:assert/strict');
   assert((await page.locator('#calendar-card').boundingBox()).y<350,'Calendar should appear near top on phone');
   assert.equal((await page.locator('label[for=language-choice]').boundingBox()).width,1);
   assert.equal(await page.locator('.brand').count(),0);
-  for(const lang of ['en','zh','ru']) {
+  for(const lang of ['en','zh','ru','fr']) {
    await page.locator('#language-choice').selectOption(lang);
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
    if(process.env.SCREENSHOTS) await page.screenshot({path:`/tmp/daymark-main-${lang}.png`,fullPage:true});

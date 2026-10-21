@@ -19,17 +19,18 @@ const assert = require('node:assert/strict');
   assert.equal(await page.locator('html').getAttribute('lang'),'ru-RU');
   assert.equal(await page.locator('#page-title').textContent(),'Календарь');
   assert.equal(await page.locator('#days .day').count(),42);
-  for(const lang of ['zh','en','ru']) {
+  for(const lang of ['zh','en','ru','fr']) {
    await page.locator('#language-choice').selectOption(lang);
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`${lang} calendar overflow`);
    if(process.env.SCREENSHOTS) await page.screenshot({path:`/tmp/daymark-language-${lang}.png`,fullPage:true});
   }
   // Leap-month labels and day identity do not depend on interface language.
+  await page.locator('#language-choice').selectOption('ru');
   await page.locator('#find-date').fill('2025-07-25');await page.locator('#date-form button').click();
   const key=new URL(page.url()).hash;
   assert((await page.locator('#detail-lunar').textContent()).includes('Вставной'));
   await page.locator('#daily-note').fill('Calendar — 今天 — Сегодня');
-  for(const lang of ['en','zh','ru']) {
+  for(const lang of ['en','zh','ru','fr']) {
    await page.locator('#language-choice').selectOption(lang);
    assert.equal(new URL(page.url()).hash,key);
    assert.equal(await page.locator('#daily-note').inputValue(),'Calendar — 今天 — Сегодня');
@@ -58,6 +59,11 @@ const assert = require('node:assert/strict');
   assert.equal(await page.locator('#account-label').textContent(),'Вы вошли как test@example.invalid');
   assert.equal(await page.locator('#sync-status').textContent(),'Синхронизировано.');
   assert.equal(await page.locator('#daily-note').inputValue(),'Unchanged account draft');assert.equal(signIns,1);
+  await page.locator('#language-choice').selectOption('fr');
+  assert.equal(await page.locator('#account-label').textContent(),'Connecté avec test@example.invalid');
+  assert.equal(await page.locator('#sync-status').textContent(),'Synchronisé.');
+  assert.equal(await page.locator('#daily-note').inputValue(),'Unchanged account draft');
+  assert.equal(signIns,1);
   assert.deepEqual(errors,[]);
   const denied = await browser.newContext({locale:'zh-CN',serviceWorkers:'block'});
   await denied.addInitScript(()=>{Storage.prototype.getItem=()=>{throw Error('denied')};Storage.prototype.setItem=()=>{throw Error('denied')};});
@@ -66,6 +72,21 @@ const assert = require('node:assert/strict');
   await p.locator('#language-choice').selectOption('ru');
   assert((await p.locator('#language-status').textContent()).includes('не смог сохранить'));
   assert.equal(await p.locator('#page-title').textContent(),'Календарь');
+  const french = await browser.newContext({locale:'fr-CA',viewport:{width:320,height:800},serviceWorkers:'block'});
+  const f = await french.newPage();await f.goto(process.env.TEST_URL || 'http://127.0.0.1:8769/');
+  assert.equal(await f.locator('html').getAttribute('lang'),'fr-FR');
+  assert.equal(await f.locator('#page-title').textContent(),'Calendrier');
+  await f.locator('#find-date').fill('2025-07-25');await f.locator('#date-form button').click();
+  assert.equal(await f.locator('#detail-lunar').textContent(),'Mois lunaire intercalaire 6, jour 1');
+  assert.equal(await f.locator('#save-note').textContent(),'Enregistrer la note');
+  await f.locator('#daily-note').fill('Ma note personnelle — 中文 — русский');
+  await f.locator('#save-note').click();await f.waitForFunction(()=>document.querySelector('#note-status').textContent==='Enregistré sur cet appareil.');
+  await f.locator('#language-choice').selectOption('en');await f.locator('#language-choice').selectOption('fr');
+  await f.reload();await f.waitForFunction(()=>!document.querySelector('#daily-note').disabled);
+  assert.equal(await f.locator('#language-choice').inputValue(),'fr');
+  assert.equal(await f.locator('#daily-note').inputValue(),'Ma note personnelle — 中文 — русский');
+  assert.equal(await f.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+  if (process.env.SCREENSHOTS) await f.screenshot({path:'/tmp/daymark-french-details.png',fullPage:true});
   console.log(`Passed (${engine}): language detection/persistence, all mobile layouts, leap month, GanZhi pronunciation, unchanged notes/drafts/date/account, translated status, storage-denied fallback.`);
  } finally {await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1)});
