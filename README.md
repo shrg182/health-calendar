@@ -110,7 +110,7 @@ The Daymark project URL and public publishable key are configured in this reposi
 - Deletions remain as cloud tombstones, so an offline device cannot silently resurrect a note.
 - Existing local notes are never automatically assigned or uploaded. Export them in local mode, sign in to the intended account, and import after reviewing conflicts.
 - Unsaved drafts block account changes. Signing out clears that account's cached notes and in-memory credentials. Pending changes must be synced or backed up; discarding them requires explicit confirmation. Signing out affects this session, not other devices.
-- Credentials are held in memory only. Reloading or reopening requires online sign-in again; offline editing works within an already signed-in page. Saved pending changes survive reload in the account-specific cache and resume after signing in again. Closing a tab does not erase its account cache; sign out on shared devices.
+- Sign-in tokens are remembered in this browser (passwords are not stored). Reloading or reopening renews and verifies the session online before opening account notes. Offline startup keeps the remembered session for retry when connectivity returns or the page reloads; it does not open an unverified cached account. Offline editing still works within an already signed-in page. Explicit sign-out removes this browser’s saved session and account cache, without signing out other devices. Sign out on shared devices.
 - A Web Lock permits only one tab per account in the same browser profile, preventing competing local writers and cache removal races. Current browsers with Web Locks support are required for cloud accounts. Other accounts can use separate tabs.
 - Account caches are separated for ordinary app use, but browser storage is not encrypted or protected from someone with access to the browser's developer tools. Cloud notes are not end-to-end encrypted. JSON backups contain plain text.
 - Dates remain Gregorian date keys without timezone conversion. Changing device timezone does not move a saved note.
@@ -139,7 +139,7 @@ TEST_ENGINE=webkit PLAYWRIGHT_PATH=/path/to/playwright node tests/languages.cjs
 
 ## Development versions and updates
 
-Settings → App shows the current development version (the first numbered release was `0.1.0-dev.1`). **What’s new** opens translated release notes; a **New** badge remains until those notes are opened in this browser. **Check for updates** checks for a new offline app bundle. A downloaded update shows **Refresh to update**. Refresh is explicit and blocked while notes have drafts, pending account changes, unresolved conflicts, or active storage/sync operations. Only the requesting tab reloads; other tabs keep their drafts and sessions. After refresh, account users sign in again.
+Settings → App shows the current development version (the first numbered release was `0.1.0-dev.1`). **What’s new** opens translated release notes; a **New** badge remains until those notes are opened in this browser. **Check for updates** checks for a new offline app bundle. A downloaded update shows **Refresh to update**. Refresh is explicit and blocked while notes have drafts, pending account changes, unresolved conflicts, or active storage/sync operations. Only the requesting tab reloads; other tabs keep their drafts and sessions. After refresh, remembered account sessions are restored online.
 
 For every publication, increment `version` in [release.js](release.js), update its date and changes, and add Chinese/Russian/French translations for new release-note messages. The service worker imports that same metadata to name its offline cache, so version and cache identity share one source. `daymark.seenRelease` stores the version whose notes were read on this device. If browser storage is unavailable, read status lasts only for the current page.
 
@@ -168,3 +168,9 @@ These are user-specified matching targets, not birth-chart inputs or automatic t
 Run `tests/shensha.cjs` with the same Playwright setup as other browser tests.
 
 Three unnamed custom target slots (①–③) are also available. Select stems, branches, or full pillars from the same picker. Enabled custom target chips and their matching values in date details appear in bold. Custom matches use a neutral color, carry no invented Shen/Sha name, and become inactive gray when Kongwang matches. Existing saved settings retain their original rules; custom slots start disabled.
+
+### Remembered sessions and multiple devices
+
+The same account may sign in on different devices or browser profiles simultaneously. The Web Lock only prevents competing tabs in one browser profile; it is not a device limit. A rejected second tab does not revoke the active tab’s session. Password sign-in and refreshed tokens are persisted after the account store opens successfully. Permanent refresh rejection clears the saved session; transient network errors retain it for an online retry/reload (automatic on the browser online event if there are no local drafts). Browser storage restrictions may make a session temporary.
+
+If real devices still displace one another, check Supabase **Authentication → Sessions → Single session per user**: it must be disabled. This is a server-side project setting, not a browser-code toggle. Client tests simulate independent device sessions and do not validate that production setting. Run `tests/persistent-session.cjs` for reload/reopen, rotation, two-device coexistence, local sign-out, lock isolation, and error recovery.

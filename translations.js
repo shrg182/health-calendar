@@ -1,6 +1,50 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
 
+  "This account is already open in another tab in this browser. Close that tab to use this one. Other devices can stay signed in.": {
+    "zh": "此账户已在本浏览器的另一个标签页打开。请关闭该标签页后使用此页。其他设备可保持登录。",
+    "ru": "Аккаунт уже открыт в другой вкладке этого браузера. Закройте её, чтобы использовать эту. На других устройствах можно оставаться в аккаунте.",
+    "fr": "Ce compte est ouvert dans un autre onglet de ce navigateur. Fermez-le pour utiliser celui-ci. Les autres appareils peuvent rester connectés."
+  },
+  "Remembered sign-in and automatic session renewal across app restarts.": {
+    "zh": "重新打开应用时恢复登录并自动续期会话。",
+    "ru": "Сохранение входа и автоматическое продление сеанса при перезапуске приложения.",
+    "fr": "Connexion mémorisée et renouvellement automatique de session au redémarrage."
+  },
+  "Clearer same-browser tab guidance; independent device sessions stay separate.": {
+    "zh": "明确区分同浏览器标签页限制与独立设备登录。",
+    "ru": "Понятнее объяснено ограничение вкладок одного браузера; сеансы устройств независимы.",
+    "fr": "Consignes plus claires pour les onglets du même navigateur ; sessions indépendantes par appareil."
+  }
+,
+
+  "Stay signed in on this device. Sign out when using a shared device.": {
+    "zh": "在此设备保持登录。使用共享设备时请退出。",
+    "ru": "Вход сохраняется на этом устройстве. На общем устройстве выходите из аккаунта.",
+    "fr": "La connexion reste active sur cet appareil. Déconnectez-vous sur un appareil partagé."
+  },
+  "An update is ready. Your saved sign-in will be restored when online.": {
+    "zh": "更新已就绪，联网后将恢复已保存的登录。",
+    "ru": "Обновление готово. Сохранённый вход восстановится при подключении к сети.",
+    "fr": "Une mise à jour est prête. Votre connexion enregistrée sera rétablie en ligne."
+  },
+  "Account restored.": {
+    "zh": "账户登录已恢复。",
+    "ru": "Вход в аккаунт восстановлен.",
+    "fr": "Connexion au compte rétablie."
+  },
+  "Signed in for this session only. Browser storage is unavailable.": {
+    "zh": "浏览器存储不可用，登录仅在本次会话有效。",
+    "ru": "Хранилище браузера недоступно. Вход действует только в этом сеансе.",
+    "fr": "Stockage du navigateur indisponible. La connexion ne vaut que pour cette session."
+  },
+  "Invalid account session. Sign in again.": {
+    "zh": "账户会话无效，请重新登录。",
+    "ru": "Сеанс недействителен. Войдите снова.",
+    "fr": "Session invalide. Reconnectez-vous."
+  }
+,
+
   "Choose targets": {
     "zh": "选择目标",
     "ru": "Выбрать значения",

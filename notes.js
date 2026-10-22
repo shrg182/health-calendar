@@ -17,7 +17,7 @@
   let account = null;
   let syncing = false;
   let syncError = false;
-  let switching = false;
+  let switching = Boolean(window.DaymarkSync?.savedUser);
   let releaseAccountLock = null;
   const cloud = window.DaymarkSync;
   function openDB(name) { return new Promise((resolve, reject) => {
@@ -276,6 +276,15 @@
     if (drafts.size) { status('Save your unsaved notes before changing accounts.', true); return false; }
     return true;
   }
+  async function acquireAccountLock(id) {
+    if (!navigator.locks) throw Error('This browser does not support safe account storage. Use a current browser.');
+    await new Promise((resolve, reject) => {
+      navigator.locks.request(`daymark-account-${id}`, {ifAvailable:true}, lock => {
+        if (!lock) { reject(Error('This account is already open in another tab in this browser. Close that tab to use this one. Other devices can stay signed in.')); return; }
+        return new Promise(release => { releaseAccountLock = release; resolve(); });
+      }).catch(reject);
+    });
+  }
   $('#account-form').addEventListener('submit', async event => {
     event.preventDefault();
     if (!canSwitch()) return;
@@ -284,17 +293,12 @@
     try {
       await ready;
       const user = await cloud.signIn($('#account-email').value.trim(), $('#account-password').value);
-      if (!navigator.locks) throw Error('This browser does not support safe account storage. Use a current browser.');
-      await new Promise((resolve, reject) => {
-        navigator.locks.request(`daymark-account-${user.id}`, {ifAvailable:true}, lock => {
-          if (!lock) { reject(Error('This account is already open in another tab. Sign out or close that tab first.')); return; }
-          return new Promise(release => { releaseAccountLock = release; resolve(); });
-        }).catch(reject);
-      });
+      await acquireAccountLock(user.id);
       await switchStore(user);
-      status('Account opened. Existing local notes were not uploaded.');
+      if (!cloud.remember()) status('Signed in for this session only. Browser storage is unavailable.');
+      else status('Account opened. Existing local notes were not uploaded.');
     } catch (error) {
-      if (!account) { releaseAccountLock?.(); releaseAccountLock = null; await cloud.signOut().catch(() => {}); }
+      if (!account) { releaseAccountLock?.(); releaseAccountLock = null; cloud.abandon(); }
       status(error.message, true);
     }
     finally { switching = false; accountUI(); showNote(); }
@@ -350,11 +354,34 @@
     && !(account && [...records.values()].some(note => note.pending || note.conflict));
   window.addEventListener('daymark:language', showConflict);
   $('#sync-now').addEventListener('click', synchronize);
-  window.addEventListener('online', synchronize);
+  window.addEventListener('online', () => {
+    if (!account && cloud?.savedUser && !switching && !busy && !drafts.size) restoreAccount();
+    else synchronize();
+  });
   window.addEventListener('focus', synchronize);
   setInterval(synchronize, 60000);
+  async function restoreAccount() {
+    const user = cloud.savedUser;
+    if (!user) { switching = false; showNote(); return; }
+    switching = true; showNote();
+    try {
+      await ready;
+      await acquireAccountLock(user.id);
+      const verified = await cloud.resume(user.id);
+      await switchStore(verified);
+      status('Account restored.');
+    } catch (error) {
+      releaseAccountLock?.(); releaseAccountLock = null;
+      cloud.abandon();
+      status(error.message, true);
+    } finally { switching = false; accountUI(); showNote(); }
+    if (account) synchronize();
+  }
   if (!cloud?.enabled) {
     for (const element of $('#account-form').elements) element.disabled = true;
     status('Cloud sync is not configured. Local notes and backups remain available.', true);
-  } else status(cloud.callbackMessage || 'Sign in to access your account notes. On shared devices, local notes are visible to anyone using this browser.');
+  } else {
+    status(cloud.callbackMessage || 'Sign in to access your account notes. On shared devices, local notes are visible to anyone using this browser.');
+    restoreAccount();
+  }
 })();
