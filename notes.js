@@ -45,7 +45,7 @@
   }
   function refreshSummary() {
     const conflict = [...records.values()].some(note => note.conflict);
-    const pending = [...records.values()].some(note => note.pending);
+    const pending = [...records.values()].some(note => note.pending) || window.DaymarkShensha?.pending;
     const key = !account ? 'Local notes' : syncing ? 'Synchronizing…'
       : syncError || conflict ? 'Sync needs attention' : pending ? 'Waiting to sync' : 'Synced.';
     setText('#calendar-sync', key);
@@ -196,6 +196,7 @@
         if (local?.pending || drafts.has(note.date)) continue;
         await transaction('readwrite', store => store.put(note)); records.set(note.date, note);
       }
+      await window.DaymarkShensha?.sync();
       syncError = false;
       status([...records.values()].some(n => n.conflict) ? 'Review conflicting edits below.' : 'Synced.');
     } catch (error) { syncError = true; setText('#sync-status', 'Sync failed. Saved changes remain on this device. {error}', {error:error.message}); }
@@ -272,10 +273,12 @@
     setText('#backup-status', '');
     $('#daily-note').value = '';
     records = new Map(all.map(note => [note.date, note]));
+    window.DaymarkShensha?.setAccount(user);
     accountUI(); refreshDates(); showConflict();
   }
   function canSwitch() {
     if (busy || syncing || switching) return false;
+    if (window.DaymarkShensha?.dirty) { status('Save your Shensha changes before changing accounts.',true); return false; }
     if (drafts.size) { status('Save your unsaved notes before changing accounts.', true); return false; }
     return true;
   }
@@ -358,6 +361,7 @@
       status('Sync or export your pending notes first. Signing out removes this account’s cached notes.');
       if (!confirm(t('Unsynced notes will be removed from this device. Continue only if you have exported a backup. Sign out and discard them?'))) return;
     }
+    if (window.DaymarkShensha?.pending && !confirm(t('Unsynced Shensha selections will be removed from this device. Sign out and discard them?'))) return;
     switching = true; showNote();
     try {
       await transaction('readwrite', store => store.clear());
@@ -368,10 +372,11 @@
     } catch { status('Could not finish signing out. Try again.'); }
     finally { switching = false; showNote(); }
   });
-  window.DaymarkNotes.canReload = () => !drafts.size && !busy && !syncing && !switching
+  window.DaymarkNotes.canReload = () => !window.DaymarkShensha?.dirty && !window.DaymarkShensha?.pending && !window.DaymarkShensha?.busy && !drafts.size && !busy && !syncing && !switching
     && !(account && [...records.values()].some(note => note.pending || note.conflict));
   window.addEventListener('daymark:language', showConflict);
   $('#sync-now').addEventListener('click', synchronize);
+  window.addEventListener('daymark:shensha-save',()=>{refreshSummary();synchronize();});
   window.addEventListener('online', () => {
     if (!account && cloud?.savedUser && !switching && !busy && !drafts.size) restoreAccount();
     else synchronize();
@@ -391,6 +396,7 @@
     } catch (error) {
       releaseAccountLock?.(); releaseAccountLock = null;
       cloud.abandon();
+      window.DaymarkShensha?.setAccount(null);
       status(error.message, true);
     } finally { switching = false; accountUI(); showNote(); }
     if (account) synchronize();

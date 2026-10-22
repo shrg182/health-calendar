@@ -50,7 +50,7 @@
     const response = await fetch(config.url.replace(/\/$/, '') + path, {
       method, headers:{ apikey:config.publishableKey, 'Content-Type':'application/json',
         ...(authenticated ? { Authorization:`Bearer ${session.access_token}` } : {}) },
-      body:JSON.stringify(body), signal:AbortSignal.timeout(20000)
+      ...(method === 'GET' ? {} : {body:JSON.stringify(body)}), signal:AbortSignal.timeout(20000)
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
@@ -59,6 +59,33 @@
       throw error;
     }
     return data;
+  }
+  // Compact preference values keep Auth user metadata (and refreshed JWTs) small.
+  const preferenceStems = [...'甲乙丙丁戊己庚辛壬癸'];
+  const preferenceBranches = [...'子丑寅卯辰巳午未申酉戌亥'];
+  const preferenceTargets = [...preferenceStems,...preferenceBranches,
+    ...Array.from({length:60},(_,i)=>preferenceStems[i%10]+preferenceBranches[i%12])];
+  function encodePreferences(settings) {
+    return {version:1,encoding:'target-indices-v1',settings:Object.fromEntries(
+      Object.entries(settings).map(([id,rule])=>[id,{enabled:rule.enabled,targets:rule.targets.map(value=>{
+        const index=preferenceTargets.indexOf(value);
+        if(index<0)throw Error('Invalid matching settings.');
+        return index;
+      })}])
+    )};
+  }
+  function decodePreferences(raw) {
+    if(raw === null || raw === undefined)return null;
+    if(!raw.encoding)return raw; // Read the plain-text version if already present.
+    if(raw.encoding !== 'target-indices-v1' || !raw.settings || typeof raw.settings !== 'object')
+      throw Error('Unsupported Shensha settings version.');
+    return {...raw,settings:Object.fromEntries(Object.entries(raw.settings).map(([id,rule])=>{
+      if(!Array.isArray(rule?.targets))throw Error('Invalid matching settings.');
+      return [id,{enabled:rule.enabled,targets:rule.targets.map(index=>{
+        if(!Number.isInteger(index) || index<0 || index>=preferenceTargets.length)throw Error('Invalid matching settings.');
+        return preferenceTargets[index];
+      })}];
+    }))};
   }
   window.DaymarkSync = {
     enabled,
@@ -101,6 +128,13 @@
     },
     async signOut() {
       try { await request('/auth/v1/logout?scope=local', {}); } finally { forget(); session = null; remembered = false; }
+    },
+    async readShensha() {
+      const user = await request('/auth/v1/user', undefined, true, 'GET');
+      return decodePreferences(user.user_metadata?.daymark_shensha);
+    },
+    async writeShensha(settings) {
+      await request('/auth/v1/user', {data:{daymark_shensha:encodePreferences(settings)}}, true, 'PUT');
     },
     read:() => request('/rest/v1/rpc/read_daily_notes', {}),
     write:note => request('/rest/v1/rpc/sync_daily_note', {

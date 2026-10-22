@@ -1,5 +1,72 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+
+  "Signed-in selections sync to your account. Local selections stay in this browser. A matching Kongwang makes every Shensha match on that date inactive.": {
+    "zh": "登录后的选择会同步到账户，未登录的选择仅保存在此浏览器。逢空亡，当日神煞均不生效。",
+    "ru": "Выбранные значения синхронизируются с аккаунтом после входа. Локальные значения остаются в браузере. Кунван делает все совпадения этого дня неактивными.",
+    "fr": "Les choix connectés sont synchronisés avec votre compte. Les choix locaux restent dans ce navigateur. Kongwang rend toutes les correspondances du jour inactives."
+  },
+  "Use local selections": {
+    "zh": "使用本地选择",
+    "ru": "Использовать локальные значения",
+    "fr": "Utiliser les choix locaux"
+  },
+  "Save your changes to sync Shensha selections.": {
+    "zh": "请保存更改以同步神煞选择。",
+    "ru": "Сохраните изменения для синхронизации шэнь-ша.",
+    "fr": "Enregistrez vos modifications pour synchroniser les choix Shen Sha."
+  },
+  "Synchronizing Shensha selections…": {
+    "zh": "正在同步神煞选择……",
+    "ru": "Синхронизация шэнь-ша…",
+    "fr": "Synchronisation des choix Shen Sha…"
+  },
+  "Shensha selections synced.": {
+    "zh": "神煞选择已同步。",
+    "ru": "Значения шэнь-ша синхронизированы.",
+    "fr": "Choix Shen Sha synchronisés."
+  },
+  "No account selections yet. Choose targets or use local selections.": {
+    "zh": "账户尚无神煞选择，请选择目标或使用本地选择。",
+    "ru": "В аккаунте пока нет значений. Выберите цели или используйте локальные значения.",
+    "fr": "Aucun choix dans le compte. Choisissez des valeurs ou utilisez les choix locaux."
+  },
+  "Shensha sync failed. Saved selections remain on this device. {error}": {
+    "zh": "神煞同步失败，已保存的选择仍保留在此设备。{error}",
+    "ru": "Сбой синхронизации шэнь-ша. Сохранённые значения остаются на устройстве. {error}",
+    "fr": "Échec de synchronisation Shen Sha. Les choix enregistrés restent sur cet appareil. {error}"
+  },
+  "Could not save Shensha selections. Try again.": {
+    "zh": "无法保存神煞选择，请重试。",
+    "ru": "Не удалось сохранить значения шэнь-ша. Повторите попытку.",
+    "fr": "Impossible d’enregistrer les choix Shen Sha. Réessayez."
+  },
+  "Saved on this device. Waiting to sync Shensha selections.": {
+    "zh": "已保存在此设备，等待同步神煞选择。",
+    "ru": "Сохранено на устройстве. Ожидание синхронизации шэнь-ша.",
+    "fr": "Enregistré sur cet appareil. En attente de synchronisation Shen Sha."
+  },
+  "Save your Shensha changes before changing accounts.": {
+    "zh": "切换账户前请保存神煞更改。",
+    "ru": "Сохраните изменения шэнь-ша перед сменой аккаунта.",
+    "fr": "Enregistrez les modifications Shen Sha avant de changer de compte."
+  },
+  "Unsynced Shensha selections will be removed from this device. Sign out and discard them?": {
+    "zh": "未同步的神煞选择将从此设备移除。是否退出并放弃这些选择？",
+    "ru": "Несинхронизированные значения шэнь-ша будут удалены с устройства. Выйти и удалить их?",
+    "fr": "Les choix Shen Sha non synchronisés seront retirés de cet appareil. Se déconnecter et les abandonner ?"
+  },
+  "Unsupported Shensha settings version.": {
+    "zh": "不支持此神煞设置版本。",
+    "ru": "Неподдерживаемая версия настроек шэнь-ша.",
+    "fr": "Version des réglages Shen Sha non prise en charge."
+  },
+  "Sync Shensha selections and custom targets across signed-in devices.": {
+    "zh": "神煞选择及自定义目标可在登录设备之间同步。",
+    "ru": "Синхронизация значений шэнь-ша и своих целей между устройствами с выполненным входом.",
+    "fr": "Synchronisation des choix Shen Sha et valeurs personnalisées entre appareils connectés."
+  }
+,
   "Click the selected encounter period again to close its list.": {
     "zh": "再次点击已选时段按钮即可收起相遇日期列表。",
     "ru": "Нажмите выбранный период ещё раз, чтобы закрыть список совпадений.",

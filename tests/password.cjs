@@ -7,6 +7,7 @@ const assert=require('node:assert/strict');
   const path=new URL(route.request().url()).pathname,body=route.request().postDataJSON();let data={};
   if(path.endsWith('/token')){if(body.password!==stored)return route.fulfill({status:400,json:{msg:'Invalid login credentials'}});data={access_token:'mock',refresh_token:'mock',expires_in:3600,user:{id:'password-test',email:body.email}};}
   else if(path.endsWith('/read_daily_notes'))data=[];
+  else if(path.endsWith('/user') && route.request().method()==='GET')data={user_metadata:{}};
   else if(path.endsWith('/user')){assert.equal(route.request().method(),'PUT');assert.equal(route.request().headers().authorization,'Bearer mock');assert.equal(body.current_password,stored);if(fail)return route.fulfill({status:422,json:{msg:'Password policy rejected'}});stored=body.password;updates++;}
   await route.fulfill({json:data});
  });

@@ -52,8 +52,98 @@
     return result;
   }
   let settings = empty(), dayPillar = null, loadWarning = false;
+  let accountId = null, pending = false, dirty = false, hasCloud = false;
+  let syncRunning = false;
+  const accountKey = id => `daymark.shensha.account.v1:${id}`;
+  $('#shensha-form').inert = Boolean(window.DaymarkSync?.savedUser);
   try { const saved = localStorage.getItem(key); if (saved) settings = validate(JSON.parse(saved)); }
   catch { loadWarning = true; }
+  function saveCache() {
+    localStorage.setItem(accountId ? accountKey(accountId) : key,
+      JSON.stringify(accountId ? {settings,pending,hasCloud} : settings));
+  }
+  function localSelections() {
+    const raw = localStorage.getItem(key);
+    return raw ? validate(JSON.parse(raw)) : empty();
+  }
+  function importVisibility() {
+    let available = false;
+    try { available = Object.values(localSelections()).some(item=>item.enabled); } catch {}
+    $('#shensha-use-local').hidden = !accountId || hasCloud || pending || !available;
+    $('#shensha-use-local').disabled = syncRunning || dirty;
+  }
+  function markDirty() {
+    dirty = true;
+    importVisibility();
+    if(accountId)setText('#shensha-status','Save your changes to sync Shensha selections.');
+  }
+  function applyWidgets() {
+    for(const [id] of items) {
+      const picker=pickers.get(id),rule=settings[id];
+      picker.selected.clear();rule.targets.forEach(value=>picker.selected.add(value));
+      $(`#shensha-${id}`).checked=rule.enabled;
+      picker.options.forEach((option,value)=>{option.checked=picker.selected.has(value);});
+      picker.updateEnabled();
+    }
+    render();renderPeriod();importVisibility();
+  }
+  function setAccount(user) {
+    const previous=accountId;
+    accountId=user?.id || null;
+    dirty=false;pending=false;hasCloud=false;
+    $('#shensha-form').inert=false;
+    settings=empty();
+    try {
+      if(accountId) {
+        const raw=localStorage.getItem(accountKey(accountId));
+        if(raw) {
+          const cache=JSON.parse(raw);settings=validate(cache.settings);
+          pending=cache.pending===true;hasCloud=cache.hasCloud===true;
+        }
+      } else {
+        if(previous)localStorage.removeItem(accountKey(previous));
+        settings=localSelections();
+      }
+      setText('#shensha-status',accountId ? 'Synchronizing Shensha selections…' : '');
+    } catch {setText('#shensha-status','Saved matching settings could not be loaded. Please configure them again.');}
+    applyWidgets();
+  }
+  async function syncSelections() {
+    if(!accountId || syncRunning)return;
+    const owner=accountId;
+    syncRunning=true;importVisibility();
+    try {
+      // Preference saves use last-successful-save wins, unlike versioned note edits.
+      while(pending && accountId===owner) {
+        const snapshot=JSON.stringify(settings);
+        setText('#shensha-status','Synchronizing Shensha selections…');
+        await window.DaymarkSync.writeShensha(JSON.parse(snapshot));
+        if(accountId!==owner)return;
+        hasCloud=true;
+        if(JSON.stringify(settings)===snapshot)pending=false;
+        saveCache();
+      }
+      if(dirty)return; // Never replace unsaved picker changes with a background pull.
+      const remote=await window.DaymarkSync.readShensha();
+      if(accountId!==owner || dirty)return;
+      if(pending) { setTimeout(()=>window.dispatchEvent(new Event('daymark:shensha-save')),0);return; }
+      if(remote!==null) {
+        if(remote.version!==1 || !remote.settings)throw Error('Unsupported Shensha settings version.');
+        settings=validate(remote.settings);hasCloud=true;saveCache();applyWidgets();
+      } else { hasCloud=false;importVisibility(); }
+      setText('#shensha-status',hasCloud ? 'Shensha selections synced.' : 'No account selections yet. Choose targets or use local selections.');
+    } catch(error) {
+      if(accountId===owner)setText('#shensha-status','Shensha sync failed. Saved selections remain on this device. {error}',{error:error.message});
+      throw error;
+    } finally {syncRunning=false;importVisibility();}
+  }
+  $('#shensha-use-local').addEventListener('click',()=>{
+    if(!accountId || dirty || syncRunning)return;
+    try {
+      settings=localSelections();pending=true;saveCache();applyWidgets();
+      window.dispatchEvent(new Event('daymark:shensha-save'));
+    } catch {setText('#shensha-status','Could not save Shensha selections. Try again.');}
+  });
   // All values are manually chosen daily matching targets, not birth-chart anchors.
   function matches(pillar) {
     return items.filter(([id]) => {
@@ -182,7 +272,7 @@
           const chip = document.createElement('button'); chip.type = 'button'; chip.className = 'shensha-chip';
           chip.textContent = value + ' ×'; chip.disabled = !check.checked;
           chip.setAttribute('aria-label',t('Remove {value}',{value}));
-          chip.addEventListener('click',()=>{selected.delete(value);optionChecks.get(value).checked=false;updateChips();summary.focus();});
+          chip.addEventListener('click',()=>{selected.delete(value);optionChecks.get(value).checked=false;markDirty();updateChips();summary.focus();});
           chips.append(chip);
         }
       }
@@ -194,7 +284,7 @@
           const optionLabel = document.createElement('label');optionLabel.dataset.value = value;
           const option = document.createElement('input');option.type='checkbox';option.value=value;
           option.checked=selected.has(value);option.disabled=!check.checked;
-          option.addEventListener('change',()=>{if(option.checked)selected.add(value);else selected.delete(value);updateChips();});
+          option.addEventListener('change',()=>{markDirty();if(option.checked)selected.add(value);else selected.delete(value);updateChips();});
           optionChecks.set(value,option);optionLabel.append(option,document.createTextNode(value));options.append(optionLabel);
         }
         section.append(options);panel.append(section);
@@ -215,8 +305,8 @@
       summary.addEventListener('click',event=>{if(!check.checked)event.preventDefault();});
       details.addEventListener('keydown',event=>{if(event.key==='Escape'){details.open=false;summary.focus();}});
       details.append(panel);picker.append(chips,details);updateEnabled();
-      check.addEventListener('change',updateEnabled);
-      pickers.set(id,{selected,summary});
+      check.addEventListener('change',()=>{markDirty();updateEnabled();});
+      pickers.set(id,{selected,summary,options:optionChecks,updateEnabled});
       row.append(checkLabel,picker); group.append(row);
     }
     $('#shensha-fields').append(group);
@@ -233,13 +323,23 @@
       }
       draft[id] = {enabled,targets:targets.filter(value => allowedFor(id).includes(value))};
     }
-    settings = validate(draft);
-    try { localStorage.setItem(key,JSON.stringify(settings)); setText('#shensha-status','Matching settings saved. Open any date to calculate.'); }
-    catch { setText('#shensha-status','Matching settings apply for this session only; browser storage is unavailable.'); }
-    render(); renderPeriod();
+    settings = validate(draft);dirty=false;
+    if(accountId)pending=true;
+    try {
+      saveCache();
+      setText('#shensha-status',accountId ? 'Saved on this device. Waiting to sync Shensha selections.' : 'Matching settings saved. Open any date to calculate.');
+    } catch {
+      setText('#shensha-status',accountId ? 'Could not save Shensha selections. Try again.' : 'Matching settings apply for this session only; browser storage is unavailable.');
+    }
+    render(); renderPeriod();importVisibility();
+    if(accountId)window.dispatchEvent(new Event('daymark:shensha-save'));
   });
   window.addEventListener('daymark:language',()=>{render();renderPeriod();});
   window.DaymarkShensha = {
+    setAccount, sync:syncSelections,
+    get pending() {return Boolean(accountId && pending);},
+    get dirty() {return dirty;},
+    get busy() {return syncRunning;},
     show(pillar) { dayPillar = pillar; render(); },
     configure(api) { calendar=api; },
     context(date,hidden) {

@@ -20,7 +20,8 @@ const assert = require('node:assert/strict');
     const id = request.headers().authorization.split(' ')[1];
     if (!rows.has(id)) rows.set(id, new Map());
     const store = rows.get(id);
-    if (path.endsWith('/read_daily_notes')) data = [...store.values()];
+    if (path.endsWith('/user')) data = {id,user_metadata:{}};
+    else if (path.endsWith('/read_daily_notes')) data = [...store.values()];
     else if (path.endsWith('/sync_daily_note')) {
      const old = store.get(body.p_date);
      if ((old?.revision || 0) !== body.p_revision) data = {conflict:true,note:old};

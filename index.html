@@ -120,7 +120,8 @@
     <section id="settings-shensha" class="settings-card" tabindex="-1" aria-labelledby="shensha-title">
       <h2 id="shensha-title">Shensha matching</h2>
       <p id="shensha-instructions">Select an item and choose one or more matching targets.</p>
-      <p>Settings stay in this browser. A matching Kongwang makes every Shensha match on that date inactive.</p>
+      <p>Signed-in selections sync to your account. Local selections stay in this browser. A matching Kongwang makes every Shensha match on that date inactive.</p>
+      <button class="today-btn" id="shensha-use-local" type="button" hidden>Use local selections</button>
       <form id="shensha-form">
         <div id="shensha-fields"></div>
         <button class="today-btn" type="submit">Save &amp; calculate</button>
@@ -247,8 +248,8 @@
   <script src="i18n.js" defer></script>
   <script src="sync-config.js" defer></script>
   <script src="sync.js" defer></script>
-  <script src="notes.js" defer></script>
   <script src="shensha.js" defer></script>
+  <script src="notes.js" defer></script>
   <script src="app.js" defer></script>
   <script src="install.js" defer></script>
   <script src="updates.js" defer></script>
