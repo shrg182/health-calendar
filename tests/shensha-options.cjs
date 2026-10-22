@@ -12,10 +12,12 @@ const assert=require('node:assert/strict');
   const picker=page.locator(`#shensha-picker-${id}`);assert.equal(await picker.locator('input[type=checkbox]').count(),12);
   assert.equal(await picker.locator('input[value="甲"]').count(),0);assert.equal(await picker.locator('input[value="子"]').count(),1);assert.equal(await picker.locator('input[value="甲子"]').count(),0);
  }
- for(const id of ['zaisha','yuanchen','kuigang','shie','custom1','custom2','custom3'])assert.equal(await page.locator(`#shensha-picker-${id} input[type=checkbox]`).count(),82);
+ for(const id of ['zaisha','yuanchen','kuigang','custom1','custom2','custom3'])assert.equal(await page.locator(`#shensha-picker-${id} input[type=checkbox]`).count(),82);
+ const ten=['甲辰','乙巳','丙申','丁亥','戊戌','己丑','庚辰','辛巳','壬申','癸亥'];
+ assert.deepEqual(await page.locator('#shensha-picker-shie input[type=checkbox]').evaluateAll(options=>options.map(option=>option.value)),ten);
  await page.evaluate(()=>localStorage.setItem('daymark.shensha.v1',JSON.stringify({
   tiande:{enabled:true,targets:['甲','子','甲子']},tianyi:{enabled:true,targets:['甲','子','甲子']},
-  kongwang:{enabled:true,targets:['甲子']},custom1:{enabled:true,targets:['庚辰']},shie:{enabled:true,targets:['庚辰']}
+  kongwang:{enabled:true,targets:['甲子']},custom1:{enabled:true,targets:['庚辰']},shie:{enabled:true,targets:['甲','子','甲子','庚辰']}
  })));
  await page.reload();assert.match(await page.locator('#shensha-status').innerText(),/Unsupported/);
  assert.equal(await page.locator('#shensha-kongwang').isChecked(),false);
@@ -25,6 +27,7 @@ const assert=require('node:assert/strict');
  for(const id of ['huagai','jiangxing','jinyu','tianyi-medical','taohua']){await page.locator(`#shensha-${id}`).check();await page.locator(`#shensha-picker-${id} summary`).click();await page.locator(`#shensha-picker-${id} input[value="辰"]`).check();}
  await page.locator('#shensha-form button[type=submit]').click();
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('daymark.shensha.v1')));
+ assert.deepEqual(saved.shie.targets,['庚辰']);
  assert.deepEqual(saved.tiande.targets,['甲','子']);assert.deepEqual(saved.tianyi.targets,['子']);assert.equal(saved.kongwang.enabled,false);assert.equal(saved.huagai.enabled,true);assert.equal(saved.jiangxing.enabled,true);
  await page.reload();assert.equal(await page.locator('#shensha-status').innerText(),'');
  await page.evaluate(()=>location.hash='day=2026-10-21'); // 戊辰: both new branch targets must match.

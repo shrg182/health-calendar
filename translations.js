@@ -1,5 +1,10 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Limit Ten Defeats targets to the ten specified day pillars.": {
+    "zh": "十恶大败仅保留指定的十个日柱组合。",
+    "ru": "Для Десяти поражений оставлены только десять указанных столпов дня.",
+    "fr": "Les valeurs des Dix Défaites sont limitées aux dix piliers du jour indiqués."
+  },
   "Add Jinyu, Tianyi (天医), and Taohua with branch-only target pickers.": {
     "zh": "新增金舆、天医、桃花，仅提供地支目标选择。",
     "ru": "Добавлены Цзиньюй, Тяньи (天医) и Таохуа с выбором только земных ветвей.",

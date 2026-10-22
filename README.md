@@ -163,7 +163,7 @@ Signed-in users can change their password in **Settings → Account → Change p
 
 Open **Settings → Shensha matching** (`#settings-shensha`). Check any of the 18 named items, open **Choose targets**, and select one or more values from the searchable 天干、地支、干支组合 groups. Remove selections with their chip’s × button. For example, enable 魁罡 with day-pillar target `庚辰`, and 十恶大败 with `庚辰、戊戌`. Choose **Save & calculate**, then open any date. Matches calculate dynamically from that date’s day pillar; no period generation is needed.
 
-天德/月德 offer individual stems and branches. 天乙、禄神、文昌、驿马、华盖、将星、金舆、天医、桃花、羊刃、空亡、劫煞 offer branches only. Other items and the custom slots retain all three groups. On upgrade, unsupported saved targets are excluded, an item with no remaining targets is disabled, and a review notice is shown; other settings are preserved.
+天德/月德 offer individual stems and branches. 天乙、禄神、文昌、驿马、华盖、将星、金舆、天医、桃花、羊刃、空亡、劫煞 offer branches only. 十恶大败 offers only 甲辰、乙巳、丙申、丁亥、戊戌、己丑、庚辰、辛巳、壬申、癸亥. Other items and the custom slots retain all three groups. On upgrade, unsupported saved targets are excluded, an item with no remaining targets is disabled, and a review notice is shown; other settings are preserved.
 
 These are user-specified matching targets, not birth-chart inputs or automatic traditional rule lookups. Nothing is enabled by default. 神 matches appear green and 煞 red, with text labels. If enabled 空亡 matches, all matched items including 空亡 remain listed in gray as inactive, with one explanation. No combined Sha count is displayed. Settings stay in this browser, apply across local/account modes, and are not included in note backups or cloud synchronization.
 

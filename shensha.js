@@ -21,7 +21,9 @@
   ];
   const allowed = [...stems,...branches,...pillars];
   const branchOnly = new Set(['tianyi','lushen','wenchang','yima','huagai','jiangxing','jinyu','tianyi-medical','taohua','yangren','kongwang','jiesha']);
+  const tenDefeats = ['甲辰','乙巳','丙申','丁亥','戊戌','己丑','庚辰','辛巳','壬申','癸亥'];
   function groupsFor(id) {
+    if (id === 'shie') return [['Stem-branch pairs',tenDefeats]];
     if (branchOnly.has(id)) return [['Earthly Branches',branches]];
     if (id === 'tiande' || id === 'yuede') return [['Heavenly Stems',stems],['Earthly Branches',branches]];
     return [['Heavenly Stems',stems],['Earthly Branches',branches],['Stem-branch pairs',pillars]];
