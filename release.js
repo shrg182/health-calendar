@@ -1,9 +1,9 @@
 // Bump this version and update these notes for every published development release.
 // Shared by the page and service worker so the offline cache has the same version.
 globalThis.DAYMARK_RELEASE = Object.freeze({
-  version: '0.1.0-dev.8',
+  version: '0.1.0-dev.9',
   date: '2026-10-22',
   changes: [
-    'Simplified Shensha target groups, with Huagai and Jiangxing branch pickers.'
+    'Add Jinyu, Tianyi (天医), and Taohua with branch-only target pickers.'
   ]
 });

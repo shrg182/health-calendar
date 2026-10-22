@@ -1,5 +1,10 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Add Jinyu, Tianyi (天医), and Taohua with branch-only target pickers.": {
+    "zh": "新增金舆、天医、桃花，仅提供地支目标选择。",
+    "ru": "Добавлены Цзиньюй, Тяньи (天医) и Таохуа с выбором только земных ветвей.",
+    "fr": "Ajout de Jinyu, Tianyi (天医) et Taohua avec des valeurs limitées aux branches terrestres."
+  },
   "Unsupported saved targets were removed. Review and save your selections.": {
     "zh": "已移除不再支持的已存目标，请检查并保存选择。",
     "ru": "Неподдерживаемые сохранённые значения удалены. Проверьте и сохраните выбор.",

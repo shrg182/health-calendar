@@ -10,6 +10,8 @@
     ['tianyi','天乙','shen','branch'], ['wenchang','文昌','shen','branch'],
     ['lushen','禄神','shen','branch'], ['yima','驿马','shen','branch'],
     ['huagai','华盖','shen','branch'], ['jiangxing','将星','shen','branch'],
+    ['jinyu','金舆','shen','branch'], ['tianyi-medical','天医','shen','branch'],
+    ['taohua','桃花','shen','branch'],
     ['yangren','羊刃','sha','branch'], ['jiesha','劫煞','sha','branch'],
     ['zaisha','灾煞','sha','branch'], ['yuanchen','元辰','sha','branch'],
     ['kongwang','空亡','sha','branch'], ['kuigang','魁罡','sha','pillar'],
@@ -18,7 +20,7 @@
     ['custom3','③','custom','pillar']
   ];
   const allowed = [...stems,...branches,...pillars];
-  const branchOnly = new Set(['tianyi','lushen','wenchang','yima','huagai','jiangxing','yangren','kongwang','jiesha']);
+  const branchOnly = new Set(['tianyi','lushen','wenchang','yima','huagai','jiangxing','jinyu','tianyi-medical','taohua','yangren','kongwang','jiesha']);
   function groupsFor(id) {
     if (branchOnly.has(id)) return [['Earthly Branches',branches]];
     if (id === 'tiande' || id === 'yuede') return [['Heavenly Stems',stems],['Earthly Branches',branches]];

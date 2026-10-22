@@ -8,7 +8,7 @@ const assert=require('node:assert/strict');
   assert.equal(await picker.locator('input[type=checkbox]').count(),22);
   assert.equal(await picker.locator('input[value="甲"]').count(),1);assert.equal(await picker.locator('input[value="子"]').count(),1);assert.equal(await picker.locator('input[value="甲子"]').count(),0);
  }
- for(const id of ['tianyi','lushen','wenchang','yima','huagai','jiangxing','yangren','kongwang','jiesha']){
+ for(const id of ['tianyi','lushen','wenchang','yima','huagai','jiangxing','jinyu','tianyi-medical','taohua','yangren','kongwang','jiesha']){
   const picker=page.locator(`#shensha-picker-${id}`);assert.equal(await picker.locator('input[type=checkbox]').count(),12);
   assert.equal(await picker.locator('input[value="甲"]').count(),0);assert.equal(await picker.locator('input[value="子"]').count(),1);assert.equal(await picker.locator('input[value="甲子"]').count(),0);
  }
@@ -22,13 +22,14 @@ const assert=require('node:assert/strict');
  assert.equal(await page.locator('#shensha-picker-tiande input:checked').count(),2);
  assert.equal(await page.locator('#shensha-picker-tianyi input:checked').count(),1);
  assert.equal(await page.locator('#shensha-picker-custom1 input[value="庚辰"]').isChecked(),true);
- for(const id of ['huagai','jiangxing']){await page.locator(`#shensha-${id}`).check();await page.locator(`#shensha-picker-${id} summary`).click();await page.locator(`#shensha-picker-${id} input[value="辰"]`).check();}
+ for(const id of ['huagai','jiangxing','jinyu','tianyi-medical','taohua']){await page.locator(`#shensha-${id}`).check();await page.locator(`#shensha-picker-${id} summary`).click();await page.locator(`#shensha-picker-${id} input[value="辰"]`).check();}
  await page.locator('#shensha-form button[type=submit]').click();
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('daymark.shensha.v1')));
  assert.deepEqual(saved.tiande.targets,['甲','子']);assert.deepEqual(saved.tianyi.targets,['子']);assert.equal(saved.kongwang.enabled,false);assert.equal(saved.huagai.enabled,true);assert.equal(saved.jiangxing.enabled,true);
  await page.reload();assert.equal(await page.locator('#shensha-status').innerText(),'');
  await page.evaluate(()=>location.hash='day=2026-10-21'); // 戊辰: both new branch targets must match.
  assert.equal(await page.locator('#detail-day-pillar').innerText().then(s=>s.slice(0,2)),'戊辰');
+ for(const id of ['jinyu','tianyi-medical','taohua'])assert(await page.locator(`[data-shensha=${id}].shen`).isVisible());
  assert(await page.locator('[data-shensha=huagai]').isVisible());assert(await page.locator('[data-shensha=jiangxing]').isVisible());
- console.log('Passed: per-item group restrictions, two added branch pickers, legacy-target migration, saved selections, Huagai/Jiangxing daily matches.');
+ console.log('Passed: per-item group restrictions, five added branch pickers, legacy-target migration, saved selections, Huagai/Jiangxing/Jinyu/Tianyi/Taohua daily matches.');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});
