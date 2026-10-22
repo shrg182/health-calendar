@@ -1,5 +1,15 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Hide password form": {
+    "zh": "收起密码修改",
+    "ru": "Скрыть форму пароля",
+    "fr": "Masquer le formulaire de mot de passe"
+  },
+  "Keep the password-change form collapsed until needed.": {
+    "zh": "密码修改表单默认收起，按需展开。",
+    "ru": "Форма смены пароля свёрнута до нажатия кнопки.",
+    "fr": "Le formulaire de changement de mot de passe reste replié jusqu’à son ouverture."
+  },
 
   "Shensha encounters": {
     "zh": "神煞相遇日期",

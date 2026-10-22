@@ -231,7 +231,10 @@
   function accountUI() {
     if (account) setText('#account-label', 'Signed in as {email}', {email:account.email});
     else setText('#account-label', 'Local notes · this browser only');
-    $('#password-form').hidden = !account;
+    $('#toggle-password-form').hidden = !account;
+    $('#toggle-password-form').setAttribute('aria-expanded','false');
+    setText('#toggle-password-form','Change password');
+    $('#password-form').hidden = true;
     $('#password-form').reset();
     setText('#password-status', '');
     $('#account-form').hidden = Boolean(account);
@@ -304,6 +307,19 @@
     finally { switching = false; accountUI(); showNote(); }
     synchronize();
   });
+  $('#toggle-password-form').addEventListener('click', () => {
+    if (!account || switching) return;
+    const open = $('#password-form').hidden;
+    $('#password-form').hidden = !open;
+    $('#toggle-password-form').setAttribute('aria-expanded',String(open));
+    setText('#toggle-password-form',open ? 'Hide password form' : 'Change password');
+    if (open) $('#current-password').focus();
+    else {
+      $('#password-form').reset();
+      setText('#password-status','');
+      $('#toggle-password-form').focus();
+    }
+  });
   $('#password-form').addEventListener('submit', async event => {
     event.preventDefault();
     if (!account || busy || syncing || switching) return;
@@ -314,6 +330,7 @@
     }
     switching = true; showNote();
     $('#change-password').disabled = true;
+    $('#toggle-password-form').disabled = true;
     setText('#password-status', 'Changing password…');
     try {
       await cloud.changePassword($('#current-password').value, password);
@@ -324,6 +341,7 @@
       $('#password-form').reset();
       switching = false; showNote();
       $('#change-password').disabled = false;
+      $('#toggle-password-form').disabled = false;
     }
   });
   $('#sign-up').addEventListener('click', async () => {

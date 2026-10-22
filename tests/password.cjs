@@ -11,7 +11,13 @@ const assert=require('node:assert/strict');
   await route.fulfill({json:data});
  });
  const page=await context.newPage();await page.goto('http://127.0.0.1:8769/#settings-account');assert(await page.locator('#password-form').isHidden());
- await page.locator('#account-email').fill('test@example.com');await page.locator('#account-password').fill(stored);await page.locator('#account-form button[type=submit]').click();await page.waitForFunction(()=>document.querySelector('#sync-status').textContent==='Synced.');assert(await page.locator('#password-form').isVisible());
+ await page.locator('#account-email').fill('test@example.com');await page.locator('#account-password').fill(stored);await page.locator('#account-form button[type=submit]').click();await page.waitForFunction(()=>document.querySelector('#sync-status').textContent==='Synced.');assert(await page.locator('#password-form').isHidden());
+ assert(await page.locator('#toggle-password-form').isVisible());
+ await page.locator('#toggle-password-form').click();assert(await page.locator('#password-form').isVisible());
+ assert.equal(await page.locator('#toggle-password-form').getAttribute('aria-expanded'),'true');
+ await page.locator('#current-password').fill('clear-on-close');await page.locator('#toggle-password-form').click();
+ assert(await page.locator('#password-form').isHidden());assert.equal(await page.locator('#current-password').inputValue(),'');
+ await page.locator('#toggle-password-form').click();
  await page.evaluate(()=>location.hash='day=2026-10-25');await page.waitForFunction(()=>!document.querySelector('#daily-note').disabled);await page.locator('#daily-note').fill('Keep my draft');await page.locator('#open-settings').click();
  async function change(current,next,confirm=next){await page.locator('#current-password').fill(current);await page.locator('#new-password').fill(next);await page.locator('#confirm-password').fill(confirm);await page.locator('#change-password').click();}
  await change(stored,'newPassword123','different123');assert.match(await page.locator('#password-status').innerText(),/do not match/);assert.equal(updates,0);

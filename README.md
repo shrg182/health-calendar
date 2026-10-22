@@ -157,7 +157,7 @@ Use the Back to calendar button or calendar icon to return to the month grid; br
 
 Regular users see compact calendar and date details. Daily notes follow the Gregorian/lunar date cards. Explanatory captions appear after signing in with the confirmed email `ruixing.shi@yahoo.com`, configured in `sync-config.js`, or with Supabase `app_metadata.role` set to `admin` by an auth administrator. User-editable `user_metadata` does not grant this role. Sign out to hide the captions again. These captions are public interface text, not confidential data; this visibility rule is not a data-access boundary. Essential field labels, storage/sync notices, and solar-term estimate information remain available to everyone.
 
-Signed-in users can change their password in **Settings → Account → Change password**. Enter the current password and the new password twice (at least eight characters; the server may enforce a stronger policy). The current password is verified before the authenticated password update. Password fields are cleared after the request, and note drafts remain intact. This setting requires an online connection.
+Signed-in users can change their password in **Settings → Account → Change password**. Press **Change password** to open the normally hidden form. **Hide password form** collapses it and clears the fields. Enter the current password and the new password twice (at least eight characters; the server may enforce a stronger policy). The current password is verified before the authenticated password update. Password fields are cleared after the request, and note drafts remain intact. This setting requires an online connection.
 
 ## Manual Shensha matching (starter)
 
