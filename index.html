@@ -225,6 +225,21 @@
       </section>
       <aside class="detail-info" id="detail-solar-term"></aside>
     </section>
+    <section id="shensha-period-panel" class="detail-card" aria-labelledby="shensha-period-title">
+      <h2 id="shensha-period-title">Shensha encounters</h2>
+      <label for="shensha-reference">Reference date</label>
+      <input id="shensha-reference" type="date" min="1901-01-01" max="2100-12-31" required>
+      <div class="shensha-period-buttons" role="group" aria-label="Encounter periods">
+        <button class="today-btn" type="button" data-direction="-1" data-shensha-period="month" aria-pressed="false">Previous month</button>
+        <button class="today-btn" type="button" data-direction="-1" data-shensha-period="10" aria-pressed="false">Previous 10 days</button>
+        <button class="today-btn" type="button" data-direction="-1" data-shensha-period="7" aria-pressed="false">Previous 7 days</button>
+        <button class="today-btn" type="button" data-direction="1" data-shensha-period="7" aria-pressed="false">Next 7 days</button>
+        <button class="today-btn" type="button" data-direction="1" data-shensha-period="10" aria-pressed="false">Next 10 days</button>
+        <button class="today-btn" type="button" data-direction="1" data-shensha-period="month" aria-pressed="false">Next month</button>
+      </div>
+      <p id="shensha-period-status" role="status"></p>
+      <ol id="shensha-period-results"></ol>
+    </section>
   </main>
   <script src="release.js" defer></script>
   <script src="translations.js" defer></script>

@@ -272,3 +272,12 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
 .shensha-chip { padding:8px; min-height:44px; background:var(--paper); border:1px solid var(--line); border-radius:8px; font:inherit }
 .shensha-row.important .shensha-chip { font-weight:700 }
 @media(max-width:600px) { .shensha-row { grid-template-columns:1fr }.shensha-options { max-height:300px } }
+
+#shensha-period-panel { margin-top:16px }
+#shensha-reference { display:block; max-width:100%; min-height:44px; padding:8px; font:inherit; font-size:16px; border:1px solid #bac9bf; border-radius:6px; margin:8px 0 12px }
+.shensha-period-buttons { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px }
+.shensha-period-buttons button[aria-pressed=true] { background:var(--green);color:white }
+#shensha-period-results { list-style:none; padding:0; margin:0 }
+#shensha-period-results li { padding:14px 0; border-top:1px solid var(--line) }
+.shensha-result-date { display:inline-block; min-height:44px; padding:8px 0; color:var(--green);font-weight:700 }
+@media(max-width:600px) { .shensha-period-buttons { grid-template-columns:repeat(2,minmax(0,1fr)) } }

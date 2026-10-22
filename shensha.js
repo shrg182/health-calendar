@@ -42,21 +42,87 @@
       return rule.enabled && rule.targets.some(value => [pillar[0],pillar[1],pillar].includes(value));
     });
   }
+  function appendMatches(container,pillar,found,inactive) {
+    for (const [id,label,kind] of found) {
+      const badge = document.createElement('span');
+      badge.className = `shensha-badge ${inactive ? 'inactive' : kind}${kind === 'custom' ? ' important' : ''}`;
+      badge.dataset.shensha = id;
+      const rule = settings[id];
+      const value = rule.targets.filter(value => [pillar[0],pillar[1],pillar].includes(value)).join('、');
+      badge.textContent = `${kind === 'custom' ? value : label + ' · ' + t(names[kind])}${inactive ? ' · ' + t('Inactive') : ''}`;
+      container.append(badge);
+    }
+  }
+  let calendar = null, period = null;
+  const minDate = new Date(1901,0,1,12), maxDate = new Date(2100,11,31,12);
+  function dateKey(date) {
+    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+  }
+  function parseDate(value) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+    const [y,m,d] = value.split('-').map(Number), date = new Date(y,m-1,d,12);
+    return dateKey(date) === value && date >= minDate && date <= maxDate ? date : null;
+  }
+  function bounds(base, direction, length) {
+    const y=base.getFullYear(),m=base.getMonth(),d=base.getDate();
+    if (length === 'month') return [new Date(y,m+direction,1,12),new Date(y,m+direction+1,0,12)];
+    const days=Number(length);
+    return direction < 0 ? [new Date(y,m,d-days,12),new Date(y,m,d-1,12)]
+      : [new Date(y,m,d+1,12),new Date(y,m,d+days,12)];
+  }
+  function renderPeriod() {
+    if (!calendar) return;
+    const base = parseDate($('#shensha-reference').value);
+    if (!base) {
+      setText('#shensha-period-status','Choose a reference date between 1901 and 2100.');
+      $('#shensha-period-results').replaceChildren();
+      return;
+    }
+    const selected = items.some(([id])=>settings[id].enabled);
+    document.querySelectorAll('[data-shensha-period]').forEach(button=>{
+      const [start,end]=bounds(base,Number(button.dataset.direction),button.dataset.shenshaPeriod);
+      button.disabled=end<minDate||start>maxDate;
+      button.setAttribute('aria-pressed',String(Boolean(period && period.direction===Number(button.dataset.direction) && period.length===button.dataset.shenshaPeriod)));
+    });
+    $('#shensha-period-results').replaceChildren();
+    if (!selected) { setText('#shensha-period-status','Select Shensha targets in Settings first.'); return; }
+    if (!period) { setText('#shensha-period-status','Choose a period to list matching dates.'); return; }
+    let [start,end]=bounds(base,period.direction,period.length);
+    start=new Date(Math.max(start,minDate)); end=new Date(Math.min(end,maxDate));
+    const formatter=new Intl.DateTimeFormat(window.DaymarkI18n.locale,{year:'numeric',month:'short',day:'numeric'});
+    let count=0;
+    for(let date=new Date(start);date<=end;date.setDate(date.getDate()+1)) {
+      const pillar=calendar.pillarForDate(date),found=matches(pillar);
+      if(!found.length)continue;
+      count++;
+      const inactive=found.some(([id])=>id==='kongwang');
+      const row=document.createElement('li');row.dataset.date=dateKey(date);
+      const link=document.createElement('a');link.href=`#day=${dateKey(date)}`;
+      link.className='shensha-result-date';link.textContent=`${formatter.format(date)} · ${pillar}`;
+      const target=new Date(date);
+      link.addEventListener('click',event=>{
+        if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+        event.preventDefault();calendar.openDay(target);window.scrollTo(0,0);
+      });
+      const badges=document.createElement('div');badges.className='shensha-matches';
+      appendMatches(badges,pillar,found,inactive);row.append(link,badges);
+      $('#shensha-period-results').append(row);
+    }
+    if(start>end) {setText('#shensha-period-status','No dates in the supported range.');return;}
+    setText('#shensha-period-status',count ? '{start} – {end}: {count} matching dates.' : '{start} – {end}: no matching dates.',
+      {start:formatter.format(start),end:formatter.format(end),count});
+  }
+  $('#shensha-reference').addEventListener('change',renderPeriod);
+  document.querySelectorAll('[data-shensha-period]').forEach(button=>button.addEventListener('click',()=>{
+    period={direction:Number(button.dataset.direction),length:button.dataset.shenshaPeriod};renderPeriod();
+  }));
   function render() {
     if (!dayPillar) return;
     const selected = items.some(([id]) => settings[id].enabled);
     $('#shensha-detail').hidden = !selected;
     const found = matches(dayPillar), inactive = found.some(([id]) => id === 'kongwang');
     $('#shensha-matches').replaceChildren();
-    for (const [id,label,kind] of found) {
-      const badge = document.createElement('span');
-      badge.className = `shensha-badge ${inactive ? 'inactive' : kind}${kind === 'custom' ? ' important' : ''}`;
-      badge.dataset.shensha = id;
-      const rule = settings[id];
-      const value = rule.targets.filter(value => [dayPillar[0],dayPillar[1],dayPillar].includes(value)).join('、');
-      badge.textContent = `${kind === 'custom' ? value : label + ' · ' + t(names[kind])}${inactive ? ' · ' + t('Inactive') : ''}`;
-      $('#shensha-matches').append(badge);
-    }
+    appendMatches($('#shensha-matches'),dayPillar,found,inactive);
     $('#shensha-empty').hidden = Boolean(found.length);
     $('#shensha-inactive').hidden = !inactive;
   }
@@ -145,9 +211,17 @@
     settings = validate(draft);
     try { localStorage.setItem(key,JSON.stringify(settings)); setText('#shensha-status','Matching settings saved. Open any date to calculate.'); }
     catch { setText('#shensha-status','Matching settings apply for this session only; browser storage is unavailable.'); }
-    render();
+    render(); renderPeriod();
   });
-  window.addEventListener('daymark:language',render);
-  window.DaymarkShensha = {show(pillar) { dayPillar = pillar; render(); }};
+  window.addEventListener('daymark:language',()=>{render();renderPeriod();});
+  window.DaymarkShensha = {
+    show(pillar) { dayPillar = pillar; render(); },
+    configure(api) { calendar=api; },
+    context(date,hidden) {
+      $('#shensha-period-panel').hidden=hidden;
+      if(!period)$('#shensha-reference').value=dateKey(date);
+      renderPeriod();
+    }
+  };
   if (loadWarning) setText('#shensha-status','Saved matching settings could not be loaded. Please configure them again.');
 })();

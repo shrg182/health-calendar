@@ -1,6 +1,78 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
 
+  "Shensha encounters": {
+    "zh": "神煞相遇日期",
+    "ru": "Даты совпадений шэнь-ша",
+    "fr": "Dates des correspondances Shen Sha"
+  },
+  "Reference date": {
+    "zh": "参考日期",
+    "ru": "Опорная дата",
+    "fr": "Date de référence"
+  },
+  "Encounter periods": {
+    "zh": "查询时段",
+    "ru": "Периоды поиска",
+    "fr": "Périodes de recherche"
+  },
+  "Previous 10 days": {
+    "zh": "前10天",
+    "ru": "Предыдущие 10 дней",
+    "fr": "10 jours précédents"
+  },
+  "Previous 7 days": {
+    "zh": "前7天",
+    "ru": "Предыдущие 7 дней",
+    "fr": "7 jours précédents"
+  },
+  "Next 7 days": {
+    "zh": "后7天",
+    "ru": "Следующие 7 дней",
+    "fr": "7 jours suivants"
+  },
+  "Next 10 days": {
+    "zh": "后10天",
+    "ru": "Следующие 10 дней",
+    "fr": "10 jours suivants"
+  },
+  "Choose a reference date between 1901 and 2100.": {
+    "zh": "请选择1901至2100年之间的参考日期。",
+    "ru": "Выберите опорную дату с 1901 по 2100 год.",
+    "fr": "Choisissez une date de référence entre 1901 et 2100."
+  },
+  "Select Shensha targets in Settings first.": {
+    "zh": "请先在设置中选择神煞匹配目标。",
+    "ru": "Сначала выберите цели шэнь-ша в настройках.",
+    "fr": "Choisissez d’abord les valeurs Shen Sha dans les réglages."
+  },
+  "Choose a period to list matching dates.": {
+    "zh": "请选择时段以列出匹配日期。",
+    "ru": "Выберите период для списка совпадающих дат.",
+    "fr": "Choisissez une période pour afficher les dates correspondantes."
+  },
+  "No dates in the supported range.": {
+    "zh": "所选时段超出支持的日期范围。",
+    "ru": "Нет дат в поддерживаемом диапазоне.",
+    "fr": "Aucune date dans la plage prise en charge."
+  },
+  "{start} – {end}: {count} matching dates.": {
+    "zh": "{start}至{end}：共{count}个匹配日期。",
+    "ru": "{start} – {end}: совпадающих дат — {count}.",
+    "fr": "Du {start} au {end} : {count} dates correspondantes."
+  },
+  "{start} – {end}: no matching dates.": {
+    "zh": "{start}至{end}：无匹配日期。",
+    "ru": "{start} – {end}: совпадений нет.",
+    "fr": "Du {start} au {end} : aucune date correspondante."
+  },
+  "List Shensha encounters for previous and next weeks, 10 days, and calendar months.": {
+    "zh": "按前后7天、10天及自然月列出神煞相遇日期。",
+    "ru": "Список совпадений шэнь-ша за предыдущие и следующие 7 дней, 10 дней и календарные месяцы.",
+    "fr": "Liste des correspondances Shen Sha pour les 7 jours, 10 jours et mois calendaires précédents ou suivants."
+  }
+,
+
   "This account is already open in another tab in this browser. Close that tab to use this one. Other devices can stay signed in.": {
     "zh": "此账户已在本浏览器的另一个标签页打开。请关闭该标签页后使用此页。其他设备可保持登录。",
     "ru": "Аккаунт уже открыт в другой вкладке этого браузера. Закройте её, чтобы использовать эту. На других устройствах можно оставаться в аккаунте.",

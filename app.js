@@ -200,6 +200,7 @@
     const detailDate = settings || forceCalendar ? null : dateFromKey(activeDateKey || (match ? match[1] : ''));
     $('#calendar-page').hidden = Boolean(detailDate || settings);
     $('#detail-page').hidden = !detailDate;
+    window.DaymarkShensha.context(detailDate || todayDate,Boolean(settings));
     if (settings) {
       render();
       document.title = `${t('Settings')} · Daymark`;
@@ -346,6 +347,7 @@
     updateMonthNames(); updateWeekdays();
     try { renderPage(false); } catch { setText(summary,'Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'); }
   });
+  window.DaymarkShensha.configure({pillarForDate:sexagenaryDay,openDay});
   try { lunarFormatter.format(todayDate); renderPage(); }
   catch (err) { setText(summary,'Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'); daysEl.replaceChildren(); }
 })();
