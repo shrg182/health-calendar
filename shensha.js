@@ -9,6 +9,7 @@
     ['tiande','天德','shen','stem'], ['yuede','月德','shen','stem'],
     ['tianyi','天乙','shen','branch'], ['wenchang','文昌','shen','branch'],
     ['lushen','禄神','shen','branch'], ['yima','驿马','shen','branch'],
+    ['huagai','华盖','shen','branch'], ['jiangxing','将星','shen','branch'],
     ['yangren','羊刃','sha','branch'], ['jiesha','劫煞','sha','branch'],
     ['zaisha','灾煞','sha','branch'], ['yuanchen','元辰','sha','branch'],
     ['kongwang','空亡','sha','branch'], ['kuigang','魁罡','sha','pillar'],
@@ -17,6 +18,14 @@
     ['custom3','③','custom','pillar']
   ];
   const allowed = [...stems,...branches,...pillars];
+  const branchOnly = new Set(['tianyi','lushen','wenchang','yima','huagai','jiangxing','yangren','kongwang','jiesha']);
+  function groupsFor(id) {
+    if (branchOnly.has(id)) return [['Earthly Branches',branches]];
+    if (id === 'tiande' || id === 'yuede') return [['Heavenly Stems',stems],['Earthly Branches',branches]];
+    return [['Heavenly Stems',stems],['Earthly Branches',branches],['Stem-branch pairs',pillars]];
+  }
+  const allowedFor = id => groupsFor(id).flatMap(([,values])=>values);
+  let adjusted = false;
   const names = {shen:'Shen · positive', sha:'Sha · negative', custom:'Custom targets'};
   const empty = () => Object.fromEntries(items.map(([id]) => [id,{enabled:false,targets:[]}]));
   function validate(raw) {
@@ -28,7 +37,9 @@
       if (typeof entry.enabled !== 'boolean' || !Array.isArray(entry.targets)
         || entry.targets.length > allowed.length || entry.targets.some(value => !allowed.includes(value))
         || (entry.enabled && !entry.targets.length)) throw Error('Invalid matching settings.');
-      result[id] = {enabled:entry.enabled,targets:[...new Set(entry.targets)]};
+      const targets = [...new Set(entry.targets)].filter(value=>allowedFor(id).includes(value));
+      if (targets.length !== new Set(entry.targets).size) adjusted = true;
+      result[id] = {enabled:entry.enabled && targets.length > 0,targets};
     }
     return result;
   }
@@ -161,7 +172,7 @@
           chips.append(chip);
         }
       }
-      for (const [title,values] of [['Heavenly Stems',stems],['Earthly Branches',branches],['Stem-branch pairs',pillars]]) {
+      for (const [title,values] of groupsFor(id)) {
         const section = document.createElement('fieldset');
         const heading = document.createElement('legend');setText(heading,title);section.append(heading);
         const options = document.createElement('div'); options.className = 'shensha-option-grid';
@@ -206,7 +217,7 @@
         setText('#shensha-status','Choose at least one target for {name}.',{name:label});
         pickers.get(id).summary.focus(); return;
       }
-      draft[id] = {enabled,targets:targets.filter(value => allowed.includes(value))};
+      draft[id] = {enabled,targets:targets.filter(value => allowedFor(id).includes(value))};
     }
     settings = validate(draft);
     try { localStorage.setItem(key,JSON.stringify(settings)); setText('#shensha-status','Matching settings saved. Open any date to calculate.'); }
@@ -223,5 +234,6 @@
       renderPeriod();
     }
   };
+  if (adjusted) setText('#shensha-status','Unsupported saved targets were removed. Review and save your selections.');
   if (loadWarning) setText('#shensha-status','Saved matching settings could not be loaded. Please configure them again.');
 })();

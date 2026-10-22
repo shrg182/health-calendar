@@ -1,5 +1,15 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Unsupported saved targets were removed. Review and save your selections.": {
+    "zh": "已移除不再支持的已存目标，请检查并保存选择。",
+    "ru": "Неподдерживаемые сохранённые значения удалены. Проверьте и сохраните выбор.",
+    "fr": "Les valeurs enregistrées non prises en charge ont été retirées. Vérifiez et enregistrez vos choix."
+  },
+  "Simplified Shensha target groups, with Huagai and Jiangxing branch pickers.": {
+    "zh": "精简神煞目标分组，新增华盖与将星地支选择。",
+    "ru": "Упрощён выбор целей шэнь-ша, добавлены ветви для Хуагай и Цзянсин.",
+    "fr": "Groupes de valeurs Shen Sha simplifiés, avec sélecteurs de branches pour Huagai et Jiangxing."
+  },
   "Hide password form": {
     "zh": "收起密码修改",
     "ru": "Скрыть форму пароля",
