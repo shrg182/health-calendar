@@ -16,6 +16,7 @@
     ['zaisha','灾煞','sha','branch'], ['yuanchen','元辰','sha','branch'],
     ['kongwang','空亡','sha','branch'], ['kuigang','魁罡','sha','pillar'],
     ['shie','十恶大败','sha','pillar'], ['yinyang','阴阳差错','sha','pillar'],
+    ['tianluodiwang','天罗地网','sha','branch'],
     ['custom1','①','custom','pillar'], ['custom2','②','custom','pillar'],
     ['custom3','③','custom','pillar']
   ];
@@ -24,6 +25,7 @@
   const tenDefeats = ['甲辰','乙巳','丙申','丁亥','戊戌','己丑','庚辰','辛巳','壬申','癸亥'];
   const yinYangMismatch = ['丙子','丁丑','戊寅','辛卯','壬辰','癸巳','丙午','丁未','戊申','辛酉','壬戌','癸亥'];
   function groupsFor(id) {
+    if (id === 'tianluodiwang') return [['Earthly Branches',['戌','亥','辰','巳']]];
     if (id === 'yinyang') return [['Stem-branch pairs',yinYangMismatch]];
     if (id === 'shie') return [['Stem-branch pairs',tenDefeats]];
     if (branchOnly.has(id)) return [['Earthly Branches',branches]];

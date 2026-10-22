@@ -1,5 +1,10 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Add Tianluo Diwang with four specified branch targets.": {
+    "zh": "新增天罗地网，仅提供戌、亥、辰、巳四个地支。",
+    "ru": "Добавлены Небесные сети и Земные силки с четырьмя указанными ветвями.",
+    "fr": "Ajout de Tianluo Diwang avec les quatre branches indiquées."
+  },
   "Add Yin-Yang Mismatch with its twelve specified day pillars.": {
     "zh": "新增阴阳差错，仅提供指定的十二个日柱组合。",
     "ru": "Добавлено Несоответствие Инь-Ян с двенадцатью указанными столпами дня.",
