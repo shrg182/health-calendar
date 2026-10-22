@@ -67,6 +67,17 @@
         </div>
         <div class="note-actions"><button class="today-btn" type="submit">Sign in</button><button class="today-btn" type="button" id="sign-up">Create account</button></div>
       </form>
+      <form id="password-form" hidden>
+        <h3>Change password</h3>
+        <label for="current-password">Current password</label>
+        <input id="current-password" type="password" autocomplete="current-password" required>
+        <label for="new-password">New password</label>
+        <input id="new-password" type="password" autocomplete="new-password" minlength="8" required>
+        <label for="confirm-password">Confirm new password</label>
+        <input id="confirm-password" type="password" autocomplete="new-password" minlength="8" required>
+        <div class="note-actions"><button class="today-btn" id="change-password" type="submit">Change password</button></div>
+        <p id="password-status" role="status"></p>
+      </form>
       <p id="account-status" role="status"></p>
       <div class="note-actions" id="account-actions" hidden><button class="today-btn sign-out-button" id="sign-out">Sign out</button></div>
     </section>
@@ -104,6 +115,16 @@
         </div>
       <p id="preference-status" class="calendar-instruction" role="status"></p>
     </section>
+    <section id="settings-shensha" class="settings-card" tabindex="-1" aria-labelledby="shensha-title">
+      <h2 id="shensha-title">Shensha matching</h2>
+      <p id="shensha-instructions">Select an item and choose one or more matching targets.</p>
+      <p>Settings stay in this browser. A matching Kongwang makes every Shensha match on that date inactive.</p>
+      <form id="shensha-form">
+        <div id="shensha-fields"></div>
+        <button class="today-btn" type="submit">Save &amp; calculate</button>
+        <p id="shensha-status" role="status"></p>
+      </form>
+    </section>
     <section id="settings-app" class="settings-card release-bar" tabindex="-1" aria-label="App version and updates">
       <h2>App</h2>
       <button class="today-btn" id="install-app" type="button">Install app</button>
@@ -120,7 +141,7 @@
     </section>
     <section id="calendar-page">
     <section class="heading" aria-labelledby="page-title">
-      <div class="calendar-heading-content"><div class="heading-row"><h1 id="page-title" tabindex="-1">Calendar</h1><button class="sync-summary" id="calendar-sync" type="button" data-open-settings="account">Local notes</button></div><p class="sub" id="date-summary">Switch between Gregorian and Chinese lunar dates.</p></div>
+      <div class="calendar-heading-content"><div class="heading-row"><h1 id="page-title" tabindex="-1">Calendar</h1><button class="sync-summary" id="calendar-sync" type="button" data-open-settings="account">Local notes</button></div><p class="sub" id="date-summary" data-admin-caption hidden>Switch between Gregorian and Chinese lunar dates.</p></div>
     </section>
     <button id="calendar-update" class="calendar-notice" type="button" data-open-settings="app" hidden>An update is ready. Review update</button>
     <section aria-label="Calendar controls">
@@ -135,7 +156,7 @@
       </div>
 
 
-      <p class="calendar-instruction">Select any date to open its day details.</p>
+      <p class="calendar-instruction" data-admin-caption hidden>Select any date to open its day details.</p>
       <div class="calendar-card" id="calendar-card">
         <div class="weekdays" aria-hidden="true"><div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div></div>
         <div class="days" id="days" aria-label="Monthly calendar"></div>
@@ -155,25 +176,16 @@
           <button class="today-btn" type="submit">Open day</button>
         </form>
       </div>
-      <aside class="hint"><span class="hint-icon" aria-hidden="true">ⓘ</span><span><b>About Chinese dates:</b> Lunar labels use your browser’s Chinese calendar; almanac recommendations are not included.</span></aside>
+      <aside class="hint" data-admin-caption hidden><span class="hint-icon" aria-hidden="true">ⓘ</span><span><b>About Chinese dates:</b> Lunar labels use your browser’s Chinese calendar; almanac recommendations are not included.</span></aside>
     </section>
     </section>
     <section id="detail-page" hidden aria-labelledby="detail-title">
       <button class="detail-back" id="back-to-calendar" type="button">← <span>Back to calendar</span></button>
       <header class="detail-heading">
-        <div class="eyebrow">Day details</div>
+        <div class="eyebrow" data-admin-caption hidden>Day details</div>
         <h1 id="detail-title" tabindex="-1"></h1>
-        <p class="sub" id="detail-subtitle"></p>
+        <p class="sub" id="detail-subtitle" data-admin-caption hidden></p>
       </header>
-      <section class="detail-card note-card" aria-labelledby="note-title">
-        <h2 id="note-title">Daily note</h2>
-        <form id="note-form">
-          <label for="daily-note">Your note for this date</label>
-          <textarea id="daily-note" rows="6" maxlength="20000" placeholder="Write about your day…" disabled></textarea>
-          <div class="note-actions"><button class="today-btn" id="save-note" type="submit" disabled>Save note</button><button class="today-btn" id="delete-note" type="button" disabled>Delete note</button></div>
-          <p id="note-status" role="status">Loading notes…</p>
-        </form>
-      </section>
       <div class="detail-grid">
         <article class="detail-card">
           <div class="detail-label">Gregorian date</div>
@@ -183,18 +195,33 @@
         <article class="detail-card">
           <div class="detail-label">Chinese lunar date</div>
           <div class="detail-value" id="detail-lunar"></div>
-          <p class="detail-note">Traditional lunisolar date</p>
+          <p class="detail-note" data-admin-caption hidden>Traditional lunisolar date</p>
         </article>
       </div>
+      <section class="detail-card note-card" aria-labelledby="note-title">
+        <h2 id="note-title">Daily note</h2>
+        <form id="note-form">
+          <label class="sr-only" for="daily-note">Your note for this date</label>
+          <textarea id="daily-note" rows="6" maxlength="20000" placeholder="Write about your day…" disabled></textarea>
+          <div class="note-actions"><button class="today-btn" id="save-note" type="submit" disabled>Save note</button><button class="today-btn" id="delete-note" type="button" disabled>Delete note</button></div>
+          <p id="note-status" role="status">Loading notes…</p>
+        </form>
+      </section>
       <article class="detail-card pillars-card">
         <h2>Calendar markers</h2>
-        <p class="detail-note">GanZhi combines ten Heavenly Stems and twelve Earthly Branches in a 60-part cycle. Chinese characters are retained; pronunciation is shown alongside them.</p>
+        <p class="detail-note" data-admin-caption hidden>GanZhi combines ten Heavenly Stems and twelve Earthly Branches in a 60-part cycle. Chinese characters are retained; pronunciation is shown alongside them.</p>
         <div class="pillar-list">
           <div class="pillar"><span class="pillar-name">Year · 年</span><strong class="pillar-value" id="detail-year-pillar"></strong></div>
           <div class="pillar"><span class="pillar-name">Month · 月</span><strong class="pillar-value" id="detail-month-pillar"></strong></div>
           <div class="pillar"><span class="pillar-name">Day · 日</span><strong class="pillar-value" id="detail-day-pillar"></strong></div>
         </div>
       </article>
+      <section id="shensha-detail" class="detail-card" hidden aria-labelledby="shensha-detail-title">
+        <h2 id="shensha-detail-title">Shensha matching</h2>
+        <div id="shensha-matches" class="shensha-matches"></div>
+        <p id="shensha-empty">No matches for your selected targets.</p>
+        <p id="shensha-inactive" hidden>Kongwang matched: all Shensha on this date are inactive.</p>
+      </section>
       <aside class="detail-info" id="detail-solar-term"></aside>
     </section>
   </main>
@@ -204,6 +231,7 @@
   <script src="sync-config.js" defer></script>
   <script src="sync.js" defer></script>
   <script src="notes.js" defer></script>
+  <script src="shensha.js" defer></script>
   <script src="app.js" defer></script>
   <script src="install.js" defer></script>
   <script src="updates.js" defer></script>

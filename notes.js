@@ -231,6 +231,9 @@
   function accountUI() {
     if (account) setText('#account-label', 'Signed in as {email}', {email:account.email});
     else setText('#account-label', 'Local notes · this browser only');
+    $('#password-form').hidden = !account;
+    $('#password-form').reset();
+    setText('#password-status', '');
     $('#account-form').hidden = Boolean(account);
     $('#account-actions').hidden = !account;
     $('#sync-actions').hidden = !account;
@@ -254,6 +257,14 @@
     previous.close();
     dbReady = Promise.resolve(nextDB);
     account = user; drafts.clear(); pendingImport = null;
+    // Use the auth response, never user-editable profile metadata.
+    const captionAdmin = user?.app_metadata?.role === 'admin' || Boolean(
+      user?.email_confirmed_at && (window.DAYMARK_SYNC?.captionAdminEmails || [])
+        .some(email => email.toLowerCase() === user.email?.toLowerCase())
+    );
+    document.querySelectorAll('[data-admin-caption]').forEach(element => {
+      element.hidden = !captionAdmin;
+    });
     $('#import-preview').hidden = true;
     setText('#backup-status', '');
     $('#daily-note').value = '';
@@ -288,6 +299,28 @@
     }
     finally { switching = false; accountUI(); showNote(); }
     synchronize();
+  });
+  $('#password-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    if (!account || busy || syncing || switching) return;
+    const password = $('#new-password').value;
+    if (password !== $('#confirm-password').value) {
+      setText('#password-status', 'The new passwords do not match.');
+      return;
+    }
+    switching = true; showNote();
+    $('#change-password').disabled = true;
+    setText('#password-status', 'Changing password…');
+    try {
+      await cloud.changePassword($('#current-password').value, password);
+      setText('#password-status', 'Password changed. Use your new password next time you sign in.');
+    } catch (error) {
+      setText('#password-status', 'Could not change password. {error}', {error:error.message});
+    } finally {
+      $('#password-form').reset();
+      switching = false; showNote();
+      $('#change-password').disabled = false;
+    }
   });
   $('#sign-up').addEventListener('click', async () => {
     if (!canSwitch() || !$('#account-form').reportValidity()) return;

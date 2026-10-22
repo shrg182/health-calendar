@@ -1,5 +1,213 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+
+  "Choose targets": {
+    "zh": "选择目标",
+    "ru": "Выбрать значения",
+    "fr": "Choisir les valeurs"
+  },
+  "Search targets": {
+    "zh": "搜索干支",
+    "ru": "Поиск значений",
+    "fr": "Rechercher des valeurs"
+  },
+  "Remove {value}": {
+    "zh": "移除{value}",
+    "ru": "Удалить {value}",
+    "fr": "Retirer {value}"
+  },
+  "Heavenly Stems": {
+    "zh": "天干",
+    "ru": "Небесные стволы",
+    "fr": "Troncs célestes"
+  },
+  "Earthly Branches": {
+    "zh": "地支",
+    "ru": "Земные ветви",
+    "fr": "Branches terrestres"
+  },
+  "Stem-branch pairs": {
+    "zh": "干支组合",
+    "ru": "Пары ствол–ветвь",
+    "fr": "Paires tronc-branche"
+  },
+  "Choose at least one target for {name}.": {
+    "zh": "请为{name}选择至少一个目标。",
+    "ru": "Выберите хотя бы одно значение для {name}.",
+    "fr": "Choisissez au moins une valeur pour {name}."
+  },
+  "Select an item and choose one or more matching targets.": {
+    "zh": "勾选项目并选择一个或多个匹配目标。",
+    "ru": "Выберите пункт и одно или несколько целевых значений.",
+    "fr": "Cochez un élément et choisissez une ou plusieurs valeurs cibles."
+  },
+  "Searchable Shensha pickers, custom targets, and Kongwang inactive matches.": {
+    "zh": "新增可搜索神煞选择器、自定义目标及空亡不生效规则。",
+    "ru": "Выбор шэнь-ша с поиском, свои значения и неактивные совпадения при Кунван.",
+    "fr": "Sélecteurs Shen Sha avec recherche, valeurs personnalisées et inactivité en cas de Kongwang."
+  },
+  "Simpler date details, admin captions, and account password changes.": {
+    "zh": "简化日期详情、管理员说明及账户密码修改。",
+    "ru": "Упрощённые сведения о дате, пояснения администратора и смена пароля.",
+    "fr": "Détails de date simplifiés, explications administrateur et changement de mot de passe."
+  }
+,
+
+  "Select an item and enter matching targets separated by commas. Stems, branches, and stem-branch pairs are recognized automatically.": {
+    "zh": "勾选项目并输入匹配目标，多个目标用顿号或逗号分隔。自动识别天干、地支及干支组合。",
+    "ru": "Выберите пункт и введите цели через запятую. Стволы, ветви и их пары распознаются автоматически.",
+    "fr": "Cochez un élément et saisissez les cibles séparées par des virgules. Les troncs, branches et paires sont reconnus automatiquement."
+  },
+  "Invalid targets for {name}. Enter valid Heavenly Stems, Earthly Branches, or stem-branch pairs.": {
+    "zh": "{name}的目标值无效，请输入有效的天干、地支或干支组合。",
+    "ru": "Неверные цели для {name}. Введите допустимые стволы, ветви или их пары.",
+    "fr": "Cibles invalides pour {name}. Saisissez des troncs, branches ou paires valides."
+  }
+,
+  "Custom targets": {
+    "zh": "自定义目标",
+    "ru": "Свои значения",
+    "fr": "Valeurs personnalisées"
+  },
+
+  "Shensha matching": {
+    "zh": "神煞匹配",
+    "ru": "Совпадения шэнь-ша",
+    "fr": "Correspondances Shen Sha"
+  },
+  "Shen · positive": {
+    "zh": "神 · 正向",
+    "ru": "Шэнь · положительное",
+    "fr": "Shen · positif"
+  },
+  "Sha · negative": {
+    "zh": "煞 · 负向",
+    "ru": "Ша · отрицательное",
+    "fr": "Sha · négatif"
+  },
+  "Day stem": {
+    "zh": "日干",
+    "ru": "Ствол дня",
+    "fr": "Tronc du jour"
+  },
+  "Day branch": {
+    "zh": "日支",
+    "ru": "Ветвь дня",
+    "fr": "Branche du jour"
+  },
+  "Day pillar": {
+    "zh": "日柱",
+    "ru": "Столп дня",
+    "fr": "Pilier du jour"
+  },
+  "Match against": {
+    "zh": "匹配类型",
+    "ru": "Тип совпадения",
+    "fr": "Type de correspondance"
+  },
+  "Matching targets": {
+    "zh": "匹配目标",
+    "ru": "Целевые значения",
+    "fr": "Valeurs cibles"
+  },
+  "Inactive": {
+    "zh": "不生效",
+    "ru": "Неактивно",
+    "fr": "Inactif"
+  },
+  "Save & calculate": {
+    "zh": "保存并计算",
+    "ru": "Сохранить и рассчитать",
+    "fr": "Enregistrer et calculer"
+  },
+  "Select an item, choose day stem, day branch, or day pillar, and enter matching targets separated by commas. These are matching targets, not birth-chart inputs.": {
+    "zh": "勾选项目，选择日干、日支或日柱，输入匹配目标，多个目标用顿号或逗号分隔。这里填写目标值，不是出生八字。",
+    "ru": "Выберите пункт, ствол, ветвь или столп дня и введите целевые значения через запятую. Это цели сравнения, а не данные карты рождения.",
+    "fr": "Cochez un élément, choisissez le tronc, la branche ou le pilier du jour et saisissez les valeurs cibles séparées par des virgules. Ce ne sont pas les données du thème natal."
+  },
+  "Settings stay in this browser. A matching Kongwang makes every Shensha match on that date inactive.": {
+    "zh": "设置仅保存在此浏览器。逢空亡，当日神煞均不生效。",
+    "ru": "Настройки сохраняются в этом браузере. Совпадение с Кунван делает все шэнь-ша этого дня неактивными.",
+    "fr": "Les réglages restent dans ce navigateur. Une correspondance Kongwang rend tous les Shen Sha de cette date inactifs."
+  },
+  "No matches for your selected targets.": {
+    "zh": "未匹配到所选目标。",
+    "ru": "Нет совпадений с выбранными значениями.",
+    "fr": "Aucune correspondance avec les valeurs choisies."
+  },
+  "Kongwang matched: all Shensha on this date are inactive.": {
+    "zh": "逢空亡，当日神煞均不生效。",
+    "ru": "Совпадение с Кунван: все шэнь-ша этого дня неактивны.",
+    "fr": "Kongwang correspond : tous les Shen Sha de cette date sont inactifs."
+  },
+  "Invalid targets for {name}. Use valid values for the selected match type.": {
+    "zh": "{name}的目标值无效，请输入所选类型的有效干支。",
+    "ru": "Неверные значения для {name}. Используйте допустимые значения выбранного типа.",
+    "fr": "Valeurs invalides pour {name}. Utilisez des valeurs valides pour le type choisi."
+  },
+  "Matching settings saved. Open any date to calculate.": {
+    "zh": "匹配设置已保存，打开任意日期即可计算。",
+    "ru": "Настройки сохранены. Откройте любую дату для расчёта.",
+    "fr": "Réglages enregistrés. Ouvrez une date pour calculer."
+  },
+  "Matching settings apply for this session only; browser storage is unavailable.": {
+    "zh": "浏览器存储不可用，匹配设置仅在本次会话生效。",
+    "ru": "Хранилище браузера недоступно. Настройки действуют только в этом сеансе.",
+    "fr": "Le stockage du navigateur est indisponible. Ces réglages ne valent que pour cette session."
+  },
+  "Saved matching settings could not be loaded. Please configure them again.": {
+    "zh": "无法读取已保存的匹配设置，请重新设置。",
+    "ru": "Не удалось загрузить настройки. Настройте их заново.",
+    "fr": "Impossible de charger les réglages. Veuillez les configurer à nouveau."
+  }
+,
+
+  "Change password": {
+    "zh": "修改密码",
+    "ru": "Изменить пароль",
+    "fr": "Changer le mot de passe"
+  },
+  "Current password": {
+    "zh": "当前密码",
+    "ru": "Текущий пароль",
+    "fr": "Mot de passe actuel"
+  },
+  "New password": {
+    "zh": "新密码",
+    "ru": "Новый пароль",
+    "fr": "Nouveau mot de passe"
+  },
+  "Confirm new password": {
+    "zh": "确认新密码",
+    "ru": "Подтвердите новый пароль",
+    "fr": "Confirmer le nouveau mot de passe"
+  },
+  "The new passwords do not match.": {
+    "zh": "两次输入的新密码不一致。",
+    "ru": "Новые пароли не совпадают.",
+    "fr": "Les nouveaux mots de passe ne correspondent pas."
+  },
+  "Changing password…": {
+    "zh": "正在修改密码……",
+    "ru": "Изменение пароля…",
+    "fr": "Modification du mot de passe…"
+  },
+  "Password changed. Use your new password next time you sign in.": {
+    "zh": "密码已修改。下次登录时请使用新密码。",
+    "ru": "Пароль изменён. При следующем входе используйте новый пароль.",
+    "fr": "Mot de passe modifié. Utilisez le nouveau mot de passe lors de votre prochaine connexion."
+  },
+  "Could not change password. {error}": {
+    "zh": "无法修改密码。{error}",
+    "ru": "Не удалось изменить пароль. {error}",
+    "fr": "Impossible de modifier le mot de passe. {error}"
+  },
+  "Account verification failed. Sign out and sign in again.": {
+    "zh": "账户验证失败。请退出后重新登录。",
+    "ru": "Не удалось подтвердить аккаунт. Выйдите и войдите снова.",
+    "fr": "Échec de la vérification du compte. Déconnectez-vous et reconnectez-vous."
+  }
+,
   "Language": {
     "zh": "语言",
     "ru": "Язык",

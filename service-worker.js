@@ -1,6 +1,6 @@
 importScripts('./release.js');
 const CACHE = `daymark-shell-${self.DAYMARK_RELEASE.version}`;
-const ASSETS = ['./', './index.html', './styles.css', './app.js', './translations.js', './i18n.js', './notes.js', './sync.js', './sync-config.js', './install.js', './release.js', './updates.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
+const ASSETS = ['./', './index.html', './styles.css', './app.js', './shensha.js', './translations.js', './i18n.js', './notes.js', './sync.js', './sync-config.js', './install.js', './release.js', './updates.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
 });

@@ -177,6 +177,7 @@
     $('#detail-year-pillar').textContent = marker(pillars.year);
     $('#detail-month-pillar').textContent = marker(pillars.month);
     $('#detail-day-pillar').textContent = marker(sexagenaryDay(date));
+    window.DaymarkShensha.show(sexagenaryDay(date));
     const nearbyTerms = [];
     for (let year=date.getFullYear()-1; year<=date.getFullYear()+1; year++) nearbyTerms.push(...termsForYear(year));
     const termOnDate = nearbyTerms.find(term => dateKey(new Date(term.instant)) === dateKey(date));
@@ -192,7 +193,7 @@
     if (focus) $('#detail-title').focus();
   }
   function renderPage(focusDetails = true) {
-    const settings = location.hash.match(/^#settings(?:-(account|sync|display|app))?$/);
+    const settings = location.hash.match(/^#settings(?:-(account|sync|display|shensha|app))?$/);
     $('#settings-page').hidden = !settings;
     $('#open-settings').setAttribute('aria-expanded', String(Boolean(settings)));
     const match = location.hash.match(/^#day=(\d{4}-\d{2}-\d{2})$/);

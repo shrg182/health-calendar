@@ -152,3 +152,19 @@ The main screen starts with a calendar icon, language selector, and Settings gea
 Settings (`#settings`) is a separate view within the same document, so navigation keeps account sessions and note drafts. It groups Account, Sync & backups, Calendar display, and App controls. The display selector and version/update controls live there. Sync errors and downloaded updates link from the calendar directly to `#settings-sync` or `#settings-app`. Signed-out local status links to `#settings-account`. Sign-in errors and sign-up results appear beside the account form.
 
 Use the Back to calendar button or calendar icon to return to the month grid; browser Back can return to an open day. Direct Settings URLs work on static hosting and offline. Validate with `tests/settings.cjs` (Chrome or WebKit), plus the account, language, offline, navigation, and update regression checks.
+
+## Explanatory captions
+
+Regular users see compact calendar and date details. Daily notes follow the Gregorian/lunar date cards. Explanatory captions appear after signing in with the confirmed email `ruixing.shi@yahoo.com`, configured in `sync-config.js`, or with Supabase `app_metadata.role` set to `admin` by an auth administrator. User-editable `user_metadata` does not grant this role. Sign out to hide the captions again. These captions are public interface text, not confidential data; this visibility rule is not a data-access boundary. Essential field labels, storage/sync notices, and solar-term estimate information remain available to everyone.
+
+Signed-in users can change their password in **Settings → Account → Change password**. Enter the current password and the new password twice (at least eight characters; the server may enforce a stronger policy). The current password is verified before the authenticated password update. Password fields are cleared after the request, and note drafts remain intact. This setting requires an online connection.
+
+## Manual Shensha matching (starter)
+
+Open **Settings → Shensha matching** (`#settings-shensha`). Check any of the 13 first-batch items, open **Choose targets**, and select one or more values from the searchable 天干、地支、干支组合 groups. Remove selections with their chip’s × button. For example, enable 魁罡 with day-pillar target `庚辰`, and 十恶大败 with `庚辰、戊戌`. Choose **Save & calculate**, then open any date. Matches calculate dynamically from that date’s day pillar; no period generation is needed.
+
+These are user-specified matching targets, not birth-chart inputs or automatic traditional rule lookups. Nothing is enabled by default. 神 matches appear green and 煞 red, with text labels. If enabled 空亡 matches, all matched items including 空亡 remain listed in gray as inactive, with one explanation. No combined Sha count is displayed. Settings stay in this browser, apply across local/account modes, and are not included in note backups or cloud synchronization.
+
+Run `tests/shensha.cjs` with the same Playwright setup as other browser tests.
+
+Three unnamed custom target slots (①–③) are also available. Select stems, branches, or full pillars from the same picker. Enabled custom target chips and their matching values in date details appear in bold. Custom matches use a neutral color, carry no invented Shen/Sha name, and become inactive gray when Kongwang matches. Existing saved settings retain their original rules; custom slots start disabled.

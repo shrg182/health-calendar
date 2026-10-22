@@ -162,8 +162,8 @@ dialog h2 { margin-top:0 }
 @media(max-width:350px) { .brand { font-size:13px; gap:6px } #install-app { padding:0 8px; font-size:12px } }
 .account-panel { padding:16px; border:1px solid var(--line); border-radius:12px }
 .account-panel h2 { margin:0; font-size:18px }
-#account-form label { display:block; margin:10px 0 5px }
-#account-form input { display:block; width:100%; max-width:360px; min-height:44px; font:inherit; font-size:16px; padding:8px; border:1px solid #bac9bf; border-radius:6px }
+#account-form label, #password-form label { display:block; margin:10px 0 5px }
+#account-form input, #password-form input { display:block; width:100%; max-width:360px; min-height:44px; font:inherit; font-size:16px; padding:8px; border:1px solid #bac9bf; border-radius:6px }
 .password-field { display:flex; flex-wrap:wrap; align-items:center; gap:8px; max-width:500px }
 #account-form .password-field input { flex:1 1 160px; min-width:0 }
 #toggle-password { min-height:44px; height:auto }
@@ -242,3 +242,33 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
 #account-status:empty { display:none }
 #settings-back { position:sticky; top:max(8px,env(safe-area-inset-top)); z-index:3; box-shadow:0 2px 10px #20372a0a }
 .settings-card { scroll-margin-top:76px }
+
+/* Manual daily Shensha target matching. */
+#shensha-fields fieldset { min-width:0; margin:16px 0; border:1px solid var(--line); border-radius:10px; padding:12px }
+#shensha-fields legend { font-weight:700; padding:0 6px }
+.shensha-row { display:grid; grid-template-columns:minmax(115px,1fr) minmax(150px,2fr); gap:10px; align-items:center; margin:10px 0 }
+.shensha-row > label:first-child { display:flex; gap:8px; align-items:center; min-height:44px }
+.shensha-row input[type=checkbox] { width:20px; height:20px; flex:none }
+.shensha-row input[type=text] { min-width:0; width:100%; min-height:44px; font:inherit; font-size:16px; padding:8px; border:1px solid #bac9bf; border-radius:6px; box-sizing:border-box }
+.shensha-matches { display:flex; flex-wrap:wrap; gap:8px }
+.shensha-badge { border:1px solid currentColor; border-radius:8px; padding:6px 10px }
+.shensha-badge.shen { color:#236043; background:#eef8f0 }
+.shensha-badge.sha { color:#a12626; background:#fff0f0 }
+.shensha-badge.inactive { color:#606862; background:#f0f2f0 }
+#shensha-detail { margin-bottom:14px }
+@media(max-width:600px) { .shensha-row { grid-template-columns:1fr 1fr; padding-bottom:12px; border-bottom:1px solid var(--line) }.shensha-row input[type=text] { grid-column:1 / -1 } }
+
+.shensha-badge.custom { color:var(--ink); background:var(--paper) }
+.shensha-badge.important, .shensha-row.important input[type=text], .shensha-row.important > label:first-child { font-weight:700 }
+
+.shensha-picker { min-width:0 }
+.shensha-picker summary { min-height:44px; padding:10px; border:1px solid #bac9bf; border-radius:6px; cursor:pointer }
+.shensha-picker summary[aria-disabled=true] { opacity:.5; cursor:default }
+.shensha-options { padding:10px; border:1px solid var(--line); border-radius:6px; max-height:350px; overflow:auto; margin-top:6px }
+.shensha-options input[type=search] { width:100%; min-height:44px; font:inherit; font-size:16px; padding:8px; border:1px solid #bac9bf; border-radius:6px }
+.shensha-option-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(72px,1fr)); gap:4px }
+.shensha-option-grid label { display:flex; align-items:center; gap:6px; min-height:44px; cursor:pointer }
+.shensha-chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:6px }
+.shensha-chip { padding:8px; min-height:44px; background:var(--paper); border:1px solid var(--line); border-radius:8px; font:inherit }
+.shensha-row.important .shensha-chip { font-weight:700 }
+@media(max-width:600px) { .shensha-row { grid-template-columns:1fr }.shensha-options { max-height:300px } }

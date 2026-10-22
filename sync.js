@@ -13,7 +13,7 @@
   }
   let session = null;
   let refreshing = null;
-  async function request(path, body, authenticated = true) {
+  async function request(path, body, authenticated = true, method = 'POST') {
     if (authenticated && !session) throw Error('Sign in to synchronize.');
     if (authenticated && Date.now() >= session.expires_at * 1000 - 60000) {
       refreshing ||= request('/auth/v1/token?grant_type=refresh_token', { refresh_token:session.refresh_token }, false)
@@ -22,7 +22,7 @@
       await refreshing;
     }
     const response = await fetch(config.url.replace(/\/$/, '') + path, {
-      method:'POST', headers:{ apikey:config.publishableKey, 'Content-Type':'application/json',
+      method, headers:{ apikey:config.publishableKey, 'Content-Type':'application/json',
         ...(authenticated ? { Authorization:`Bearer ${session.access_token}` } : {}) },
       body:JSON.stringify(body), signal:AbortSignal.timeout(20000)
     });
@@ -41,6 +41,16 @@
     async signUp(email, password) {
       await request('/auth/v1/signup', { email, password }, false);
       return 'Check your email to confirm your account, then sign in. If already registered, sign in.';
+    },
+    async changePassword(currentPassword, password) {
+      if (!session) throw Error('Sign in to synchronize.');
+      const id = session.user.id;
+      const data = await request('/auth/v1/token?grant_type=password', {
+        email:session.user.email, password:currentPassword
+      }, false);
+      if (data.user.id !== id) throw Error('Account verification failed. Sign out and sign in again.');
+      session = { ...data, expires_at:Math.floor(Date.now()/1000) + data.expires_in };
+      await request('/auth/v1/user', {password, current_password:currentPassword}, true, 'PUT');
     },
     async signOut() {
       try { await request('/auth/v1/logout?scope=local', {}); } finally { session = null; }

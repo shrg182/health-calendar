@@ -21,6 +21,7 @@ jobs:
       - name: Check JavaScript
         run: |
           node --check app.js
+          node --check shensha.js
           node --check i18n.js
           node --check translations.js
           node --check notes.js
@@ -35,7 +36,7 @@ jobs:
       - name: Prepare website
         run: |
           mkdir _site
-          cp index.html styles.css app.js translations.js i18n.js notes.js sync.js sync-config.js install.js release.js updates.js service-worker.js manifest.webmanifest _site/
+          cp index.html styles.css app.js shensha.js translations.js i18n.js notes.js sync.js sync-config.js install.js release.js updates.js service-worker.js manifest.webmanifest _site/
           cp -R icons _site/
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5
