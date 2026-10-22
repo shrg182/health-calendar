@@ -15,6 +15,8 @@ const assert=require('node:assert/strict');
  for(const id of ['zaisha','yuanchen','kuigang','custom1','custom2','custom3'])assert.equal(await page.locator(`#shensha-picker-${id} input[type=checkbox]`).count(),82);
  const ten=['甲辰','乙巳','丙申','丁亥','戊戌','己丑','庚辰','辛巳','壬申','癸亥'];
  assert.deepEqual(await page.locator('#shensha-picker-shie input[type=checkbox]').evaluateAll(options=>options.map(option=>option.value)),ten);
+ const mismatch=['丙子','丁丑','戊寅','辛卯','壬辰','癸巳','丙午','丁未','戊申','辛酉','壬戌','癸亥'];
+ assert.deepEqual(await page.locator('#shensha-picker-yinyang input[type=checkbox]').evaluateAll(options=>options.map(option=>option.value)),mismatch);
  await page.evaluate(()=>localStorage.setItem('daymark.shensha.v1',JSON.stringify({
   tiande:{enabled:true,targets:['甲','子','甲子']},tianyi:{enabled:true,targets:['甲','子','甲子']},
   kongwang:{enabled:true,targets:['甲子']},custom1:{enabled:true,targets:['庚辰']},shie:{enabled:true,targets:['甲','子','甲子','庚辰']}
@@ -34,5 +36,14 @@ const assert=require('node:assert/strict');
  assert.equal(await page.locator('#detail-day-pillar').innerText().then(s=>s.slice(0,2)),'戊辰');
  for(const id of ['jinyu','tianyi-medical','taohua'])assert(await page.locator(`[data-shensha=${id}].shen`).isVisible());
  assert(await page.locator('[data-shensha=huagai]').isVisible());assert(await page.locator('[data-shensha=jiangxing]').isVisible());
+ await page.goto('http://127.0.0.1:8769/#settings-shensha');
+ await page.locator('#shensha-yinyang').check();await page.locator('#shensha-picker-yinyang summary').click();
+ await page.locator('#shensha-picker-yinyang input[value="戊申"]').check();await page.locator('#shensha-form button[type=submit]').click();
+ await page.reload();assert(await page.locator('#shensha-picker-yinyang input[value="戊申"]').isChecked());
+ await page.evaluate(()=>location.hash='day=2026-10-01'); // 戊申
+ assert(await page.locator('[data-shensha=yinyang].sha').isVisible());
+ await page.locator('#open-settings').click();await page.locator('#shensha-kongwang').check();await page.locator('#shensha-picker-kongwang summary').click();
+ await page.locator('#shensha-picker-kongwang input[value="申"]').check();await page.locator('#shensha-form button[type=submit]').click();await page.goBack();
+ assert(await page.locator('[data-shensha=yinyang].inactive').isVisible());
  console.log('Passed: per-item group restrictions, five added branch pickers, legacy-target migration, saved selections, Huagai/Jiangxing/Jinyu/Tianyi/Taohua daily matches.');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

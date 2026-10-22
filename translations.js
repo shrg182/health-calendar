@@ -1,5 +1,10 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Add Yin-Yang Mismatch with its twelve specified day pillars.": {
+    "zh": "新增阴阳差错，仅提供指定的十二个日柱组合。",
+    "ru": "Добавлено Несоответствие Инь-Ян с двенадцатью указанными столпами дня.",
+    "fr": "Ajout du Désaccord Yin-Yang avec les douze piliers du jour indiqués."
+  },
   "Limit Ten Defeats targets to the ten specified day pillars.": {
     "zh": "十恶大败仅保留指定的十个日柱组合。",
     "ru": "Для Десяти поражений оставлены только десять указанных столпов дня.",
