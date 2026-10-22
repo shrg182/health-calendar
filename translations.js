@@ -1,5 +1,10 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Click the selected encounter period again to close its list.": {
+    "zh": "再次点击已选时段按钮即可收起相遇日期列表。",
+    "ru": "Нажмите выбранный период ещё раз, чтобы закрыть список совпадений.",
+    "fr": "Cliquez à nouveau sur la période sélectionnée pour fermer la liste."
+  },
   "Add Tianluo Diwang with four specified branch targets.": {
     "zh": "新增天罗地网，仅提供戌、亥、辰、巳四个地支。",
     "ru": "Добавлены Небесные сети и Земные силки с четырьмя указанными ветвями.",

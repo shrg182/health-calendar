@@ -91,6 +91,7 @@
   }
   function renderPeriod() {
     if (!calendar) return;
+    $('#shensha-period-results').hidden = !period;
     const base = parseDate($('#shensha-reference').value);
     if (!base) {
       setText('#shensha-period-status','Choose a reference date between 1901 and 2100.');
@@ -101,7 +102,10 @@
     document.querySelectorAll('[data-shensha-period]').forEach(button=>{
       const [start,end]=bounds(base,Number(button.dataset.direction),button.dataset.shenshaPeriod);
       button.disabled=end<minDate||start>maxDate;
-      button.setAttribute('aria-pressed',String(Boolean(period && period.direction===Number(button.dataset.direction) && period.length===button.dataset.shenshaPeriod)));
+      const active = Boolean(period && period.direction===Number(button.dataset.direction) && period.length===button.dataset.shenshaPeriod);
+      button.setAttribute('aria-pressed',String(active));
+      button.setAttribute('aria-expanded',String(active));
+      button.setAttribute('aria-controls','shensha-period-results');
     });
     $('#shensha-period-results').replaceChildren();
     if (!selected) { setText('#shensha-period-status','Select Shensha targets in Settings first.'); return; }
@@ -133,7 +137,9 @@
   }
   $('#shensha-reference').addEventListener('change',renderPeriod);
   document.querySelectorAll('[data-shensha-period]').forEach(button=>button.addEventListener('click',()=>{
-    period={direction:Number(button.dataset.direction),length:button.dataset.shenshaPeriod};renderPeriod();
+    const direction=Number(button.dataset.direction),length=button.dataset.shenshaPeriod;
+    period=period && period.direction===direction && period.length===length ? null : {direction,length};
+    renderPeriod();
   }));
   function render() {
     if (!dayPillar) return;

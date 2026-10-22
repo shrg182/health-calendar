@@ -13,11 +13,17 @@ const assert=require('node:assert/strict');
  const dates=()=>page.locator('#shensha-period-results li').evaluateAll(rows=>rows.map(row=>row.dataset.date));
  async function run(ref,direction,length,first,last,count){
   await page.locator('#shensha-reference').fill(ref);await page.locator('#shensha-reference').dispatchEvent('change');
-  await page.locator(`[data-direction="${direction}"][data-shensha-period="${length}"]`).click();
+  const button=page.locator(`[data-direction="${direction}"][data-shensha-period="${length}"]`);
+  if(await button.getAttribute('aria-pressed')!=='true')await button.click();
   const actual=await dates();assert.equal(actual.length,count);assert.equal(actual[0],first);assert.equal(actual.at(-1),last);
   assert(!actual.includes(ref));return actual;
  }
  await run('2028-03-15',-1,'month','2028-02-01','2028-02-29',29);
+ const active=page.locator('[data-direction="-1"][data-shensha-period="month"]');
+ assert.equal(await active.getAttribute('aria-expanded'),'true');await active.click();
+ assert(await page.locator('#shensha-period-results').isHidden());assert.equal((await dates()).length,0);
+ assert.equal(await active.getAttribute('aria-pressed'),'false');assert.equal(await active.getAttribute('aria-expanded'),'false');
+ await active.click();assert.equal((await dates()).length,29);assert(await page.locator('#shensha-period-results').isVisible());
  await run('2028-01-15',-1,'month','2027-12-01','2027-12-31',31);
  await run('2028-01-31',1,'month','2028-02-01','2028-02-29',29);
  await run('2028-12-15',1,'month','2029-01-01','2029-01-31',31);
