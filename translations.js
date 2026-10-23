@@ -1,5 +1,8 @@
 // English source messages with complete Chinese, Japanese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Selected day": {"zh":"所选日期","ja":"選択した日","ru":"Выбранный день","fr":"Jour sélectionné"},
+  "Show the selected day by default and simplify period options.": {"zh":"默认显示所选日期，并简化时段选项。","ja":"選択した日を初期表示し、期間の選択肢を整理しました。","ru":"По умолчанию показывается выбранный день; список периодов упрощён.","fr":"Affichage du jour sélectionné par défaut et simplification des périodes."},
+
   "Japanese interface, localized dates, and Japanese GanZhi readings.": {"zh":"新增日语界面、本地化日期和干支日语读音。","ru":"Японский интерфейс, локализованные даты и японское чтение стволов и ветвей.","fr":"Interface japonaise, dates localisées et lectures japonaises des troncs et branches.","ja":"日本語の画面・日付表示と干支の読み方に対応しました。"},
 
   "Refresh versioned assets to keep Shensha controls working after updates.": {

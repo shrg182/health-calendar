@@ -9,7 +9,7 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Daymark">
-  <link rel="stylesheet" href="styles.css?v=0.1.0-dev.29">
+  <link rel="stylesheet" href="styles.css?v=0.1.0-dev.30">
 </head>
 <body>
   <main class="shell">
@@ -231,13 +231,11 @@
       <h2 id="shensha-period-title">Shensha of the day</h2>
       <label class="sr-only" for="shensha-period">Period</label>
       <select id="shensha-period" aria-controls="shensha-custom-range shensha-period-results">
-        <option value="">Choose a period</option>
-        <option value="today">Today</option>
+        <option value="" hidden>Choose a period</option>
+        <option value="day" selected>Selected day</option>
         <option value="-1:month">Previous month</option>
         <option value="-1:10">Previous 10 days</option>
         <option value="-1:7">Previous 7 days</option>
-        <option value="-1:3">Previous 3 days</option>
-        <option value="1:3">Next 3 days</option>
         <option value="1:7">Next 7 days</option>
         <option value="1:10">Next 10 days</option>
         <option value="1:month">Next month</option>
@@ -267,15 +265,15 @@
       <div id="shensha-period-results"></div>
     </section>
   </main>
-  <script src="release.js?v=0.1.0-dev.29" defer></script>
-  <script src="translations.js?v=0.1.0-dev.29" defer></script>
-  <script src="i18n.js?v=0.1.0-dev.29" defer></script>
-  <script src="sync-config.js?v=0.1.0-dev.29" defer></script>
-  <script src="sync.js?v=0.1.0-dev.29" defer></script>
-  <script src="shensha.js?v=0.1.0-dev.29" defer></script>
-  <script src="notes.js?v=0.1.0-dev.29" defer></script>
-  <script src="app.js?v=0.1.0-dev.29" defer></script>
-  <script src="install.js?v=0.1.0-dev.29" defer></script>
-  <script src="updates.js?v=0.1.0-dev.29" defer></script>
+  <script src="release.js?v=0.1.0-dev.30" defer></script>
+  <script src="translations.js?v=0.1.0-dev.30" defer></script>
+  <script src="i18n.js?v=0.1.0-dev.30" defer></script>
+  <script src="sync-config.js?v=0.1.0-dev.30" defer></script>
+  <script src="sync.js?v=0.1.0-dev.30" defer></script>
+  <script src="shensha.js?v=0.1.0-dev.30" defer></script>
+  <script src="notes.js?v=0.1.0-dev.30" defer></script>
+  <script src="app.js?v=0.1.0-dev.30" defer></script>
+  <script src="install.js?v=0.1.0-dev.30" defer></script>
+  <script src="updates.js?v=0.1.0-dev.30" defer></script>
 </body>
 </html>

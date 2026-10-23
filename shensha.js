@@ -179,7 +179,7 @@
       container.append(badge);
     }
   }
-  let calendar = null, period = null;
+  let calendar = null, period = {direction:0,length:"day"};
   const minDate = new Date(1901,0,1,12), maxDate = new Date(2100,11,31,12);
   function dateKey(date) {
     return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
@@ -190,7 +190,7 @@
     return dateKey(date) === value && date >= minDate && date <= maxDate ? date : null;
   }
   function bounds(base, direction, length) {
-    if(length==='today')return [new Date(base),new Date(base)];
+    if(length==='day')return [new Date(base),new Date(base)];
     const y=base.getFullYear(),m=base.getMonth(),d=base.getDate();
     if (length === 'month') return [new Date(y,m+direction,1,12),new Date(y,m+direction+1,0,12)];
     const days=Number(length);
@@ -345,8 +345,7 @@
     $('#shensha-custom-range').hidden=value!=='custom';
     resultPage=0;
     if(value==='custom' || !value){period=null;renderPeriod();return;}
-    const [direction,length]=value==='today' ? ['0','today'] : value.split(':');
-    if(value==='today')calendar.openDay(new Date());
+    const [direction,length]=value==='day' ? ['0','day'] : value.split(':');
     period={direction:Number(direction),length};
     const base=referenceDate;
     if(base)fillRange(...bounds(base,period.direction,length));
