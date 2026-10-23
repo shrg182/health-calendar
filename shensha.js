@@ -98,7 +98,7 @@
       picker.options.forEach((option,value)=>{option.checked=picker.selected.has(value);});
       picker.updateEnabled();
     }
-    render();renderPeriod();importVisibility();
+    render();renderPeriod();importVisibility();window.dispatchEvent(new Event('daymark:shensha-changed'));
   }
   function setAccount(user) {
     const previous=accountId;
@@ -213,6 +213,30 @@
     const hours=context.hours.map(slot=>({...slot,found:matches(slot.pillar).filter(([id])=>repeated.has(id)),counts:Object.fromEntries(items.map(([id])=>[id,counts[id]+1]))}));
     const baseVoid=['year','month','day'].some(scope=>hasVoid(groups[scope].found));
     return {groups,hours,wholeDayVoid:baseVoid,state:baseVoid ? 'inactive' : 'active'};
+  }
+  function appendCalendarCell(cell,date) {
+    if(!calendar || !items.some(([id])=>settings[id].enabled))return;
+    const data=encounterData(date);
+    const found=items.filter(([id])=>Object.values(data.groups).some(group=>group.found.some(([matchId])=>matchId===id)));
+    if(!found.length)return;
+    const list=document.createElement('div');list.className='calendar-shensha';
+    const descriptions=[];
+    for(const item of found) {
+      const group=Object.values(data.groups).find(group=>group.found.some(([id])=>id===item[0]));
+      const holder=document.createElement('div');appendMatches(holder,group.pillar,[item],data.wholeDayVoid,group.counts);
+      const badge=holder.firstElementChild;descriptions.push(badge.textContent);
+      if(list.children.length<2) {
+        const name=document.createElement('span');name.className='calendar-shensha-name';
+        name.textContent=item[2]==='custom' ? badge.textContent : itemName(item[0],item[1]);
+        const strength=document.createElement('span');strength.className='calendar-shensha-strength';
+        strength.textContent=item[2]==='custom' || group.counts[item[0]]<2 ? '' : (item[2]==='shen'?'+':'-').repeat(group.counts[item[0]]);
+        badge.title=badge.textContent;badge.replaceChildren(name,strength);list.append(badge);
+      }
+    }
+    if(found.length>2){const more=document.createElement('span');more.className='calendar-shensha-more';more.textContent=t('{count} more',{count:found.length-2});list.append(more);}
+    cell.append(list);cell.classList.add('has-shensha');
+    const description=descriptions.join('; ');cell.title=description;
+    cell.setAttribute('aria-label',cell.getAttribute('aria-label')+'; '+description);
   }
   function dateFormatter() {return new Intl.DateTimeFormat(window.DaymarkI18n.locale,{year:'numeric',month:'short',day:'numeric'});}
   function appendPillarGroup(root,scope,group,inactive,formatter,empty=true) {
@@ -434,7 +458,7 @@
     } catch {
       setText('#shensha-status',accountId ? 'Could not save Shensha selections. Try again.' : 'Matching settings apply for this session only; browser storage is unavailable.');
     }
-    render(); renderPeriod();importVisibility();
+    render(); renderPeriod();importVisibility();window.dispatchEvent(new Event('daymark:shensha-changed'));
     if(accountId)window.dispatchEvent(new Event('daymark:shensha-save'));
   });
   window.addEventListener('daymark:language',()=>{
@@ -446,7 +470,7 @@
     render();renderPeriod();
   });
   window.DaymarkShensha = {
-    setAccount, sync:syncSelections,
+    setAccount, sync:syncSelections, appendCalendarCell,
     get pending() {return Boolean(accountId && pending);},
     get dirty() {return dirty;},
     get busy() {return syncRunning;},

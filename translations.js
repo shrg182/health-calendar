@@ -102,6 +102,8 @@ window.DAYMARK_TRANSLATIONS = {
   "Choose valid start and end dates, with the end on or after the start.": {"zh": "请选择有效的起止日期，结束日期不得早于开始日期。", "ru": "Выберите допустимые даты: конечная дата не должна быть раньше начальной.", "fr": "Choisissez des dates valides, la fin ne devant pas précéder le début."},
   "Displayed dates: {start} – {end}; {count} matching dates.": {"zh": "当前显示：{start} – {end}；{count}个相遇日期。", "ru": "Показаны даты: {start} – {end}; совпадений по датам: {count}.", "fr": "Dates affichées : {start} – {end} ; {count} dates avec rencontres."},
   "Date range search and mobile-friendly Shensha calendar cards.": {"zh": "日期范围查询与适合手机的神煞日历卡片。", "ru": "Поиск по диапазону дат и удобные для телефона карточки календаря шэньша.", "fr": "Recherche par période et cartes de calendrier Shensha adaptées aux mobiles."},
+  "{count} more": {"zh":"另{count}项","ru":"Ещё {count}","fr":"{count} de plus"},
+  "Shensha encounter previews in calendar day cells.": {"zh":"月历日期格显示神煞相遇预览。","ru":"Предпросмотр совпадений шэньша в ячейках календаря.","fr":"Aperçu des rencontres Shensha dans les cases du calendrier."},
   "Heavenly Virtue": {
     "zh": "天德",
     "ru": "Небесная добродетель",
