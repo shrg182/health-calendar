@@ -269,7 +269,7 @@
     }
     root.append(details);
   }
-  let resultPage=0;
+  let resultPage=0, referenceDate=null;
   try {if(localStorage.getItem('daymark.shensha.display.v1')==='cards')$('#shensha-display').value='cards';} catch {}
   $('#shensha-display').addEventListener('change',()=>{
     try {localStorage.setItem('daymark.shensha.display.v1',$('#shensha-display').value);} catch {}
@@ -287,7 +287,7 @@
     if(!calendar)return;
     const root=$('#shensha-period-results');root.hidden=!period;root.replaceChildren();
     $('#shensha-close').hidden=!period;$('#shensha-result-pages').hidden=true;
-    const base=parseDate($('#shensha-reference').value);
+    const base=referenceDate;
     if(!items.some(([id])=>settings[id].enabled)){setText('#shensha-period-status','Select Shensha targets in Settings first.');return;}
     if(!period){setText('#shensha-period-status','Choose a period to list matching dates.');return;}
     if(!period.custom && !base){setText('#shensha-period-status','Choose a reference date between 1901 and 2100.');return;}
@@ -340,21 +340,15 @@
   $('#shensha-close').addEventListener('click',()=>{period=null;$('#shensha-period').value='';$('#shensha-custom-range').hidden=true;resultPage=0;renderPeriod();});
   $('#shensha-page-prev').addEventListener('click',()=>{resultPage=Math.max(0,resultPage-1);renderPeriod();});
   $('#shensha-page-next').addEventListener('click',()=>{resultPage++;renderPeriod();});
-  $('#shensha-reference').addEventListener('change',()=>{
-    resultPage=0;
-    const base=parseDate($('#shensha-reference').value);
-    if(period && !period.custom && base)fillRange(...bounds(base,period.direction,period.length));
-    renderPeriod();
-  });
   $('#shensha-period').addEventListener('change',()=>{
     const value=$('#shensha-period').value;
     $('#shensha-custom-range').hidden=value!=='custom';
     resultPage=0;
     if(value==='custom' || !value){period=null;renderPeriod();return;}
     const [direction,length]=value==='today' ? ['0','today'] : value.split(':');
-    if(value==='today')$('#shensha-reference').value=dateKey(new Date());
+    if(value==='today')calendar.openDay(new Date());
     period={direction:Number(direction),length};
-    const base=parseDate($('#shensha-reference').value);
+    const base=referenceDate;
     if(base)fillRange(...bounds(base,period.direction,length));
     renderPeriod();
   });
@@ -475,7 +469,10 @@
     configure(api) { calendar=api; },
     context(date,hidden) {
       $('#shensha-period-panel').hidden=hidden;
-      if(!period){$('#shensha-reference').value=dateKey(date);fillRange(date,date);}
+      if(!referenceDate || dateKey(referenceDate)!==dateKey(date))resultPage=0;
+      referenceDate=new Date(date);
+      if(period && !period.custom)fillRange(...bounds(referenceDate,period.direction,period.length));
+      else if(!period && $('#shensha-period').value!=='custom')fillRange(date,date);
       renderPeriod();
     }
   };

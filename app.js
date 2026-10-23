@@ -6,6 +6,7 @@
   const monthTitle = $('#month-title');
   const summary = $('#date-summary');
   const todayDate = new Date();
+  let selectedCalendarDate = new Date(todayDate);
   let shown = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
   const MIN_YEAR = 1901;
   const MAX_YEAR = 2100;
@@ -231,7 +232,9 @@
     const detailDate = settings || forceCalendar ? null : dateFromKey(activeDateKey || (match ? match[1] : ''));
     $('#calendar-page').hidden = Boolean(detailDate || settings);
     $('#detail-page').hidden = !detailDate;
-    window.DaymarkShensha.context(detailDate || todayDate,Boolean(settings));
+    if(detailDate)selectedCalendarDate=new Date(detailDate);
+    $('#find-date').value=dateKey(selectedCalendarDate);
+    window.DaymarkShensha.context(selectedCalendarDate,Boolean(settings));
     if (settings) {
       render();
       document.title = `${t('Settings')} · Daymark`;
@@ -313,6 +316,12 @@
     shown = new Date(Number($('#jump-year').value), Number($('#jump-month').value), 1);
     render();
   });
+  $('#find-date').addEventListener('change',()=>{
+    const date=dateFromKey($('#find-date').value);
+    if(!date)return;
+    selectedCalendarDate=new Date(date);
+    window.DaymarkShensha.context(selectedCalendarDate,false);
+  });
   $('#date-form').addEventListener('submit', event => {
     event.preventDefault();
     if (!event.currentTarget.reportValidity()) return;
@@ -323,7 +332,7 @@
   });
   $('#prev').addEventListener('click', () => { shown = new Date(shown.getFullYear(), shown.getMonth()-1, 1); render(); });
   $('#next').addEventListener('click', () => { shown = new Date(shown.getFullYear(), shown.getMonth()+1, 1); render(); });
-  $('#today').addEventListener('click', () => { shown = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1); render(); });
+  $('#today').addEventListener('click', () => { selectedCalendarDate=new Date(todayDate);$('#find-date').value=dateKey(selectedCalendarDate);window.DaymarkShensha.context(selectedCalendarDate,false);shown = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1); render(); });
   $('#back-to-calendar').addEventListener('click', () => {
     if (detailRouteAvailable && history.state?.fromCalendar) {
       activeDateKey = null;

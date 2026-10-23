@@ -1,9 +1,9 @@
 // Bump this version and update these notes for every published development release.
 // Shared by the page and service worker so the offline cache has the same version.
 globalThis.DAYMARK_RELEASE = Object.freeze({
-  version: '0.1.0-dev.25',
+  version: '0.1.0-dev.26',
   date: '2026-10-23',
   changes: [
-    'Remove the Shensha matching block and keep local time in 24-hour format.'
+    'Use the selected calendar date for Shensha periods.'
   ]
 });
