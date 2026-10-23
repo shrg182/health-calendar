@@ -4,7 +4,7 @@ const assert=require('node:assert/strict');
  const context=await browser.newContext({locale:'en-US',timezoneId:'America/Detroit',viewport:{width:390,height:844},serviceWorkers:'block'});
  await context.addInitScript(()=>localStorage.setItem('daymark.shensha.v1',JSON.stringify({
   tiande:{enabled:true,targets:['丙']},yuede:{enabled:true,targets:['戊']},tianyi:{enabled:true,targets:['巳']},
-  shie:{enabled:true,targets:['戊戌']},custom1:{enabled:true,targets:['庚午']},
+  shie:{enabled:true,targets:['戊戌']},custom1:{enabled:true,targets:Array.from({length:60},(_,i)=>'甲乙丙丁戊己庚辛壬癸'[i%10]+'子丑寅卯辰巳午未申酉戌亥'[i%12])},
   yuanchen:{enabled:true,targets:['巳']},kuigang:{enabled:true,targets:['庚辰']}
  })));
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -39,8 +39,8 @@ const assert=require('node:assert/strict');
  await page.locator('#shensha-form button[type=submit]').click();
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('daymark.shensha.v1')));assert.equal(saved.yuanchen,undefined);assert.equal(saved.kuigang,undefined);assert(saved.tiande.enabled);
  await page.goBack();
- // Preserved whole-day Void policy: 子 hour affects the date even when selected time is 午.
- assert(await page.locator('#shensha-inactive').isVisible());assert.match(await page.locator('#shensha-inactive').innerText(),/00:00–01:00.*23:00–24:00/);assert.equal(await group('year').locator('.inactive').count(),1);assert(await group('hour').locator('[data-shensha=custom1].inactive').isVisible());
+ // An isolated 子 hour no longer deactivates the date.
+ assert(await page.locator('#shensha-inactive').isHidden());assert.equal(await group('year').locator('.inactive').count(),0);assert(await group('hour').locator('[data-shensha=custom1]:not(.inactive)').isVisible());
  assert(await page.locator('#shensha-matches [data-pillar-scope=hour-schedule] .shensha-hour-list').count());
  for(const lang of ['zh','ru','fr','en']){await page.locator('#language-choice').selectOption(lang);for(const width of [320,430,1440]){await page.setViewportSize({width,height:900});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);}}
  await page.setViewportSize({width:390,height:844});await page.locator('#shensha-detail').screenshot({path:'/tmp/daymark-four-pillars.png'});

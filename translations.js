@@ -145,10 +145,11 @@ window.DAYMARK_TRANSLATIONS = {
     "ru": "Цветок персика",
     "fr": "Fleur de pêcher"
   },
-  "Yang Blade": {
+  "Repeated Shensha hour indications and Sheep Blade naming.": {"zh":"重复神煞的时柱提示及羊刃译名更新。","ru":"Часовые указания повторяющихся шэньша и название Клинок овцы.","fr":"Indications horaires des Shensha répétés et nom Lame du mouton."},
+  "Sheep Blade": {
     "zh": "羊刃",
-    "ru": "Клинок Ян",
-    "fr": "Lame Yang"
+    "ru": "Клинок овцы",
+    "fr": "Lame du mouton"
   },
   "Robbery Star": {
     "zh": "劫煞",

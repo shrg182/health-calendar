@@ -52,7 +52,7 @@ const assert=require('node:assert/strict');
  await page.locator('#shensha-form button[type=submit]').click();await page.reload();
  assert.equal(await page.locator('#shensha-picker-tianluodiwang input:checked').count(),4);
  await page.evaluate(()=>location.hash='day=2026-10-21'); // 戊辰
- assert(await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=tianluodiwang].inactive').isVisible());
+ assert(await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=tianluodiwang]:not(.inactive)').isVisible());
  await page.locator('#open-settings').click();await page.locator('#shensha-picker-kongwang summary').click();await page.locator('#shensha-picker-kongwang input[value="辰"]').check();
  await page.locator('#shensha-form button[type=submit]').click();await page.goBack();assert(await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=tianluodiwang].inactive').isVisible());
  await page.evaluate(()=>location.hash='day=2026-10-23'); // 庚午

@@ -49,7 +49,7 @@ const assert=require('node:assert/strict');
  await page.locator('#open-settings').click();
  for(const id of ['yinyang','shie','tiande'])await page.locator(`#shensha-${id}`).uncheck();
  const other=pillar[1]==='子'?'丑':'子';await enable('kongwang','branch',other);await save();await page.goBack();
- assert(await page.locator('#shensha-empty').isVisible());assert(await page.locator('#shensha-inactive').isVisible());
+ assert(await page.locator('#shensha-empty').isVisible());assert(await page.locator('#shensha-inactive').isHidden());
  // Custom slots accept each target type, stay unnamed, persist, and obey Kongwang.
  await page.locator('#open-settings').click();
  await page.locator('#shensha-kongwang').uncheck();

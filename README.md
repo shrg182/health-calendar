@@ -161,7 +161,7 @@ Signed-in users can change their password in **Settings → Account → Change p
 
 ## Manual Shensha matching (starter)
 
-Open **Settings → Shensha matching** (`#settings-shensha`). Check any of the 18 named items, open **Choose targets**, and select one or more values from the searchable 天干、地支、干支组合 groups. Remove selections with their chip’s × button. For example, enable 魁罡 with day-pillar target `庚辰`, and 十恶大败 with `庚辰、戊戌`. Choose **Save & calculate**, then open any date. Matches calculate dynamically against year, month, day, and hour pillars according to section 18 of the calculation document.
+Open **Settings → Shensha matching** (`#settings-shensha`). Check any of the 18 named items, open **Choose targets**, and select one or more values from the searchable 天干、地支、干支组合 groups. Remove selections with their chip’s × button. For example, enable 十恶大败 with targets `庚辰、戊戌`. Choose **Save & calculate**, then open any date. Matches calculate dynamically against year, month, day, and hour pillars according to section 18 of the calculation document.
 
 天德/月德 offer individual stems and branches. 天乙、禄神、文昌、驿马、华盖、将星、金舆、天医、桃花、羊刃、空亡、劫煞 offer branches only. 十恶大败 offers only 甲辰、乙巳、丙申、丁亥、戊戌、己丑、庚辰、辛巳、壬申、癸亥. 阴阳差错 offers only 丙子、丁丑、戊寅、辛卯、壬辰、癸巳、丙午、丁未、戊申、辛酉、壬戌、癸亥, in the 煞 group. 天罗地网 offers only 戌、亥、辰、巳, in the 煞 group; any selected branch matching the date’s 日支 triggers the item. 灾煞 and the custom slots retain all three target groups. 元辰 and 魁罡 have been removed from the checklist and matching. On upgrade, unsupported saved targets are excluded, an item with no remaining targets is disabled, and a review notice is shown; other settings are preserved.
 
@@ -199,12 +199,12 @@ Named encounter badges use `+` for 神 and `−` for 煞 in every language, with
 
 ### Four encounter pillars (section 18)
 
-All 18 remaining named items and three custom slots apply to year/month/day/hour pillars as assigned in `docs/shensha_calculation.md` §18. Old 元辰/魁罡 selections are ignored; saving settings removes those entries without changing other targets. Date details group matches by pillar. **Local time for hour matching** selects the displayed hour pillar (default 12:00); **Hour encounters** expands the full date’s matching time slots.
+All 18 remaining named items and three custom slots apply to year/month/day/hour pillars as assigned in `docs/shensha_calculation.md` §18. Old 元辰/魁罡 selections are ignored; saving settings removes those entries without changing other targets. Date details group matches by pillar. **Local time for hour matching** selects the displayed hour pillar (default 12:00); **Hour encounters** expands matching time slots only for items already encountered in at least two of the year, month, and day pillars. Counts are per item, not per selected target. This also applies to Sha and custom items. 羊刃 is translated as Sheep Blade.
 
 Year/month ranges use the app’s existing approximate solar-term boundaries evaluated at local noon, so their displayed inclusive civil dates agree with the calendar markers. A term arriving after local noon first applies on the following date. Year changes use Beginning of Spring; month changes use the twelve existing jie boundaries. Period lists deduplicate year/month matches by effective interval and list daily/hourly matches under individual dates. Mixed inactive intervals receive a note instead of being marked inactive for their entire span.
 
 Hour branches use local wall-clock intervals from 子 23:00–01:00 through 亥 21:00–23:00. Day-stem/hour-stem lookup follows [HKO tables 3 and 5](https://www.weather.gov.hk/en/gts/time/stemsandbranches.htm). The app retains its civil-midnight day change: 子 is displayed as 00:00–01:00 and 23:00–24:00 within each civil date and uses that date’s day stem. This is a documented product convention rather than a 23:00 day change or true-solar-time birth-chart calculation.
 
-The previously confirmed **whole-date 空亡 rule remains in force**, including hour-pillar matches. Any matching hour-level 空亡 deactivates every encounter for that civil date. Since all twelve hour branches occur daily, enabling 空亡 with any branch target consequently makes every date’s matches inactive. This implication was presented for user clarification; the implementation retains the existing whole-date rule until it is changed.
+The whole-date 空亡 rule remains in force for encounters. An isolated hour target does not qualify as an encounter: hours are shown only after the same item matches at least two year/month/day pillars.
 
-Run `tests/shensha-pillars.cjs` for the four groups, hour-table fixtures, period intervals, removed-entry migration, inactive handling, and responsive translations.
+Run `tests/shensha-repeated-hours.cjs` for the repeated-item threshold and `tests/shensha-pillars.cjs` for the four groups, hour-table fixtures, period intervals, removed-entry migration, inactive handling, and responsive translations.

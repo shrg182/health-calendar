@@ -26,7 +26,7 @@
     wenchang:'Literary Star', lushen:'Emolument Star', yima:'Relay Horse',
     huagai:'Canopy Star', jiangxing:'General Star', jinyu:'Golden Carriage',
     'tianyi-medical':'Heavenly Physician', taohua:'Peach Blossom',
-    yangren:'Yang Blade', jiesha:'Robbery Star', zaisha:'Calamity Star',
+    yangren:'Sheep Blade', jiesha:'Robbery Star', zaisha:'Calamity Star',
     kongwang:'Void',
     shie:'Ten Defeats', yinyang:'Yin-Yang Mismatch', tianluodiwang:'Heavenly Net and Earthly Snare'
   };
@@ -195,8 +195,7 @@
       : [new Date(y,m,d+1,12),new Date(y,m,d+days,12)];
   }
   const scopeNames={year:'Year pillar',month:'Month pillar',day:'Day pillar',hour:'Hour pillar'};
-  // Existing user rule: an hour-level Void also deactivates the entire civil date.
-  const hourVoidAllDay=true;
+  // Hours amplify an item already encountered in at least two longer pillars.
   function hasVoid(found) {return found.some(([id])=>id==='kongwang');}
   function timeText(minutes) {return `${String(Math.floor(minutes/60)).padStart(2,'0')}:${String(minutes%60).padStart(2,'0')}`;}
   function selectedMinute() {
@@ -206,11 +205,10 @@
   function encounterData(date) {
     const context=calendar.contextForDate(date);
     const groups=Object.fromEntries(['year','month','day'].map(scope=>[scope,{...context[scope],found:matches(context[scope].pillar)}]));
-    const hours=context.hours.map(slot=>({...slot,found:matches(slot.pillar)}));
+    const repeated=new Set(items.filter(([id])=>['year','month','day'].filter(scope=>groups[scope].found.some(([foundId])=>foundId===id)).length>=2).map(([id])=>id));
+    const hours=context.hours.map(slot=>({...slot,found:matches(slot.pillar).filter(([id])=>repeated.has(id))}));
     const baseVoid=['year','month','day'].some(scope=>hasVoid(groups[scope].found));
-    const hourVoid=hours.some(slot=>hasVoid(slot.found));
-    return {groups,hours,baseVoid,wholeDayVoid:baseVoid || (hourVoidAllDay && hourVoid),
-      state:baseVoid || (hourVoidAllDay && hourVoid) ? 'inactive' : hourVoid ? 'partial' : 'active'};
+    return {groups,hours,wholeDayVoid:baseVoid,state:baseVoid ? 'inactive' : 'active'};
   }
   function dateFormatter() {return new Intl.DateTimeFormat(window.DaymarkI18n.locale,{year:'numeric',month:'short',day:'numeric'});}
   function appendPillarGroup(root,scope,group,inactive,formatter,empty=true) {
@@ -231,7 +229,7 @@
   function appendHours(root,data) {
     const foundHours=data.hours.filter(slot=>slot.found.length);
     if(!foundHours.length)return;
-    const details=document.createElement('details');details.className='shensha-hour-list';
+    const details=document.createElement('details');details.className='shensha-hour-list';details.open=true;
     const summary=document.createElement('summary');summary.textContent=t('Hour encounters');details.append(summary);
     for(const slot of foundHours) {
       const row=document.createElement('div');row.className='shensha-hour-slot';
@@ -301,15 +299,14 @@
     const data=encounterData(selectedDate),hour=data.hours.find(slot=>minute>=slot.startMinute&&minute<slot.endMinute);
     const inactive=data.wholeDayVoid||hasVoid(hour.found),formatter=dateFormatter();
     for(const scope of ['year','month','day'])appendPillarGroup(root,scope,data.groups[scope],inactive,formatter);
-    const hourSection=appendPillarGroup(root,'hour',hour,inactive,formatter);
-    const hours=document.createElement('p');hours.textContent=`${timeText(hour.startMinute)}–${timeText(hour.endMinute)}`;hourSection.insertBefore(hours,hourSection.children[1]);
+    const hourSection=appendPillarGroup(root,'hour',hour,inactive,formatter,false);
+    if(hourSection) {
+      const hours=document.createElement('p');hours.textContent=`${timeText(hour.startMinute)}–${timeText(hour.endMinute)}`;hourSection.insertBefore(hours,hourSection.children[1]);
+    }
     const scheduled=document.createElement('div');scheduled.dataset.pillarScope='hour-schedule';appendHours(scheduled,data);root.append(scheduled);
     const any=['year','month','day'].some(scope=>data.groups[scope].found.length)||hour.found.length;
     setText('#shensha-empty','No matches at the selected time.');$('#shensha-empty').hidden=Boolean(any);
-    const voidTimes=data.hours.filter(slot=>hasVoid(slot.found)).map(slot=>`${timeText(slot.startMinute)}–${timeText(slot.endMinute)}`).join(', ');
-    if(hourVoidAllDay && !data.baseVoid && voidTimes)
-      setText('#shensha-inactive','Hour-pillar Kongwang matched at {times}; all Shensha on this date are inactive.',{times:voidTimes});
-    else setText('#shensha-inactive',hourVoidAllDay ? 'Kongwang matched: all Shensha on this date are inactive.' : 'Kongwang matched: all Shensha are inactive at the selected time.');
+    setText('#shensha-inactive','Kongwang matched: all Shensha on this date are inactive.');
     $('#shensha-inactive').hidden=!inactive;
   }
   $('#shensha-time').addEventListener('change',()=>{render();renderPeriod();});
