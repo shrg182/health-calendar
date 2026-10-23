@@ -90,40 +90,41 @@ window.DAYMARK_TRANSLATIONS = {
   }
 ,
 
+  "Shensha names aligned with section 18 translations.": {"zh":"神煞译名与第18节一致。","ru":"Названия шэньша приведены в соответствие с переводами раздела 18.","fr":"Noms des Shensha harmonisés avec les traductions de la section 18."},
   "Heavenly Virtue": {
     "zh": "天德",
     "ru": "Небесная добродетель",
     "fr": "Vertu céleste"
   },
-  "Monthly Virtue": {
+  "Moon Virtue": {
     "zh": "月德",
-    "ru": "Месячная добродетель",
-    "fr": "Vertu mensuelle"
+    "ru": "Лунная добродетель",
+    "fr": "Vertu lunaire"
   },
-  "Heavenly Nobleman": {
+  "Heavenly Mentor": {
     "zh": "天乙",
-    "ru": "Небесный благородный",
-    "fr": "Noble céleste"
+    "ru": "Небесный наставник",
+    "fr": "Mentor céleste"
   },
   "Literary Star": {
     "zh": "文昌",
     "ru": "Звезда учёности",
     "fr": "Étoile des lettres"
   },
-  "Emolument Star": {
+  "Emolument God": {
     "zh": "禄神",
-    "ru": "Звезда достатка",
-    "fr": "Étoile des émoluments"
+    "ru": "Бог достатка",
+    "fr": "Dieu des émoluments"
   },
   "Relay Horse": {
     "zh": "驿马",
     "ru": "Почтовая лошадь",
     "fr": "Cheval de relais"
   },
-  "Canopy Star": {
+  "Splendor Canopy": {
     "zh": "华盖",
-    "ru": "Звезда балдахина",
-    "fr": "Étoile du dais"
+    "ru": "Балдахин великолепия",
+    "fr": "Dais de splendeur"
   },
   "General Star": {
     "zh": "将星",
@@ -135,9 +136,9 @@ window.DAYMARK_TRANSLATIONS = {
     "ru": "Золотая колесница",
     "fr": "Carrosse d’or"
   },
-  "Heavenly Physician": {
+  "Heavenly Doctor": {
     "zh": "天医",
-    "ru": "Небесный лекарь",
+    "ru": "Небесный врач",
     "fr": "Médecin céleste"
   },
   "Peach Blossom": {
@@ -152,25 +153,25 @@ window.DAYMARK_TRANSLATIONS = {
     "ru": "Клинок овцы",
     "fr": "Lame du mouton"
   },
-  "Robbery Star": {
+  "Robbery Evil": {
     "zh": "劫煞",
-    "ru": "Звезда грабежа",
-    "fr": "Étoile du pillage"
+    "ru": "Зло грабежа",
+    "fr": "Mal du pillage"
   },
-  "Calamity Star": {
+  "Disaster Evil": {
     "zh": "灾煞",
-    "ru": "Звезда бедствий",
-    "fr": "Étoile des calamités"
+    "ru": "Зло бедствия",
+    "fr": "Mal du désastre"
   },
   "Origin Star": {
     "zh": "元辰",
     "ru": "Звезда истока",
     "fr": "Étoile de l’origine"
   },
-  "Void": {
+  "Empty Void": {
     "zh": "空亡",
-    "ru": "Пустота",
-    "fr": "Vide"
+    "ru": "Пустота небытия",
+    "fr": "Vide absolu"
   },
   "Dipper Chief": {
     "zh": "魁罡",
@@ -187,10 +188,10 @@ window.DAYMARK_TRANSLATIONS = {
     "ru": "Несоответствие Инь-Ян",
     "fr": "Désaccord Yin-Yang"
   },
-  "Heavenly Net and Earthly Snare": {
+  "Heavenly Net": {
     "zh": "天罗地网",
-    "ru": "Небесная сеть и земные силки",
-    "fr": "Filet céleste et piège terrestre"
+    "ru": "Небесная сеть",
+    "fr": "Filet céleste"
   },
   "Localized Shensha names with Chinese references and compact +/− encounter labels.": {
     "zh": "神煞名称随语言翻译并保留中文参照，相遇标签使用 +/−。",

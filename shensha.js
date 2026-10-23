@@ -22,13 +22,13 @@
   ];
   // Explanatory localized labels; retain Chinese to distinguish traditional names.
   const itemNames = {
-    tiande:'Heavenly Virtue', yuede:'Monthly Virtue', tianyi:'Heavenly Nobleman',
-    wenchang:'Literary Star', lushen:'Emolument Star', yima:'Relay Horse',
-    huagai:'Canopy Star', jiangxing:'General Star', jinyu:'Golden Carriage',
-    'tianyi-medical':'Heavenly Physician', taohua:'Peach Blossom',
-    yangren:'Sheep Blade', jiesha:'Robbery Star', zaisha:'Calamity Star',
-    kongwang:'Void',
-    shie:'Ten Defeats', yinyang:'Yin-Yang Mismatch', tianluodiwang:'Heavenly Net and Earthly Snare'
+    tiande:'Heavenly Virtue', yuede:'Moon Virtue', tianyi:'Heavenly Mentor',
+    wenchang:'Literary Star', lushen:'Emolument God', yima:'Relay Horse',
+    huagai:'Splendor Canopy', jiangxing:'General Star', jinyu:'Golden Carriage',
+    'tianyi-medical':'Heavenly Doctor', taohua:'Peach Blossom',
+    yangren:'Sheep Blade', jiesha:'Robbery Evil', zaisha:'Disaster Evil',
+    kongwang:'Empty Void',
+    shie:'Ten Defeats', yinyang:'Yin-Yang Mismatch', tianluodiwang:'Heavenly Net'
   };
   function itemName(id,chinese) {
     return window.DaymarkI18n.language === 'zh' || !itemNames[id] ? chinese : `${t(itemNames[id])}（${chinese}）`;

@@ -377,31 +377,31 @@ https://fortunecloud.co/learn/shen-sha
 
 以下按当前应用列出 **20 个具名神煞**，另附 3 个无名自定义项。请在“适用柱”栏填写年柱、月柱、日柱，可填写多项；在“柱位说明”栏补充你的规则。空白表示待确定，不预设适用柱。
 
-| 分类 | 名称 | 适用柱 | 柱位说明 |
-| --- | --- | --- | --- |
-| 神 | 天德 | yy mm dd hh |  |
-| 神 | 月德 | yy mm dd hh |  |
-| 神 | 天乙 | yy mm dd hh |  |
-| 神 | 文昌 | yy mm dd hh |  |
-| 神 | 禄神 | yy mm dd hh |  |
-| 神 | 驿马 | yy mm dd hh |  |
-| 神 | 华盖 | yy mm dd hh |  |
-| 神 | 将星 | yy mm dd hh |  |
-| 神 | 金舆 | yy mm dd hh |  |
-| 神 | 天医 | yy mm dd hh |  |
-| 神 | 桃花 | yy mm dd hh |  |
-| 煞 | 羊刃 | yy mm dd hh |  |
-| 煞 | 劫煞 | yy mm dd hh |  |
-| 煞 | 灾煞 | yy mm dd hh |  |
-| 煞 | 元辰 |   | x |
-| 煞 | 空亡 | yy mm dd hh |  |
-| 煞 | 魁罡 |   | x |
-| 煞 | 十恶大败 | yy mm dd hh |  |
-| 煞 | 阴阳差错 | yy mm dd hh |  |
-| 煞 | 天罗地网 | yy mm dd hh |  |
-| 自定义 | 无名自定义① | yy mm dd hh |  |
-| 自定义 | 无名自定义② | yy mm dd hh |  |
-| 自定义 | 无名自定义③ | yy mm dd hh |  |
+| 分类 | 名称 | 适用柱 | 柱位说明 | 英文名称 |
+| --- | --- | --- | --- | --- |
+| 神 | 天德 | yy mm dd hh |  | Heavenly Virtue |
+| 神 | 月德 | yy mm dd hh |  | Moon Virtue |
+| 神 | 天乙 | yy mm dd hh |  | Heavenly Mentor |
+| 神 | 文昌 | yy mm dd hh |  | Literary Star |
+| 神 | 禄神 | yy mm dd hh |  | Emolument God |
+| 神 | 驿马 | yy mm dd hh |  | Relay Horse |
+| 神 | 华盖 | yy mm dd hh |  | Splendor Canopy |
+| 神 | 金舆 | yy mm dd hh |  | Golden Carriage |
+| 神 | 天医 | yy mm dd hh |  | Heavenly Doctor |
+| 神 | 桃花 | yy mm dd hh |  | Peach Blossom |
+| 煞 | 羊刃 | yy mm dd hh |  | Sheep Blade |
+| 煞 | 劫煞 | yy mm dd hh |  | Robbery Evil |
+| 煞 | 灾煞 | yy mm dd hh |  | Disaster Evil |
+| 煞 | 元辰 |  | x |  |
+| 煞 | 空亡 | yy mm dd hh |  | Empty Void |
+| 煞 | 魁罡 |  | x |  |
+| 煞 | 十恶大败 | yy mm dd hh |  | Ten Defeats |
+| 煞 | 阴阳差错 | yy mm dd hh |  | Yin-Yang Mismatch |
+| 煞 | 天罗地网 | yy mm dd hh |  | Heavenly Net |
+| 自定义 | 无名自定义① | yy mm dd hh |  |  |
+| 自定义 | 无名自定义② | yy mm dd hh |  |  |
+| 自定义 | 无名自定义③ | yy mm dd hh |  |  |
+
 
 ## 19. 第 18 节的实现约定
 
@@ -418,3 +418,11 @@ https://fortunecloud.co/learn/shen-sha
 空亡仍使该日期所有神煞不生效；单独出现在某个时支、但未在年/月/日重复的空亡不构成相遇，也不会使所有日期失效。
 
 神煞名称后置正负号：单次 `+` / `−`，重复如 `+3` / `−3`。次数按同一项目匹配的年、月、日柱计数；时柱相遇显示这三柱加当前时柱的次数，不累加不同时间段，也不将同柱的多个目标重复计数。超过三次（四柱全遇）时，神用深绿底白字、煞用深红底白字突出显示。空亡下仍灰色不生效，自定义项保持无名粗体。
+
+## 20 Help Page
+
+### 1. Definitions of Shen Sha
+
+### 2. Calculation Rules
+
+### 3. Input Requirements
