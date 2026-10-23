@@ -92,6 +92,16 @@ window.DAYMARK_TRANSLATIONS = {
 
   "Shensha names aligned with section 18 translations.": {"zh":"神煞译名与第18节一致。","ru":"Названия шэньша приведены в соответствие с переводами раздела 18.","fr":"Noms des Shensha harmonisés avec les traductions de la section 18."},
   "Repeated Shensha signs instead of numeric counts.": {"zh":"重复神煞以重复正负号显示。","ru":"Повторяющиеся знаки шэньша вместо числовых счётчиков.","fr":"Signes répétés pour les Shensha au lieu de nombres."},
+  "Start date": {"zh": "开始日期", "ru": "Начальная дата", "fr": "Date de début"},
+  "End date": {"zh": "结束日期", "ru": "Конечная дата", "fr": "Date de fin"},
+  "Show encounters": {"zh": "显示相遇", "ru": "Показать совпадения", "fr": "Afficher les rencontres"},
+  "Close list": {"zh": "关闭列表", "ru": "Закрыть список", "fr": "Fermer la liste"},
+  "Encounter result pages": {"zh": "相遇结果分页", "ru": "Страницы результатов совпадений", "fr": "Pages de résultats des rencontres"},
+  "Earlier dates": {"zh": "更早日期", "ru": "Более ранние даты", "fr": "Dates précédentes"},
+  "Later dates": {"zh": "更晚日期", "ru": "Более поздние даты", "fr": "Dates suivantes"},
+  "Choose valid start and end dates, with the end on or after the start.": {"zh": "请选择有效的起止日期，结束日期不得早于开始日期。", "ru": "Выберите допустимые даты: конечная дата не должна быть раньше начальной.", "fr": "Choisissez des dates valides, la fin ne devant pas précéder le début."},
+  "Displayed dates: {start} – {end}; {count} matching dates.": {"zh": "当前显示：{start} – {end}；{count}个相遇日期。", "ru": "Показаны даты: {start} – {end}; совпадений по датам: {count}.", "fr": "Dates affichées : {start} – {end} ; {count} dates avec rencontres."},
+  "Date range search and mobile-friendly Shensha calendar cards.": {"zh": "日期范围查询与适合手机的神煞日历卡片。", "ru": "Поиск по диапазону дат и удобные для телефона карточки календаря шэньша.", "fr": "Recherche par période et cartes de calendrier Shensha adaptées aux mobiles."},
   "Heavenly Virtue": {
     "zh": "天德",
     "ru": "Небесная добродетель",

@@ -31,8 +31,8 @@ const assert=require('node:assert/strict');
  }
  await page.goto('http://127.0.0.1:8769/#day=2026-10-22');
  await page.locator('[data-direction="1"][data-shensha-period="7"]').click();
- assert.equal(await page.locator('#shensha-period-results > [data-pillar-scope=year]').count(),1);
- assert.equal(await page.locator('#shensha-period-results > [data-pillar-scope=month]').count(),1);
+ assert.equal(await page.locator('#shensha-period-results > [data-pillar-scope=year]').count(),0);
+ assert.equal(await page.locator('#shensha-period-results .shensha-date-card .lunar').count(),7);
  assert.equal(await page.locator('#shensha-period-results li[data-date]').count(),7);
  await page.locator('#open-settings').click();assert.equal(await page.locator('#shensha-yuanchen,#shensha-kuigang').count(),0);
  await page.locator('#shensha-kongwang').check();await page.locator('#shensha-picker-kongwang summary').click();await page.locator('#shensha-picker-kongwang input[value="子"]').check();

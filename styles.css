@@ -298,3 +298,21 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
 
 .shensha-badge.shen.intense { color:#fff; background:#236043; font-weight:700 }
 .shensha-badge.sha.intense { color:#fff; background:#a12626; font-weight:700 }
+
+.shensha-range-inputs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:12px 0 }
+.shensha-range-inputs label { min-width:0 }
+.shensha-range-inputs input { display:block; box-sizing:border-box; width:100%; min-width:0; min-height:44px; margin-top:6px; padding:8px; font:inherit; font-size:16px; border:1px solid #bac9bf; border-radius:6px }
+#shensha-range-form { margin-bottom:16px }
+#shensha-result-pages { display:flex; gap:8px; margin:12px 0 }
+#shensha-period-results .shensha-date-cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px }
+#shensha-period-results li.shensha-date-card { min-width:0; padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--paper) }
+.shensha-date-card .ganzhi { display:block; font-size:12px; line-height:1.5; white-space:normal; overflow-wrap:anywhere; margin:8px 0 12px }
+.shensha-date-card .shensha-result-date { max-width:100%; overflow-wrap:anywhere }
+.shensha-card-inactive { color:var(--muted); margin-bottom:0 }
+@media(max-width:600px) {
+ #shensha-period-results .shensha-date-cards { grid-template-columns:minmax(0,1fr) }
+ .shensha-range-inputs { grid-template-columns:minmax(0,1fr) }
+ .shensha-date-card .shensha-badge { padding:4px 7px; font-size:14px }
+}
+
+.shensha-date-card .lunar { display:block; text-align:left; font-size:13px }

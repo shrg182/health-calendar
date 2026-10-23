@@ -378,7 +378,7 @@
     updateMonthNames(); updateWeekdays();
     try { renderPage(false); } catch { setText(summary,'Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'); }
   });
-  window.DaymarkShensha.configure({pillarForDate:sexagenaryDay,contextForDate:encounterPillars,openDay});
+  window.DaymarkShensha.configure({pillarForDate:sexagenaryDay,contextForDate:encounterPillars,dateInfo:date=>({lunar:lunarParts(date).full,weekday:weekdayFormatter.format(date)}),openDay});
   try { lunarFormatter.format(todayDate); renderPage(); }
   catch (err) { setText(summary,'Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'); daysEl.replaceChildren(); }
 })();

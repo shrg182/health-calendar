@@ -235,6 +235,14 @@
       <h2 id="shensha-period-title">Shensha encounters</h2>
       <label for="shensha-reference">Reference date</label>
       <input id="shensha-reference" type="date" min="1901-01-01" max="2100-12-31" required>
+      <form id="shensha-range-form">
+        <div class="shensha-range-inputs">
+          <label>Start date<input id="shensha-start" type="date" min="1901-01-01" max="2100-12-31" required></label>
+          <label>End date<input id="shensha-end" type="date" min="1901-01-01" max="2100-12-31" required></label>
+        </div>
+        <button class="today-btn" type="submit">Show encounters</button>
+        <button class="today-btn" id="shensha-close" type="button" hidden>Close list</button>
+      </form>
       <div class="shensha-period-buttons" role="group" aria-label="Encounter periods">
         <button class="today-btn" type="button" data-direction="-1" data-shensha-period="month" aria-pressed="false">Previous month</button>
         <button class="today-btn" type="button" data-direction="-1" data-shensha-period="10" aria-pressed="false">Previous 10 days</button>
@@ -244,6 +252,10 @@
         <button class="today-btn" type="button" data-direction="1" data-shensha-period="month" aria-pressed="false">Next month</button>
       </div>
       <p id="shensha-period-status" role="status"></p>
+      <nav id="shensha-result-pages" aria-label="Encounter result pages" hidden>
+        <button class="today-btn" id="shensha-page-prev" type="button">Earlier dates</button>
+        <button class="today-btn" id="shensha-page-next" type="button">Later dates</button>
+      </nav>
       <div id="shensha-period-results"></div>
     </section>
   </main>
