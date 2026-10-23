@@ -1,5 +1,7 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Refresh versioned assets to keep Shensha controls working after updates.": {"zh":"使用带版本的资源，确保更新后神煞控件正常运行。","ru":"Версии ресурсов обеспечивают работу элементов шэньша после обновлений.","fr":"Les ressources versionnées assurent le fonctionnement des commandes Shensha après les mises à jour."},
+
   "Simplify the Shensha period dropdown label.": {"zh":"简化神煞时段下拉菜单标签。","ru":"Упрощена подпись списка периодов шэньша.","fr":"Simplification du libellé du menu des périodes Shensha."},
 
   "Use the selected calendar date for Shensha periods.": {"zh":"神煞时段使用所选日历日期。","ru":"Периоды шэньша используют выбранную дату календаря.","fr":"Les périodes Shensha utilisent la date sélectionnée dans le calendrier."},

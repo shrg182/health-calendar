@@ -1,8 +1,9 @@
-importScripts('./release.js');
+importScripts('./release.js?v=0.1.0-dev.28');
 const CACHE = `daymark-shell-${self.DAYMARK_RELEASE.version}`;
-const ASSETS = ['./', './index.html', './styles.css', './app.js', './shensha.js', './translations.js', './i18n.js', './notes.js', './sync.js', './sync-config.js', './install.js', './release.js', './updates.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
+// Match the versioned URLs in index.html so online and offline loads use the same assets.
+const ASSETS = ['./', './index.html', './styles.css?v=0.1.0-dev.28', './app.js?v=0.1.0-dev.28', './shensha.js?v=0.1.0-dev.28', './translations.js?v=0.1.0-dev.28', './i18n.js?v=0.1.0-dev.28', './notes.js?v=0.1.0-dev.28', './sync.js?v=0.1.0-dev.28', './sync-config.js?v=0.1.0-dev.28', './install.js?v=0.1.0-dev.28', './release.js?v=0.1.0-dev.28', './updates.js?v=0.1.0-dev.28', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS.map(url=>new Request(url,{cache:'reload'})))));
 });
 self.addEventListener('message', event => {
   if (event.data?.type === 'DAYMARK_ACTIVATE_UPDATE') event.waitUntil(self.skipWaiting());
