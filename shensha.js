@@ -288,7 +288,7 @@
     const root=$('#shensha-period-results');root.hidden=!period;root.replaceChildren();
     $('#shensha-close').hidden=!period;$('#shensha-result-pages').hidden=true;
     const base=referenceDate;
-    if(!items.some(([id])=>settings[id].enabled)){setText('#shensha-period-status','Select Shensha targets in Settings first.');return;}
+    const hasTargets=items.some(([id])=>settings[id].enabled);
     if(!period){setText('#shensha-period-status','Choose a period to list matching dates.');return;}
     if(!period.custom && !base){setText('#shensha-period-status','Choose a reference date between 1901 and 2100.');return;}
     let [start,end]=activeBounds(base);
@@ -302,11 +302,9 @@
     $('#shensha-result-pages').hidden=prev.disabled&&next.disabled;
     const compact=$('#shensha-display').value==='calendar';
     const formatter=dateFormatter(),rows=document.createElement('ol');rows.className=compact ? 'shensha-calendar-cells' : 'shensha-date-cards';
-    let count=0;
     for(let date=new Date(first);date<=last;date.setDate(date.getDate()+1)) {
       const data=encounterData(date);
       const found=items.filter(([id])=>['year','month','day'].some(scope=>data.groups[scope].found.some(([matchId])=>matchId===id)));
-      if(!found.length)continue;count++;
       const row=document.createElement('li');row.className=compact ? 'shensha-encounter-cell' : 'shensha-date-card';row.dataset.date=dateKey(date);
       const link=document.createElement('a');link.href=`#day=${dateKey(date)}`;link.className='shensha-result-date';
       const info=calendar.dateInfo(date);
@@ -317,6 +315,10 @@
       pillars.textContent=['year','month','day'].map(scope=>`${t(scopeNames[scope])} ${data.groups[scope].pillar}`).join(' · ');
       row.append(link,lunar);
       if(!compact)row.append(pillars);
+      if(!found.length) {
+        const empty=document.createElement('p');empty.className='detail-note shensha-no-encounters';
+        empty.textContent=t('No Shensha encounters.');row.append(empty);
+      }
       if(compact) {
         row.setAttribute('aria-label',link.textContent);
         appendCalendarCell(row,date);
@@ -333,7 +335,7 @@
       appendHours(row,data);rows.append(row);
     }
     root.append(rows);
-    setText('#shensha-period-status',count ? '' : 'No matches for your selected targets.');
+    setText('#shensha-period-status',hasTargets ? '' : 'Select Shensha targets in Settings first.');
   }
   $('#shensha-range-form').addEventListener('submit',event=>{
     event.preventDefault();period={custom:true,start:$('#shensha-start').value,end:$('#shensha-end').value};resultPage=0;renderPeriod();

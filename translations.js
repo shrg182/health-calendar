@@ -1,5 +1,8 @@
 // English source messages with complete Chinese, Japanese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "No Shensha encounters.": {"zh":"无神煞相遇。","ja":"該当する神煞はありません。","ru":"Нет совпадений шэньша.","fr":"Aucune rencontre Shensha."},
+  "Show every date in Shensha periods, including days without encounters.": {"zh":"神煞时段显示所有日期，包括没有相遇的日期。","ja":"該当する神煞がない日も含め、期間内のすべての日付を表示します。","ru":"Показаны все даты периода шэньша, включая дни без совпадений.","fr":"Affichage de toutes les dates de la période Shensha, même sans rencontre."},
+
   "−3 days": {"zh": "−3天", "ja": "−3日", "ru": "−3 дн.", "fr": "−3 jours"},
   "−10 days": {"zh": "−10天", "ja": "−10日", "ru": "−10 дн.", "fr": "−10 jours"},
   "−30 days": {"zh": "−30天", "ja": "−30日", "ru": "−30 дн.", "fr": "−30 jours"},
