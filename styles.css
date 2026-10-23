@@ -275,12 +275,9 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
 
 #shensha-period-panel { margin-top:16px }
 #shensha-reference { display:block; max-width:100%; min-height:44px; padding:8px; font:inherit; font-size:16px; border:1px solid #bac9bf; border-radius:6px; margin:8px 0 12px }
-.shensha-period-buttons { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px }
-.shensha-period-buttons button[aria-pressed=true] { background:var(--green);color:white }
 #shensha-period-results { list-style:none; padding:0; margin:0 }
 #shensha-period-results li { padding:14px 0; border-top:1px solid var(--line) }
 .shensha-result-date { display:inline-block; min-height:44px; padding:8px 0; color:var(--green);font-weight:700 }
-@media(max-width:600px) { .shensha-period-buttons { grid-template-columns:repeat(2,minmax(0,1fr)) } }
 
 .shensha-badge { max-width:100%; overflow-wrap:anywhere }
 .shensha-row > label:first-child > span { min-width:0; overflow-wrap:anywhere }
@@ -337,3 +334,6 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
 .shensha-encounter-cell .ganzhi { display:block; font-size:10px; line-height:1.5; margin-top:6px }
 .shensha-encounter-cell .calendar-shensha .shensha-badge { font-size:12px }
 @media(max-width:760px) { #shensha-period-results .shensha-calendar-cells { grid-template-columns:repeat(2,minmax(0,1fr)) } }
+
+#shensha-period { display:block; max-width:100%; min-height:44px; padding:8px; margin:8px 0 12px; font:inherit; border:1px solid #bac9bf; border-radius:6px; background:var(--paper) }
+#shensha-period-status:empty { display:none }

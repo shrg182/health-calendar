@@ -5,7 +5,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');const assert
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:8769/#calendar');
  await page.locator('#jump-year').fill('2026');await page.locator('#jump-month').selectOption('9');await page.locator('#month-form button').click();
  assert.equal(await page.locator('#days .calendar-shensha').count(),0);
- await page.locator('#shensha-start').fill('2026-10-17');await page.locator('#shensha-end').fill('2026-10-23');await page.locator('#shensha-range-form button[type=submit]').click();
+ await page.locator('#shensha-period').selectOption('custom');await page.locator('#shensha-start').fill('2026-10-17');await page.locator('#shensha-end').fill('2026-10-23');await page.locator('#shensha-range-form button[type=submit]').click();
  const cell=page.locator('#shensha-period-results [data-date="2026-10-22"]');
  assert.equal(await cell.locator('.shensha-badge').count(),2);assert.equal(await cell.locator('.calendar-shensha-strength').first().innerText(),'+++');assert.equal(await cell.locator('.calendar-shensha-more').innerText(),'2 more');
  assert.match(await cell.getAttribute('aria-label'),/Heavenly Mentor（天乙）.*Sheep Blade（羊刃）/);
@@ -16,7 +16,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');const assert
  assert.equal(await page.locator('#shensha-period-results .shensha-date-card').count(),7);
  assert.equal(await cell.locator(':scope > .shensha-matches .shensha-badge').count(),4);
  await page.reload();assert.equal(await page.locator('#shensha-display').inputValue(),'cards');
- await page.locator('#shensha-start').fill('2026-10-22');await page.locator('#shensha-end').fill('2026-10-22');await page.locator('#shensha-range-form button[type=submit]').click();
+ await page.locator('#shensha-period').selectOption('custom');await page.locator('#shensha-start').fill('2026-10-22');await page.locator('#shensha-end').fill('2026-10-22');await page.locator('#shensha-range-form button[type=submit]').click();
  await page.locator('#shensha-display').selectOption('calendar');assert.equal(await page.locator('#shensha-period-results .shensha-encounter-cell').count(),1);
  await cell.locator('.shensha-result-date').click();assert.equal(new URL(page.url()).hash,'#day=2026-10-22');assert(await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=yangren]').isVisible());
  await page.locator('#open-settings').click();for(const id of ['tiande','yuede','tianyi','yangren','kongwang'])await page.locator(`#shensha-${id}`).uncheck();await page.locator('#shensha-form button[type=submit]').click();

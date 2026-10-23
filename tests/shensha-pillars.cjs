@@ -31,7 +31,7 @@ const assert=require('node:assert/strict');
   await page.goto(`http://127.0.0.1:8769/#day=${date}`);assert.equal(await group('year').getAttribute('data-pillar'),year);if(month)assert.equal(await group('month').getAttribute('data-pillar'),month);
  }
  await page.goto('http://127.0.0.1:8769/#day=2026-10-22');
- await page.locator('[data-direction="1"][data-shensha-period="7"]').click();
+ await page.locator('#shensha-period').selectOption('1:7');
  assert.equal(await page.locator('#shensha-period-results > [data-pillar-scope=year]').count(),0);
  assert.equal(await page.locator('#shensha-period-results .shensha-date-card .lunar').count(),7);
  assert.equal(await page.locator('#shensha-period-results li[data-date]').count(),7);

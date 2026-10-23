@@ -8,9 +8,14 @@ const assert=require('node:assert/strict');
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:8769/#day=2026-10-22');
  await page.locator('#shensha-display').selectOption('cards');
+ assert.equal(await page.locator('#shensha-period-title').innerText(),'Shensha of the day');
+ assert(await page.locator('#shensha-custom-range').isHidden());
+ await page.locator('#shensha-period').selectOption('today');
+ assert.equal(await page.locator('#shensha-start').inputValue(),await page.locator('#shensha-end').inputValue());
+ assert.equal(await page.locator('#shensha-period-status').innerText(),'');
  const cards=()=>page.locator('#shensha-period-results li.shensha-date-card');
  const dates=()=>cards().evaluateAll(rows=>rows.map(row=>row.dataset.date));
- async function range(start,end){await page.locator('#shensha-start').fill(start);await page.locator('#shensha-end').fill(end);await page.locator('#shensha-range-form button[type=submit]').click();}
+ async function range(start,end){await page.locator('#shensha-period').selectOption('custom');await page.locator('#shensha-start').fill(start);await page.locator('#shensha-end').fill(end);await page.locator('#shensha-range-form button[type=submit]').click();}
  await range('2026-10-21','2026-10-23');assert.deepEqual(await dates(),['2026-10-21','2026-10-22','2026-10-23']);
  const card=page.locator('[data-date="2026-10-22"].shensha-date-card');
  assert.match(await card.locator('.shensha-result-date').innerText(),/Thursday/);assert.match(await card.locator('.lunar').innerText(),/Lunar month/);
@@ -23,12 +28,12 @@ const assert=require('node:assert/strict');
  await card.locator('summary').click();assert(await card.locator('.intense').first().isVisible());
  await range('2026-10-17','2026-10-17');assert.match(await cards().innerText(),/Inactive/);assert.equal(await cards().locator('.intense').count(),0);
  await range('2026-10-23','2026-10-21');assert.match(await page.locator('#shensha-period-status').innerText(),/end on or after/);assert.equal(await cards().count(),0);
- for(const [ref,dir,len,start,end,count] of [['2028-03-15',-1,'month','2028-02-01','2028-02-29',29],['2026-03-10',-1,'7','2026-03-03','2026-03-09',7],['2026-10-28',1,'10','2026-10-29','2026-11-07',10]]){
+ for(const [ref,dir,len,start,end,count] of [['2026-10-23',-1,'3','2026-10-20','2026-10-22',3],['2026-10-23',1,'3','2026-10-24','2026-10-26',3],['2028-03-15',-1,'month','2028-02-01','2028-02-29',29],['2026-03-10',-1,'7','2026-03-03','2026-03-09',7],['2026-10-28',1,'10','2026-10-29','2026-11-07',10]]){
   await page.locator('#shensha-reference').fill(ref);await page.locator('#shensha-reference').dispatchEvent('change');
-  const button=page.locator(`[data-direction="${dir}"][data-shensha-period="${len}"]`);await button.click();
+  await page.locator('#shensha-period').selectOption(`${dir}:${len}`);
   assert.equal(await page.locator('#shensha-start').inputValue(),start);assert.equal(await page.locator('#shensha-end').inputValue(),end);
   const actual=await dates();assert.equal(actual.length,count);assert.equal(actual[0],start);assert.equal(actual.at(-1),end);
-  await button.click();assert(await page.locator('#shensha-period-results').isHidden());assert.equal(await cards().count(),0);
+  await page.locator('#shensha-close').click();assert(await page.locator('#shensha-period-results').isHidden());assert.equal(await cards().count(),0);
  }
  await range('1901-01-01','2100-12-31');assert.equal(await cards().count(),31);assert.equal((await dates())[0],'1901-01-01');assert(await page.locator('#shensha-page-prev').isDisabled());
  await page.locator('#shensha-page-next').click();assert.equal((await dates())[0],'1901-02-01');await page.locator('#shensha-page-prev').click();assert.equal((await dates())[0],'1901-01-01');

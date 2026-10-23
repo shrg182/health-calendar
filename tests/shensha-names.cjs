@@ -21,9 +21,9 @@ const assert=require('node:assert/strict');
   assert((await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=yangren]').innerText()).includes('（羊刃）') || lang==='zh');
   assert.equal(await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=custom1]').innerText(),'癸亥');
   for(const badge of await page.locator('#shensha-matches [data-pillar-scope=day] .shensha-badge:not(.important)').all())assert(!/Shen · positive|Sha · negative|神 · 正向|煞 · 负向/.test(await badge.innerText()));
-  await page.locator('[data-direction="1"][data-shensha-period="month"]').click();
+  await page.locator('#shensha-period').selectOption('1:month');
   assert((await page.locator('#shensha-period-results [data-shensha=yima]').first().innerText()).includes(expected[lang]));
-  await page.locator('[data-direction="1"][data-shensha-period="month"]').click();
+  await page.locator('#shensha-close').click();
   await page.locator('#open-settings').click();
   for(const [id,chinese] of Object.entries(labels)){
    const name=await page.locator(`#shensha-${id}`).locator('..').locator('span').innerText();

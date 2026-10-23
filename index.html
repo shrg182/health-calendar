@@ -180,7 +180,6 @@
           <button class="today-btn" type="submit">Open day</button>
         </form>
       </div>
-      <aside class="hint" data-admin-caption hidden><span class="hint-icon" aria-hidden="true">ⓘ</span><span><b>About Chinese dates:</b> Lunar labels use your browser’s Chinese calendar; almanac recommendations are not included.</span></aside>
     </section>
     </section>
     <section id="detail-page" hidden aria-labelledby="detail-title">
@@ -232,31 +231,39 @@
       <aside class="detail-info" id="detail-solar-term"></aside>
     </section>
     <section id="shensha-period-panel" class="detail-card" aria-labelledby="shensha-period-title">
-      <h2 id="shensha-period-title">Shensha encounters</h2>
+      <h2 id="shensha-period-title">Shensha of the day</h2>
       <label for="shensha-reference">Reference date</label>
       <input id="shensha-reference" type="date" min="1901-01-01" max="2100-12-31" required>
+      <label for="shensha-period">Period</label>
+      <select id="shensha-period" aria-controls="shensha-custom-range shensha-period-results">
+        <option value="">Choose a period</option>
+        <option value="today">Today</option>
+        <option value="-1:month">Previous month</option>
+        <option value="-1:10">Previous 10 days</option>
+        <option value="-1:7">Previous 7 days</option>
+        <option value="-1:3">Previous 3 days</option>
+        <option value="1:3">Next 3 days</option>
+        <option value="1:7">Next 7 days</option>
+        <option value="1:10">Next 10 days</option>
+        <option value="1:month">Next month</option>
+        <option value="custom">Custom range</option>
+      </select>
       <form id="shensha-range-form">
-        <div class="shensha-range-inputs">
-          <label>Start date<input id="shensha-start" type="date" min="1901-01-01" max="2100-12-31" required></label>
-          <label>End date<input id="shensha-end" type="date" min="1901-01-01" max="2100-12-31" required></label>
+        <div id="shensha-custom-range" hidden>
+          <div class="shensha-range-inputs">
+            <label>Start date<input id="shensha-start" type="date" min="1901-01-01" max="2100-12-31" required></label>
+            <label>End date<input id="shensha-end" type="date" min="1901-01-01" max="2100-12-31" required></label>
+          </div>
+          <button class="today-btn" type="submit">Show encounters</button>
         </div>
-        <button class="today-btn" type="submit">Show encounters</button>
         <button class="today-btn" id="shensha-close" type="button" hidden>Close list</button>
       </form>
-      <div class="shensha-period-buttons" role="group" aria-label="Encounter periods">
-        <button class="today-btn" type="button" data-direction="-1" data-shensha-period="month" aria-pressed="false">Previous month</button>
-        <button class="today-btn" type="button" data-direction="-1" data-shensha-period="10" aria-pressed="false">Previous 10 days</button>
-        <button class="today-btn" type="button" data-direction="-1" data-shensha-period="7" aria-pressed="false">Previous 7 days</button>
-        <button class="today-btn" type="button" data-direction="1" data-shensha-period="7" aria-pressed="false">Next 7 days</button>
-        <button class="today-btn" type="button" data-direction="1" data-shensha-period="10" aria-pressed="false">Next 10 days</button>
-        <button class="today-btn" type="button" data-direction="1" data-shensha-period="month" aria-pressed="false">Next month</button>
-      </div>
-      <label class="shensha-display-choice" for="shensha-display">Encounter display
-        <select id="shensha-display">
+      <div class="shensha-display-choice">
+        <select id="shensha-display" aria-label="Encounter display">
           <option value="calendar">Calendar cells</option>
           <option value="cards">Detailed cards</option>
         </select>
-      </label>
+      </div>
       <p id="shensha-period-status" role="status"></p>
       <nav id="shensha-result-pages" aria-label="Encounter result pages" hidden>
         <button class="today-btn" id="shensha-page-prev" type="button">Earlier dates</button>

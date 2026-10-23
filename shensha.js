@@ -190,6 +190,7 @@
     return dateKey(date) === value && date >= minDate && date <= maxDate ? date : null;
   }
   function bounds(base, direction, length) {
+    if(length==='today')return [new Date(base),new Date(base)];
     const y=base.getFullYear(),m=base.getMonth(),d=base.getDate();
     if (length === 'month') return [new Date(y,m+direction,1,12),new Date(y,m+direction+1,0,12)];
     const days=Number(length);
@@ -287,12 +288,6 @@
     const root=$('#shensha-period-results');root.hidden=!period;root.replaceChildren();
     $('#shensha-close').hidden=!period;$('#shensha-result-pages').hidden=true;
     const base=parseDate($('#shensha-reference').value);
-    document.querySelectorAll('[data-shensha-period]').forEach(button=>{
-      const range=base ? bounds(base,Number(button.dataset.direction),button.dataset.shenshaPeriod) : [null,null];
-      button.disabled=!base || range[1]<minDate || range[0]>maxDate;
-      const active=Boolean(period && !period.custom && period.direction===Number(button.dataset.direction) && period.length===button.dataset.shenshaPeriod);
-      button.setAttribute('aria-pressed',String(active));button.setAttribute('aria-expanded',String(active));button.setAttribute('aria-controls','shensha-period-results');
-    });
     if(!items.some(([id])=>settings[id].enabled)){setText('#shensha-period-status','Select Shensha targets in Settings first.');return;}
     if(!period){setText('#shensha-period-status','Choose a period to list matching dates.');return;}
     if(!period.custom && !base){setText('#shensha-period-status','Choose a reference date between 1901 and 2100.');return;}
@@ -337,12 +332,12 @@
       appendHours(row,data);rows.append(row);
     }
     root.append(rows);
-    setText('#shensha-period-status','Displayed dates: {start} – {end}; {count} matching dates.',{start:formatter.format(first),end:formatter.format(last),count});
+    setText('#shensha-period-status',count ? '' : 'No matches for your selected targets.');
   }
   $('#shensha-range-form').addEventListener('submit',event=>{
     event.preventDefault();period={custom:true,start:$('#shensha-start').value,end:$('#shensha-end').value};resultPage=0;renderPeriod();
   });
-  $('#shensha-close').addEventListener('click',()=>{period=null;resultPage=0;renderPeriod();});
+  $('#shensha-close').addEventListener('click',()=>{period=null;$('#shensha-period').value='';$('#shensha-custom-range').hidden=true;resultPage=0;renderPeriod();});
   $('#shensha-page-prev').addEventListener('click',()=>{resultPage=Math.max(0,resultPage-1);renderPeriod();});
   $('#shensha-page-next').addEventListener('click',()=>{resultPage++;renderPeriod();});
   $('#shensha-reference').addEventListener('change',()=>{
@@ -351,12 +346,18 @@
     if(period && !period.custom && base)fillRange(...bounds(base,period.direction,period.length));
     renderPeriod();
   });
-  document.querySelectorAll('[data-shensha-period]').forEach(button=>button.addEventListener('click',()=>{
-    const direction=Number(button.dataset.direction),length=button.dataset.shenshaPeriod;
-    const base=parseDate($('#shensha-reference').value);if(!base)return;
-    period=period && !period.custom && period.direction===direction && period.length===length ? null : {direction,length};
-    resultPage=0;if(period)fillRange(...bounds(base,direction,length));renderPeriod();
-  }));
+  $('#shensha-period').addEventListener('change',()=>{
+    const value=$('#shensha-period').value;
+    $('#shensha-custom-range').hidden=value!=='custom';
+    resultPage=0;
+    if(value==='custom' || !value){period=null;renderPeriod();return;}
+    const [direction,length]=value==='today' ? ['0','today'] : value.split(':');
+    if(value==='today')$('#shensha-reference').value=dateKey(new Date());
+    period={direction:Number(direction),length};
+    const base=parseDate($('#shensha-reference').value);
+    if(base)fillRange(...bounds(base,period.direction,length));
+    renderPeriod();
+  });
   let selectedDate=null;
   function render() {
     if(!selectedDate || !calendar)return;

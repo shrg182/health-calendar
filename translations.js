@@ -1,5 +1,13 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Shensha of the day: choose a period or custom date range from one dropdown.": {"zh":"当日神煞：通过下拉菜单选择时段或自选日期范围。","ru":"Шэньша дня: выбор периода или произвольного диапазона в одном списке.","fr":"Shensha du jour : choisissez une période ou une plage personnalisée dans un menu."},
+  "Shensha of the day": {"zh":"当日神煞","ru":"Шэньша дня","fr":"Shensha du jour"},
+  "Period": {"zh":"时段","ru":"Период","fr":"Période"},
+  "Choose a period": {"zh":"选择时段","ru":"Выберите период","fr":"Choisir une période"},
+  "Custom range": {"zh":"自选日期范围","ru":"Произвольный диапазон","fr":"Plage personnalisée"},
+  "Previous 3 days": {"zh":"前3天","ru":"Предыдущие 3 дня","fr":"3 jours précédents"},
+  "Next 3 days": {"zh":"后3天","ru":"Следующие 3 дня","fr":"3 jours suivants"},
+
   "Hour-pillar Kongwang matched at {times}; all Shensha on this date are inactive.": {
     "zh": "时柱于{times}匹配空亡，当日所有神煞均不生效。",
     "ru": "Кунван в столпе часа: {times}; все шэнь-ша этой даты неактивны.",
