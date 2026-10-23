@@ -1,6 +1,6 @@
 (() => {
   const messages = window.DAYMARK_TRANSLATIONS;
-  const locales = {en:'en-US', zh:'zh-CN', ru:'ru-RU', fr:'fr-FR'};
+  const locales = {en:'en-US', zh:'zh-CN', ru:'ru-RU', fr:'fr-FR', ja:'ja-JP'};
   const normalize = code => String(code || '').toLowerCase().split(/[-_]/)[0];
   let language = (navigator.languages || [navigator.language]).map(normalize).find(code => locales[code]) || 'en';
   try { const saved = localStorage.getItem('daymark.language'); if (locales[saved]) language = saved; } catch {}

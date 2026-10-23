@@ -1,0 +1,31 @@
+const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
+const assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({channel:'chrome',headless:true});try{
+ const context=await browser.newContext({locale:'ja-JP',serviceWorkers:'block'});
+ await context.addInitScript(()=>localStorage.setItem('daymark.shensha.v1',JSON.stringify({tiande:{enabled:true,targets:[...'甲乙丙丁戊己庚辛壬癸']}})));
+ const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://127.0.0.1:8769/#calendar');
+ assert.equal(await page.locator('html').getAttribute('lang'),'ja-JP');
+ assert.equal(await page.locator('#language-choice').inputValue(),'ja');
+ assert.equal(await page.locator('#shensha-period-title').innerText(),'今日の神煞');
+ await page.locator('#find-date').fill('2026-10-23');await page.locator('#find-date').dispatchEvent('change');
+ await page.locator('#shensha-period').selectOption('1:3');
+ assert.equal(await page.locator('.shensha-encounter-cell').count(),3);
+ assert.match(await page.locator('.shensha-encounter-cell').first().innerText(),/天徳/);
+ assert.match(await page.locator('.shensha-result-date').first().innerText(),/2026.*10.*24/);
+ for(const width of [320,390,1440]){await page.setViewportSize({width,height:900});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);}
+ await page.locator('#language-choice').selectOption('en');assert.equal(await page.locator('#shensha-period-title').innerText(),'Shensha of the day');
+ await page.locator('#language-choice').selectOption('ja');await page.reload();assert.equal(await page.locator('#language-choice').inputValue(),'ja');
+ await page.locator('#find-date').fill('2026-10-23');await page.locator('#date-form button').click();
+ assert.match(await page.locator('#detail-day-pillar').innerText(),/かのえ.*うま/);
+ await page.waitForFunction(()=>!document.querySelector('#daily-note').disabled);
+ await page.locator('#daily-note').fill('日本語のメモ');await page.locator('#language-choice').selectOption('fr');
+ assert.equal(await page.locator('#daily-note').inputValue(),'日本語のメモ');
+ await page.locator('#language-choice').selectOption('ja');
+ await page.setViewportSize({width:390,height:844});
+ await page.locator('#local-time-panel').screenshot({path:'/tmp/daymark-japanese-time.png'});
+ await page.goto('http://127.0.0.1:8769/#calendar');await page.locator('#shensha-period').selectOption('1:3');
+ await page.locator('#shensha-period-panel').screenshot({path:'/tmp/daymark-japanese-shensha.png'});
+ assert.deepEqual(errors,[]);
+ console.log('Passed: Japanese detection, saved preference, translated controls and Shensha, dates, kana readings, draft preservation, and mobile layout.');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

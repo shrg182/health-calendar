@@ -70,10 +70,12 @@
   const pinyinBranches = ['Zǐ','Chǒu','Yín','Mǎo','Chén','Sì','Wǔ','Wèi','Shēn','Yǒu','Xū','Hài'];
   const russianStems = ['Цзя','И','Бин','Дин','У','Цзи','Гэн','Синь','Жэнь','Гуй'];
   const russianBranches = ['цзы','чоу','инь','мао','чэнь','сы','у','вэй','шэнь','ю','сюй','хай'];
+  const japaneseStems = ['きのえ','きのと','ひのえ','ひのと','つちのえ','つちのと','かのえ','かのと','みずのえ','みずのと'];
+  const japaneseBranches = ['ね','うし','とら','う','たつ','み','うま','ひつじ','さる','とり','いぬ','い'];
   function marker(value) {
     if (i18n.language === 'zh') return value;
     const stem = stems.indexOf(value[0]), branch = branches.indexOf(value[1]);
-    const names = i18n.language === 'ru' ? [russianStems, russianBranches] : [pinyinStems, pinyinBranches];
+    const names = i18n.language === 'ja' ? [japaneseStems, japaneseBranches] : i18n.language === 'ru' ? [russianStems, russianBranches] : [pinyinStems, pinyinBranches];
     return `${value} · ${names[0][stem]}-${names[1][branch]}`;
   }
   const termMeanings = ['Minor Cold','Beginning of Spring','Awakening of Insects','Pure Brightness','Beginning of Summer','Grain in Ear','Minor Heat','Beginning of Autumn','White Dew','Cold Dew','Beginning of Winter','Major Snow'];

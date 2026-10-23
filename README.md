@@ -21,7 +21,7 @@ Then visit http://localhost:8000.
 
 ## Current features
 
-- Chinese, English, Russian, and French interface choices, remembered per browser, with localized dates and GanZhi pronunciation in day details
+- Chinese, English, Japanese, Russian, and French interface choices, remembered per browser, with localized dates and GanZhi pronunciation in day details
 - Monthly calendar with previous, next, and Today navigation
 - Month/year selection and date search (1901–2100)
 - Calendar-view preference saved on this browser, with a fallback when storage is unavailable
@@ -127,7 +127,7 @@ Covers two-account separation, two-device synchronization, legacy notes, sign-ou
 
 Use the language selector at the top of the app: **中文 / English / Русский / Français**. First use follows the browser's preferred supported language; later visits remember your choice in this browser. Changes apply without reloading or signing out. Notes, drafts, backup data, and Gregorian date keys retain their original contents.
 
-Chinese retains traditional lunar labels. English, Russian, and French use numeric lunar months/days and explicitly identify leap months. GanZhi characters remain the reference notation, with pinyin in English and French day details and Cyrillic pronunciation in Russian. Solar-term explanations and estimate labels are translated. The calendar calculations and Sunday-first week layout are unchanged.
+Chinese retains traditional lunar labels. English, Japanese, Russian, and French use numeric lunar months/days and explicitly identify leap months. GanZhi characters remain the reference notation, with pinyin in English and French day details and Cyrillic pronunciation in Russian, and kana readings in Japanese. Solar-term explanations and estimate labels are translated. The calendar calculations and Sunday-first week layout are unchanged.
 
 See [language implementation notes](docs/languages.md). Validate with:
 
@@ -141,7 +141,7 @@ TEST_ENGINE=webkit PLAYWRIGHT_PATH=/path/to/playwright node tests/languages.cjs
 
 Settings → App shows the current development version (the first numbered release was `0.1.0-dev.1`). **What’s new** opens translated release notes; a **New** badge remains until those notes are opened in this browser. **Check for updates** checks for a new offline app bundle. A downloaded update shows **Refresh to update**. Refresh is explicit and blocked while notes have drafts, pending account changes, unresolved conflicts, or active storage/sync operations. Only the requesting tab reloads; other tabs keep their drafts and sessions. After refresh, remembered account sessions are restored online.
 
-For every publication, increment `version` in [release.js](release.js), update its date and changes, and add Chinese/Russian/French translations for new release-note messages. The service worker imports that same metadata to name its offline cache, so version and cache identity share one source. `daymark.seenRelease` stores the version whose notes were read on this device. If browser storage is unavailable, read status lasts only for the current page.
+For every publication, increment `version` in [release.js](release.js), update its date and changes, and add Chinese/Japanese/Russian/French translations for new release-note messages. The service worker imports that same metadata to name its offline cache, so version and cache identity share one source. `daymark.seenRelease` stores the version whose notes were read on this device. If browser storage is unavailable, read status lasts only for the current page.
 
 Run `tests/updates.cjs` with Playwright (Chrome or `TEST_ENGINE=webkit`) to verify an actual waiting-worker update, release-note tracking, draft protection, note/date preservation, other-tab protection, and offline messages. A browser may update on its own after all app tabs close; the explicit refresh protection applies to the app's update button. Existing older tabs need one online reload to acquire this update UI.
 

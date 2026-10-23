@@ -20,3 +20,7 @@ Solar-term names retain Chinese characters alongside translated meanings and pin
 Both translation scripts are bundled with the static deployment and offline cache. Native date-picker dialogs and browser validation messages may follow the phone/browser language rather than the app's selection. The installed app's manifest name remains Daymark Calendar.
 
 Tests cover translation completeness, placeholder parity, Chrome/WebKit mobile layouts, language persistence and blocked storage, leap-month labels, GanZhi pronunciation, and preservation of note drafts, saved text, date routes, and signed-in accounts. Real phone testing remains necessary.
+
+## Japanese
+
+Japanese (`ja-JP`) is available as 日本語 in the language selector, is detected from browser preferences, and is remembered on this device. The full message catalog, status messages, Shensha labels, dates, and accessibility labels are translated. Chinese lunar calculations remain unchanged; Japanese uses numeric lunar labels, Japanese solar-term names, and kana readings for Heavenly Stems and Earthly Branches. Run `tests/japanese.cjs` for browser verification and `tests/translation-catalog.cjs` for catalog completeness and placeholders.
