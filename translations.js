@@ -146,6 +146,7 @@ window.DAYMARK_TRANSLATIONS = {
     "fr": "Fleur de pêcher"
   },
   "Repeated Shensha hour indications and Sheep Blade naming.": {"zh":"重复神煞的时柱提示及羊刃译名更新。","ru":"Часовые указания повторяющихся шэньша и название Клинок овцы.","fr":"Indications horaires des Shensha répétés et nom Lame du mouton."},
+  "Shensha suffix signs, repeated counts, and strong encounter highlights.": {"zh":"神煞符号后置、重复次数与强相遇高亮。","ru":"Знаки после названий шэньша, число повторений и выделение сильных совпадений.","fr":"Signes après les noms des Shensha, nombres de répétitions et mise en évidence des rencontres fortes."},
   "Sheep Blade": {
     "zh": "羊刃",
     "ru": "Клинок овцы",

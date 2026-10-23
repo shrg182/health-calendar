@@ -164,16 +164,18 @@
       return rule.enabled && rule.targets.some(value => [pillar[0],pillar[1],pillar].includes(value));
     });
   }
-  function appendMatches(container,pillar,found,inactive) {
+  function appendMatches(container,pillar,found,inactive,counts={}) {
     for (const [id,label,kind] of found) {
       const badge = document.createElement('span');
       badge.className = `shensha-badge ${inactive ? 'inactive' : kind}${kind === 'custom' ? ' important' : ''}`;
-      badge.dataset.shensha = id;
+      const count=counts[id]||1;
+      badge.dataset.shensha = id;badge.dataset.count=String(count);
+      badge.classList.toggle('intense',count>3 && !inactive && kind!=='custom');
       const rule = settings[id];
       const value = rule.targets.filter(value => [pillar[0],pillar[1],pillar].includes(value)).join('、');
       const title=itemName(id,label);
-      badge.textContent = `${kind === 'custom' ? value : (kind === 'shen' ? '+ ' : '− ') + title}${inactive ? ' · ' + t('Inactive') : ''}`;
-      if(kind !== 'custom')badge.setAttribute('aria-label',`${title} · ${t(names[kind])}${inactive ? ' · ' + t('Inactive') : ''}`);
+      badge.textContent = `${kind === 'custom' ? value : title + ' ' + (kind === 'shen' ? '+' : '−') + (count>1 ? count : '')}${inactive ? ' · ' + t('Inactive') : ''}`;
+      if(kind !== 'custom')badge.setAttribute('aria-label',`${title} · ${kind==='shen'?'+':'−'}${count} · ${t(names[kind])}${inactive ? ' · ' + t('Inactive') : ''}`);
       container.append(badge);
     }
   }
@@ -205,8 +207,10 @@
   function encounterData(date) {
     const context=calendar.contextForDate(date);
     const groups=Object.fromEntries(['year','month','day'].map(scope=>[scope,{...context[scope],found:matches(context[scope].pillar)}]));
-    const repeated=new Set(items.filter(([id])=>['year','month','day'].filter(scope=>groups[scope].found.some(([foundId])=>foundId===id)).length>=2).map(([id])=>id));
-    const hours=context.hours.map(slot=>({...slot,found:matches(slot.pillar).filter(([id])=>repeated.has(id))}));
+    const counts=Object.fromEntries(items.map(([id])=>[id,['year','month','day'].filter(scope=>groups[scope].found.some(([foundId])=>foundId===id)).length]));
+    for(const group of Object.values(groups))group.counts=counts;
+    const repeated=new Set(items.filter(([id])=>counts[id]>=2).map(([id])=>id));
+    const hours=context.hours.map(slot=>({...slot,found:matches(slot.pillar).filter(([id])=>repeated.has(id)),counts:Object.fromEntries(items.map(([id])=>[id,counts[id]+1]))}));
     const baseVoid=['year','month','day'].some(scope=>hasVoid(groups[scope].found));
     return {groups,hours,wholeDayVoid:baseVoid,state:baseVoid ? 'inactive' : 'active'};
   }
@@ -222,7 +226,7 @@
       section.dataset.start=dateKey(group.start);section.dataset.end=dateKey(group.end);section.append(range);
     }
     const badges=document.createElement('div');badges.className='shensha-matches';
-    appendMatches(badges,group.pillar,group.found,inactive);section.append(badges);
+    appendMatches(badges,group.pillar,group.found,inactive,group.counts);section.append(badges);
     if(!group.found.length){const none=document.createElement('span');none.textContent='—';none.setAttribute('aria-label',t('No matches in this pillar.'));section.append(none);}
     root.append(section);return section;
   }
@@ -236,7 +240,7 @@
       row.dataset.start=timeText(slot.startMinute);row.dataset.end=timeText(slot.endMinute);row.dataset.pillar=slot.pillar;
       const heading=document.createElement('h4');heading.textContent=`${timeText(slot.startMinute)}–${timeText(slot.endMinute)} · ${slot.pillar}`;
       const badges=document.createElement('div');badges.className='shensha-matches';
-      appendMatches(badges,slot.pillar,slot.found,data.wholeDayVoid || hasVoid(slot.found));row.append(heading,badges);details.append(row);
+      appendMatches(badges,slot.pillar,slot.found,data.wholeDayVoid || hasVoid(slot.found),slot.counts);row.append(heading,badges);details.append(row);
     }
     root.append(details);
   }

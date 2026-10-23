@@ -12,8 +12,8 @@ const assert=require('node:assert/strict');
  const expected={en:'Relay Horse（驿马）',zh:'驿马',ru:'Почтовая лошадь（驿马）',fr:'Cheval de relais（驿马）'};
  for(const lang of ['en','zh','ru','fr']){
   await page.locator('#language-choice').selectOption(lang);
-  assert.equal(await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=yima]').innerText(),'+ '+expected[lang]);
-  assert((await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=yangren]').innerText()).startsWith('− '));
+  assert.equal(await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=yima]').innerText(),expected[lang]+' +');
+  assert((await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=yangren]').innerText()).endsWith(' −'));
   assert.equal(await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=custom1]').innerText(),'癸亥');
   for(const badge of await page.locator('#shensha-matches [data-pillar-scope=day] .shensha-badge:not(.important)').all())assert(!/Shen · positive|Sha · negative|神 · 正向|煞 · 负向/.test(await badge.innerText()));
   await page.locator('[data-direction="1"][data-shensha-period="month"]').click();
@@ -31,8 +31,8 @@ const assert=require('node:assert/strict');
  }
  await page.locator('#open-settings').click();await page.locator('#shensha-kongwang').check();await page.locator('#shensha-form button[type=submit]').click();await page.goBack();
  assert.equal(await page.locator('#shensha-matches [data-pillar-scope=day] .inactive').count(),19);
- assert((await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=yima]').innerText()).startsWith('+ Cheval de relais（驿马）'));
- assert((await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=kongwang]').innerText()).startsWith('− Vide（空亡）'));
+ assert((await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=yima]').innerText()).startsWith('Cheval de relais（驿马） +'));
+ assert((await page.locator('#shensha-matches [data-pillar-scope=day] [data-shensha=kongwang]').innerText()).startsWith('Vide（空亡） −'));
  await page.locator('#language-choice').selectOption('en');await page.setViewportSize({width:375,height:844});
  await page.locator('#shensha-detail').screenshot({path:'/tmp/daymark-localized-shensha.png'});
  assert.deepEqual(errors,[]);

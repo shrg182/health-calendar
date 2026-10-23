@@ -295,3 +295,6 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
 #shensha-period-results ol { padding:0; margin:0; list-style:none }
 
 #shensha-matches { display:block }
+
+.shensha-badge.shen.intense { color:#fff; background:#236043; font-weight:700 }
+.shensha-badge.sha.intense { color:#fff; background:#a12626; font-weight:700 }
