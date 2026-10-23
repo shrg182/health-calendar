@@ -20,6 +20,19 @@
     ['custom1','①','custom','pillar'], ['custom2','②','custom','pillar'],
     ['custom3','③','custom','pillar']
   ];
+  // Explanatory localized labels; retain Chinese to distinguish traditional names.
+  const itemNames = {
+    tiande:'Heavenly Virtue', yuede:'Monthly Virtue', tianyi:'Heavenly Nobleman',
+    wenchang:'Literary Star', lushen:'Emolument Star', yima:'Relay Horse',
+    huagai:'Canopy Star', jiangxing:'General Star', jinyu:'Golden Carriage',
+    'tianyi-medical':'Heavenly Physician', taohua:'Peach Blossom',
+    yangren:'Yang Blade', jiesha:'Robbery Star', zaisha:'Calamity Star',
+    yuanchen:'Origin Star', kongwang:'Void', kuigang:'Dipper Chief',
+    shie:'Ten Defeats', yinyang:'Yin-Yang Mismatch', tianluodiwang:'Heavenly Net and Earthly Snare'
+  };
+  function itemName(id,chinese) {
+    return window.DaymarkI18n.language === 'zh' || !itemNames[id] ? chinese : `${t(itemNames[id])}（${chinese}）`;
+  }
   const allowed = [...stems,...branches,...pillars];
   const branchOnly = new Set(['tianyi','lushen','wenchang','yima','huagai','jiangxing','jinyu','tianyi-medical','taohua','yangren','kongwang','jiesha']);
   const tenDefeats = ['甲辰','乙巳','丙申','丁亥','戊戌','己丑','庚辰','辛巳','壬申','癸亥'];
@@ -158,7 +171,9 @@
       badge.dataset.shensha = id;
       const rule = settings[id];
       const value = rule.targets.filter(value => [pillar[0],pillar[1],pillar].includes(value)).join('、');
-      badge.textContent = `${kind === 'custom' ? value : label + ' · ' + t(names[kind])}${inactive ? ' · ' + t('Inactive') : ''}`;
+      const title=itemName(id,label);
+      badge.textContent = `${kind === 'custom' ? value : (kind === 'shen' ? '+ ' : '− ') + title}${inactive ? ' · ' + t('Inactive') : ''}`;
+      if(kind !== 'custom')badge.setAttribute('aria-label',`${title} · ${t(names[kind])}${inactive ? ' · ' + t('Inactive') : ''}`);
       container.append(badge);
     }
   }
@@ -250,14 +265,15 @@
       const row = document.createElement('div'); row.className = 'shensha-row';
       const checkLabel = document.createElement('label');
       const check = document.createElement('input'); check.type = 'checkbox'; check.id = `shensha-${id}`;
-      check.checked = settings[id].enabled; checkLabel.append(check,document.createTextNode(` ${label}`));
+      const nameLabel=document.createElement('span');nameLabel.textContent=itemName(id,label);
+      check.checked = settings[id].enabled; checkLabel.append(check,nameLabel);
       if (kind === 'custom') row.classList.toggle('important',check.checked);
       const picker = document.createElement('div'); picker.className = 'shensha-picker';
       const selected = new Set(settings[id].targets);
       const chips = document.createElement('div'); chips.className = 'shensha-chips';
       const details = document.createElement('details'); details.id = `shensha-picker-${id}`;
       const summary = document.createElement('summary'); setText(summary,'Choose targets');
-      summary.setAttribute('aria-label',label + ' · ' + t('Matching targets'));
+      summary.setAttribute('aria-label',itemName(id,label) + ' · ' + t('Matching targets'));
       details.append(summary);
       const panel = document.createElement('div'); panel.className = 'shensha-options';
       const searchLabel = document.createElement('label');
@@ -306,7 +322,7 @@
       details.addEventListener('keydown',event=>{if(event.key==='Escape'){details.open=false;summary.focus();}});
       details.append(panel);picker.append(chips,details);updateEnabled();
       check.addEventListener('change',()=>{markDirty();updateEnabled();});
-      pickers.set(id,{selected,summary,options:optionChecks,updateEnabled});
+      pickers.set(id,{selected,summary,options:optionChecks,updateEnabled,nameLabel});
       row.append(checkLabel,picker); group.append(row);
     }
     $('#shensha-fields').append(group);
@@ -318,7 +334,7 @@
       const enabled = $(`#shensha-${id}`).checked;
       const targets = [...pickers.get(id).selected];
       if (enabled && !targets.length) {
-        setText('#shensha-status','Choose at least one target for {name}.',{name:label});
+        setText('#shensha-status','Choose at least one target for {name}.',{name:itemName(id,label)});
         pickers.get(id).summary.focus(); return;
       }
       draft[id] = {enabled,targets:targets.filter(value => allowedFor(id).includes(value))};
@@ -334,7 +350,14 @@
     render(); renderPeriod();importVisibility();
     if(accountId)window.dispatchEvent(new Event('daymark:shensha-save'));
   });
-  window.addEventListener('daymark:language',()=>{render();renderPeriod();});
+  window.addEventListener('daymark:language',()=>{
+    for(const [id,label] of items) {
+      const picker=pickers.get(id);picker.nameLabel.textContent=itemName(id,label);
+      picker.summary.setAttribute('aria-label',itemName(id,label) + ' · ' + t('Matching targets'));
+      picker.updateEnabled();
+    }
+    render();renderPeriod();
+  });
   window.DaymarkShensha = {
     setAccount, sync:syncSelections,
     get pending() {return Boolean(accountId && pending);},

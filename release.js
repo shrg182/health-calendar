@@ -1,9 +1,9 @@
 // Bump this version and update these notes for every published development release.
 // Shared by the page and service worker so the offline cache has the same version.
 globalThis.DAYMARK_RELEASE = Object.freeze({
-  version: '0.1.0-dev.14',
+  version: '0.1.0-dev.15',
   date: '2026-10-22',
   changes: [
-    'Sync Shensha selections and custom targets across signed-in devices.'
+    'Localized Shensha names with Chinese references and compact +/− encounter labels.'
   ]
 });

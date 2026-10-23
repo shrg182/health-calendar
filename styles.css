@@ -281,3 +281,6 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
 #shensha-period-results li { padding:14px 0; border-top:1px solid var(--line) }
 .shensha-result-date { display:inline-block; min-height:44px; padding:8px 0; color:var(--green);font-weight:700 }
 @media(max-width:600px) { .shensha-period-buttons { grid-template-columns:repeat(2,minmax(0,1fr)) } }
+
+.shensha-badge { max-width:100%; overflow-wrap:anywhere }
+.shensha-row > label:first-child > span { min-width:0; overflow-wrap:anywhere }

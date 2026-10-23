@@ -1,6 +1,113 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
 
+  "Heavenly Virtue": {
+    "zh": "天德",
+    "ru": "Небесная добродетель",
+    "fr": "Vertu céleste"
+  },
+  "Monthly Virtue": {
+    "zh": "月德",
+    "ru": "Месячная добродетель",
+    "fr": "Vertu mensuelle"
+  },
+  "Heavenly Nobleman": {
+    "zh": "天乙",
+    "ru": "Небесный благородный",
+    "fr": "Noble céleste"
+  },
+  "Literary Star": {
+    "zh": "文昌",
+    "ru": "Звезда учёности",
+    "fr": "Étoile des lettres"
+  },
+  "Emolument Star": {
+    "zh": "禄神",
+    "ru": "Звезда достатка",
+    "fr": "Étoile des émoluments"
+  },
+  "Relay Horse": {
+    "zh": "驿马",
+    "ru": "Почтовая лошадь",
+    "fr": "Cheval de relais"
+  },
+  "Canopy Star": {
+    "zh": "华盖",
+    "ru": "Звезда балдахина",
+    "fr": "Étoile du dais"
+  },
+  "General Star": {
+    "zh": "将星",
+    "ru": "Звезда полководца",
+    "fr": "Étoile du général"
+  },
+  "Golden Carriage": {
+    "zh": "金舆",
+    "ru": "Золотая колесница",
+    "fr": "Carrosse d’or"
+  },
+  "Heavenly Physician": {
+    "zh": "天医",
+    "ru": "Небесный лекарь",
+    "fr": "Médecin céleste"
+  },
+  "Peach Blossom": {
+    "zh": "桃花",
+    "ru": "Цветок персика",
+    "fr": "Fleur de pêcher"
+  },
+  "Yang Blade": {
+    "zh": "羊刃",
+    "ru": "Клинок Ян",
+    "fr": "Lame Yang"
+  },
+  "Robbery Star": {
+    "zh": "劫煞",
+    "ru": "Звезда грабежа",
+    "fr": "Étoile du pillage"
+  },
+  "Calamity Star": {
+    "zh": "灾煞",
+    "ru": "Звезда бедствий",
+    "fr": "Étoile des calamités"
+  },
+  "Origin Star": {
+    "zh": "元辰",
+    "ru": "Звезда истока",
+    "fr": "Étoile de l’origine"
+  },
+  "Void": {
+    "zh": "空亡",
+    "ru": "Пустота",
+    "fr": "Vide"
+  },
+  "Dipper Chief": {
+    "zh": "魁罡",
+    "ru": "Владыка Ковша",
+    "fr": "Chef de la Grande Ourse"
+  },
+  "Ten Defeats": {
+    "zh": "十恶大败",
+    "ru": "Десять поражений",
+    "fr": "Dix Défaites"
+  },
+  "Yin-Yang Mismatch": {
+    "zh": "阴阳差错",
+    "ru": "Несоответствие Инь-Ян",
+    "fr": "Désaccord Yin-Yang"
+  },
+  "Heavenly Net and Earthly Snare": {
+    "zh": "天罗地网",
+    "ru": "Небесная сеть и земные силки",
+    "fr": "Filet céleste et piège terrestre"
+  },
+  "Localized Shensha names with Chinese references and compact +/− encounter labels.": {
+    "zh": "神煞名称随语言翻译并保留中文参照，相遇标签使用 +/−。",
+    "ru": "Названия шэнь-ша переведены с сохранением китайских названий; для совпадений используются +/−.",
+    "fr": "Noms Shen Sha traduits avec référence chinoise et symboles +/− pour les correspondances."
+  }
+,
+
   "Signed-in selections sync to your account. Local selections stay in this browser. A matching Kongwang makes every Shensha match on that date inactive.": {
     "zh": "登录后的选择会同步到账户，未登录的选择仅保存在此浏览器。逢空亡，当日神煞均不生效。",
     "ru": "Выбранные значения синхронизируются с аккаунтом после входа. Локальные значения остаются в браузере. Кунван делает все совпадения этого дня неактивными.",
