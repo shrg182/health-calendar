@@ -336,3 +336,6 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
 
 #shensha-period { display:block; max-width:100%; min-height:44px; padding:8px; margin:8px 0 12px; font:inherit; border:1px solid #bac9bf; border-radius:6px; background:var(--paper) }
 #shensha-period-status:empty { display:none }
+
+/* Route focus announces the heading without outlining the entire row. */
+#detail-title:focus { outline:none }

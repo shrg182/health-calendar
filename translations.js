@@ -1,5 +1,7 @@
 // English source messages with complete Chinese, Japanese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Remove the date-heading outline after opening or reloading a day.": {"zh":"移除打开或刷新日期页面后日期标题的边框。","ja":"日付を開いたときや再読み込みしたときの見出しの枠線を非表示にしました。","ru":"Убрана рамка заголовка даты при открытии или перезагрузке дня.","fr":"Suppression du contour du titre de date à l’ouverture ou au rechargement d’un jour."},
+
   "Simplify Shensha calendar cells with names only and no pillar line.": {"zh":"简化神煞日期格，仅显示名称并移除干支行。","ja":"神煞のカレンダー表示を名前のみにし、干支の行を省略しました。","ru":"В ячейках шэньша оставлены только названия без строки столпов.","fr":"Simplification des cases Shensha : noms seuls, sans ligne des piliers."},
 
   "Selected day": {"zh":"所选日期","ja":"選択した日","ru":"Выбранный день","fr":"Jour sélectionné"},
