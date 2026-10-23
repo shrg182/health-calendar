@@ -219,14 +219,11 @@
           <div class="pillar"><span class="pillar-name">Day · 日</span><strong class="pillar-value" id="detail-day-pillar"></strong></div>
         </div>
       </article>
-      <section id="shensha-detail" class="detail-card" hidden aria-labelledby="shensha-detail-title">
-        <h2 id="shensha-detail-title">Shensha matching</h2>
-        <label for="shensha-time">Local time for hour matching</label>
-        <input id="shensha-time" type="time" value="12:00" required>
-        <p>Local clock time; the day changes at midnight.</p>
-        <div id="shensha-matches" class="shensha-matches"></div>
-        <p id="shensha-empty">No matches for your selected targets.</p>
-        <p id="shensha-inactive" hidden>Kongwang matched: all Shensha on this date are inactive.</p>
+      <section id="local-time-panel" class="detail-card" aria-labelledby="local-time-title">
+        <h2 id="local-time-title">Local time</h2>
+        <label for="shensha-time">Time (24-hour, HH:MM)</label>
+        <input id="shensha-time" type="text" inputmode="numeric" value="12:00" pattern="([01][0-9]|2[0-3]):[0-5][0-9]" maxlength="5" placeholder="HH:MM" required aria-describedby="local-time-help">
+        <p id="local-time-help">Local clock time; the day changes at midnight.</p>
       </section>
       <aside class="detail-info" id="detail-solar-term"></aside>
     </section>

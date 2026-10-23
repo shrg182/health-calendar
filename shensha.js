@@ -203,7 +203,7 @@
   function timeText(minutes) {return `${String(Math.floor(minutes/60)).padStart(2,'0')}:${String(minutes%60).padStart(2,'0')}`;}
   function selectedMinute() {
     const value=$('#shensha-time').value;
-    return /^\d{2}:\d{2}$/.test(value) ? Number(value.slice(0,2))*60+Number(value.slice(3)) : null;
+    return /^([01]\d|2[0-3]):[0-5]\d$/.test(value) ? Number(value.slice(0,2))*60+Number(value.slice(3)) : null;
   }
   function encounterData(date) {
     const context=calendar.contextForDate(date);
@@ -358,26 +358,11 @@
     if(base)fillRange(...bounds(base,period.direction,length));
     renderPeriod();
   });
-  let selectedDate=null;
   function render() {
-    if(!selectedDate || !calendar)return;
-    const selected=items.some(([id])=>settings[id].enabled);$('#shensha-detail').hidden=!selected;
-    const root=$('#shensha-matches');root.replaceChildren();
-    const minute=selectedMinute();
-    if(minute===null){setText('#shensha-empty','Choose a valid local time.');$('#shensha-empty').hidden=false;$('#shensha-inactive').hidden=true;return;}
-    const data=encounterData(selectedDate),hour=data.hours.find(slot=>minute>=slot.startMinute&&minute<slot.endMinute);
-    const inactive=data.wholeDayVoid||hasVoid(hour.found),formatter=dateFormatter();
-    for(const scope of ['year','month','day'])appendPillarGroup(root,scope,data.groups[scope],inactive,formatter);
-    const hourSection=appendPillarGroup(root,'hour',hour,inactive,formatter,false);
-    if(hourSection) {
-      const hours=document.createElement('p');hours.textContent=`${timeText(hour.startMinute)}–${timeText(hour.endMinute)}`;hourSection.insertBefore(hours,hourSection.children[1]);
-    }
-    const scheduled=document.createElement('div');scheduled.dataset.pillarScope='hour-schedule';appendHours(scheduled,data);root.append(scheduled);
-    const any=['year','month','day'].some(scope=>data.groups[scope].found.length)||hour.found.length;
-    setText('#shensha-empty','No matches at the selected time.');$('#shensha-empty').hidden=Boolean(any);
-    setText('#shensha-inactive','Kongwang matched: all Shensha on this date are inactive.');
-    $('#shensha-inactive').hidden=!inactive;
+    const input=$('#shensha-time');
+    input.setCustomValidity(selectedMinute()===null ? t('Choose a valid local time.') : '');
   }
+  $('#shensha-time').addEventListener('input',render);
   $('#shensha-time').addEventListener('change',()=>{render();renderPeriod();});
   const pickers = new Map();
   for (const kind of ['shen','sha','custom']) {
@@ -486,7 +471,7 @@
     get pending() {return Boolean(accountId && pending);},
     get dirty() {return dirty;},
     get busy() {return syncRunning;},
-    show(date) { selectedDate=new Date(date);render(); },
+    show() { render(); },
     configure(api) { calendar=api; },
     context(date,hidden) {
       $('#shensha-period-panel').hidden=hidden;

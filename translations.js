@@ -1,5 +1,10 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Remove the Shensha matching block and keep local time in 24-hour format.": {"zh":"移除神煞匹配区块，保留24小时制本地时间。","ru":"Блок совпадений шэньша удалён; местное время в 24-часовом формате.","fr":"Suppression du bloc de correspondances Shensha ; heure locale au format 24 heures."},
+
+  "Local time": {"zh":"本地时间","ru":"Местное время","fr":"Heure locale"},
+  "Time (24-hour, HH:MM)": {"zh":"时间（24小时制，HH:MM）","ru":"Время (24 часа, ЧЧ:ММ)","fr":"Heure (24 heures, HH:MM)"},
+
   "Shensha of the day: choose a period or custom date range from one dropdown.": {"zh":"当日神煞：通过下拉菜单选择时段或自选日期范围。","ru":"Шэньша дня: выбор периода или произвольного диапазона в одном списке.","fr":"Shensha du jour : choisissez une période ou une plage personnalisée dans un menu."},
   "Shensha of the day": {"zh":"当日神煞","ru":"Шэньша дня","fr":"Shensha du jour"},
   "Period": {"zh":"时段","ru":"Период","fr":"Période"},
