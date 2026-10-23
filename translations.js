@@ -1,5 +1,13 @@
 // English source messages with complete Chinese, Japanese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "−3 days": {"zh": "−3天", "ja": "−3日", "ru": "−3 дн.", "fr": "−3 jours"},
+  "−10 days": {"zh": "−10天", "ja": "−10日", "ru": "−10 дн.", "fr": "−10 jours"},
+  "−30 days": {"zh": "−30天", "ja": "−30日", "ru": "−30 дн.", "fr": "−30 jours"},
+  "+3 days": {"zh": "+3天", "ja": "+3日", "ru": "+3 дн.", "fr": "+3 jours"},
+  "+10 days": {"zh": "+10天", "ja": "+10日", "ru": "+10 дн.", "fr": "+10 jours"},
+  "+30 days": {"zh": "+30天", "ja": "+30日", "ru": "+30 дн.", "fr": "+30 jours"},
+  "Choose 3, 10, or 30 days before or after the selected day.": {"zh": "选择所选日期之前或之后的3、10或30天。", "ja": "選択した日の前後3日・10日・30日を選べます。", "ru": "Выбор 3, 10 или 30 дней до или после выбранного дня.", "fr": "Choisissez 3, 10 ou 30 jours avant ou après le jour sélectionné."},
+
   "Remove the date-heading outline after opening or reloading a day.": {"zh":"移除打开或刷新日期页面后日期标题的边框。","ja":"日付を開いたときや再読み込みしたときの見出しの枠線を非表示にしました。","ru":"Убрана рамка заголовка даты при открытии или перезагрузке дня.","fr":"Suppression du contour du titre de date à l’ouverture ou au rechargement d’un jour."},
 
   "Simplify Shensha calendar cells with names only and no pillar line.": {"zh":"简化神煞日期格，仅显示名称并移除干支行。","ja":"神煞のカレンダー表示を名前のみにし、干支の行を省略しました。","ru":"В ячейках шэньша оставлены только названия без строки столпов.","fr":"Simplification des cases Shensha : noms seuls, sans ligne des piliers."},
