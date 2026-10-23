@@ -228,7 +228,7 @@
       const badge=holder.firstElementChild;descriptions.push(badge.textContent);
       if(list.children.length<2) {
         const name=document.createElement('span');name.className='calendar-shensha-name';
-        name.textContent=item[2]==='custom' ? badge.textContent : itemName(item[0],item[1]);
+        name.textContent=item[2]==='custom' ? badge.textContent : (itemNames[item[0]] ? t(itemNames[item[0]]) : item[1]);
         const strength=document.createElement('span');strength.className='calendar-shensha-strength';
         strength.textContent=item[2]==='custom' || group.counts[item[0]]<2 ? '' : (item[2]==='shen'?'+':'-').repeat(group.counts[item[0]]);
         badge.title=badge.textContent;badge.replaceChildren(name,strength);list.append(badge);
@@ -315,7 +315,8 @@
       const lunar=document.createElement('div');lunar.className='lunar';lunar.textContent=info.lunar;
       const pillars=document.createElement('div');pillars.className='ganzhi';
       pillars.textContent=['year','month','day'].map(scope=>`${t(scopeNames[scope])} ${data.groups[scope].pillar}`).join(' · ');
-      row.append(link,lunar,pillars);
+      row.append(link,lunar);
+      if(!compact)row.append(pillars);
       if(compact) {
         row.setAttribute('aria-label',link.textContent);
         appendCalendarCell(row,date);

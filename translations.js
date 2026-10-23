@@ -1,5 +1,7 @@
 // English source messages with complete Chinese, Japanese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Simplify Shensha calendar cells with names only and no pillar line.": {"zh":"简化神煞日期格，仅显示名称并移除干支行。","ja":"神煞のカレンダー表示を名前のみにし、干支の行を省略しました。","ru":"В ячейках шэньша оставлены только названия без строки столпов.","fr":"Simplification des cases Shensha : noms seuls, sans ligne des piliers."},
+
   "Selected day": {"zh":"所选日期","ja":"選択した日","ru":"Выбранный день","fr":"Jour sélectionné"},
   "Show the selected day by default and simplify period options.": {"zh":"默认显示所选日期，并简化时段选项。","ja":"選択した日を初期表示し、期間の選択肢を整理しました。","ru":"По умолчанию показывается выбранный день; список периодов упрощён.","fr":"Affichage du jour sélectionné par défaut et simplification des périodes."},
 
