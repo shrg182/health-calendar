@@ -139,6 +139,37 @@
     const monthPillar = stems[mod(firstMonthStem + term.offset, 10)] + branches[mod(2 + term.offset, 12)];
     return { year: yearPillar, month: monthPillar, term };
   }
+  // Keep encounter ranges consistent with the date cards' local-noon convention.
+  function effectiveTermDate(instant) {
+    const date=new Date(instant);
+    const result=new Date(date.getFullYear(),date.getMonth(),date.getDate(),12);
+    if(result.getTime()<instant)result.setDate(result.getDate()+1);
+    return result;
+  }
+  function encounterPillars(date) {
+    const noon=timestampAtLocalNoon(date),markers=pillarsFor(date);
+    const terms=[];
+    for(let y=date.getFullYear()-1;y<=date.getFullYear()+2;y++)terms.push(...termsForYear(y));
+    terms.sort((a,b)=>a.instant-b.instant);
+    const yearStarts=terms.filter(term=>term.offset===0);
+    const yearStart=yearStarts.filter(term=>term.instant<=noon).at(-1);
+    const yearEnd=yearStarts.find(term=>term.instant>noon);
+    const monthEnd=terms.find(term=>term.instant>noon);
+    function interval(pillar,start,end) {
+      const last=effectiveTermDate(end.instant);last.setDate(last.getDate()-1);
+      return {pillar,start:effectiveTermDate(start.instant),end:last};
+    }
+    const day=sexagenaryDay(date),dayStem=stems.indexOf(day[0]);
+    const hourStarts=[0,1,3,5,7,9,11,13,15,17,19,21,23];
+    const hours=hourStarts.map((hour,i)=>{
+      const branch=Math.floor((hour+1)/2)%12;
+      return {pillar:stems[mod((dayStem%5)*2+branch,10)]+branches[branch],
+        startMinute:hour*60,endMinute:(hourStarts[i+1]??24)*60};
+    });
+    return {year:interval(markers.year,yearStart,yearEnd),
+      month:interval(markers.month,markers.term,monthEnd),
+      day:{pillar:day,start:new Date(date),end:new Date(date)},hours};
+  }
   function dateKey(date) {
     const pad = value => String(value).padStart(2, '0');
     return `${String(date.getFullYear()).padStart(4, '0')}-${pad(date.getMonth()+1)}-${pad(date.getDate())}`;
@@ -177,7 +208,7 @@
     $('#detail-year-pillar').textContent = marker(pillars.year);
     $('#detail-month-pillar').textContent = marker(pillars.month);
     $('#detail-day-pillar').textContent = marker(sexagenaryDay(date));
-    window.DaymarkShensha.show(sexagenaryDay(date));
+    window.DaymarkShensha.show(date);
     const nearbyTerms = [];
     for (let year=date.getFullYear()-1; year<=date.getFullYear()+1; year++) nearbyTerms.push(...termsForYear(year));
     const termOnDate = nearbyTerms.find(term => dateKey(new Date(term.instant)) === dateKey(date));
@@ -347,7 +378,7 @@
     updateMonthNames(); updateWeekdays();
     try { renderPage(false); } catch { setText(summary,'Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'); }
   });
-  window.DaymarkShensha.configure({pillarForDate:sexagenaryDay,openDay});
+  window.DaymarkShensha.configure({pillarForDate:sexagenaryDay,contextForDate:encounterPillars,openDay});
   try { lunarFormatter.format(todayDate); renderPage(); }
   catch (err) { setText(summary,'Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'); daysEl.replaceChildren(); }
 })();

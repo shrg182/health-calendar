@@ -34,8 +34,8 @@ const assert=require('node:assert/strict');
  // Every day matches tiande; only 子 days trigger the inactive override.
  for(const row of await page.locator('#shensha-period-results li').all()){
   const pillar=(await row.locator('a').innerText()).split(' · ')[1];
-  assert.equal(await row.locator('.inactive').count()>0,pillar.endsWith('子'));
-  assert.equal(await row.locator('.important').count(),pillar.startsWith('甲')?1:0);
+  assert.equal(await row.locator('[data-pillar-scope=day] .inactive').count()>0,true);
+  assert.equal(await row.locator('[data-pillar-scope=day] .important').count(),pillar.startsWith('甲')?1:0);
  }
  await page.waitForFunction(()=>!document.querySelector('#daily-note').disabled);
  await page.locator('#daily-note').fill('Keep this period-navigation draft');
@@ -58,7 +58,7 @@ const assert=require('node:assert/strict');
  const picker=page.locator('#shensha-picker-custom1');await picker.locator('summary').click();
  await picker.locator('input[value="甲"]').uncheck();await picker.locator('input[value="甲子"]').check();
  await page.locator('#shensha-form button[type=submit]').click();await page.goBack();
- assert.match(await page.locator('#shensha-period-status').innerText(),/no matching dates/);assert.equal((await dates()).length,0);
+ assert((await dates()).length>0,'Full-pillar targets can also match hour pillars');
  await page.locator('#open-settings').click();await page.locator('#shensha-custom1').uncheck();
  await page.locator('#shensha-form button[type=submit]').click();await page.goBack();assert.match(await page.locator('#shensha-period-status').innerText(),/Settings first/);assert.equal((await dates()).length,0);
  assert.deepEqual(errors,[]);

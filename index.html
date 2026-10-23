@@ -119,6 +119,7 @@
     </section>
     <section id="settings-shensha" class="settings-card" tabindex="-1" aria-labelledby="shensha-title">
       <h2 id="shensha-title">Shensha matching</h2>
+      <p>Matches apply to year, month, day, and hour pillars.</p>
       <p id="shensha-instructions">Select an item and choose one or more matching targets.</p>
       <p>Signed-in selections sync to your account. Local selections stay in this browser. A matching Kongwang makes every Shensha match on that date inactive.</p>
       <button class="today-btn" id="shensha-use-local" type="button" hidden>Use local selections</button>
@@ -221,6 +222,9 @@
       </article>
       <section id="shensha-detail" class="detail-card" hidden aria-labelledby="shensha-detail-title">
         <h2 id="shensha-detail-title">Shensha matching</h2>
+        <label for="shensha-time">Local time for hour matching</label>
+        <input id="shensha-time" type="time" value="12:00" required>
+        <p>Local clock time; the day changes at midnight.</p>
         <div id="shensha-matches" class="shensha-matches"></div>
         <p id="shensha-empty">No matches for your selected targets.</p>
         <p id="shensha-inactive" hidden>Kongwang matched: all Shensha on this date are inactive.</p>
@@ -240,7 +244,7 @@
         <button class="today-btn" type="button" data-direction="1" data-shensha-period="month" aria-pressed="false">Next month</button>
       </div>
       <p id="shensha-period-status" role="status"></p>
-      <ol id="shensha-period-results"></ol>
+      <div id="shensha-period-results"></div>
     </section>
   </main>
   <script src="release.js" defer></script>

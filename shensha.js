@@ -13,8 +13,8 @@
     ['jinyu','金舆','shen','branch'], ['tianyi-medical','天医','shen','branch'],
     ['taohua','桃花','shen','branch'],
     ['yangren','羊刃','sha','branch'], ['jiesha','劫煞','sha','branch'],
-    ['zaisha','灾煞','sha','branch'], ['yuanchen','元辰','sha','branch'],
-    ['kongwang','空亡','sha','branch'], ['kuigang','魁罡','sha','pillar'],
+    ['zaisha','灾煞','sha','branch'],
+    ['kongwang','空亡','sha','branch'],
     ['shie','十恶大败','sha','pillar'], ['yinyang','阴阳差错','sha','pillar'],
     ['tianluodiwang','天罗地网','sha','branch'],
     ['custom1','①','custom','pillar'], ['custom2','②','custom','pillar'],
@@ -27,7 +27,7 @@
     huagai:'Canopy Star', jiangxing:'General Star', jinyu:'Golden Carriage',
     'tianyi-medical':'Heavenly Physician', taohua:'Peach Blossom',
     yangren:'Yang Blade', jiesha:'Robbery Star', zaisha:'Calamity Star',
-    yuanchen:'Origin Star', kongwang:'Void', kuigang:'Dipper Chief',
+    kongwang:'Void',
     shie:'Ten Defeats', yinyang:'Yin-Yang Mismatch', tianluodiwang:'Heavenly Net and Earthly Snare'
   };
   function itemName(id,chinese) {
@@ -64,7 +64,7 @@
     }
     return result;
   }
-  let settings = empty(), dayPillar = null, loadWarning = false;
+  let settings = empty(), loadWarning = false;
   let accountId = null, pending = false, dirty = false, hasCloud = false;
   let syncRunning = false;
   const accountKey = id => `daymark.shensha.account.v1:${id}`;
@@ -194,51 +194,96 @@
     return direction < 0 ? [new Date(y,m,d-days,12),new Date(y,m,d-1,12)]
       : [new Date(y,m,d+1,12),new Date(y,m,d+days,12)];
   }
-  function renderPeriod() {
-    if (!calendar) return;
-    $('#shensha-period-results').hidden = !period;
-    const base = parseDate($('#shensha-reference').value);
-    if (!base) {
-      setText('#shensha-period-status','Choose a reference date between 1901 and 2100.');
-      $('#shensha-period-results').replaceChildren();
-      return;
+  const scopeNames={year:'Year pillar',month:'Month pillar',day:'Day pillar',hour:'Hour pillar'};
+  // Existing user rule: an hour-level Void also deactivates the entire civil date.
+  const hourVoidAllDay=true;
+  function hasVoid(found) {return found.some(([id])=>id==='kongwang');}
+  function timeText(minutes) {return `${String(Math.floor(minutes/60)).padStart(2,'0')}:${String(minutes%60).padStart(2,'0')}`;}
+  function selectedMinute() {
+    const value=$('#shensha-time').value;
+    return /^\d{2}:\d{2}$/.test(value) ? Number(value.slice(0,2))*60+Number(value.slice(3)) : null;
+  }
+  function encounterData(date) {
+    const context=calendar.contextForDate(date);
+    const groups=Object.fromEntries(['year','month','day'].map(scope=>[scope,{...context[scope],found:matches(context[scope].pillar)}]));
+    const hours=context.hours.map(slot=>({...slot,found:matches(slot.pillar)}));
+    const baseVoid=['year','month','day'].some(scope=>hasVoid(groups[scope].found));
+    const hourVoid=hours.some(slot=>hasVoid(slot.found));
+    return {groups,hours,baseVoid,wholeDayVoid:baseVoid || (hourVoidAllDay && hourVoid),
+      state:baseVoid || (hourVoidAllDay && hourVoid) ? 'inactive' : hourVoid ? 'partial' : 'active'};
+  }
+  function dateFormatter() {return new Intl.DateTimeFormat(window.DaymarkI18n.locale,{year:'numeric',month:'short',day:'numeric'});}
+  function appendPillarGroup(root,scope,group,inactive,formatter,empty=true) {
+    if(!empty && !group.found.length)return null;
+    const section=document.createElement('section');section.className='shensha-pillar-group';
+    section.dataset.pillarScope=scope;section.dataset.pillar=group.pillar;
+    const title=document.createElement('h3');title.textContent=`${t(scopeNames[scope])} · ${group.pillar}`;section.append(title);
+    if(scope==='year'||scope==='month') {
+      const range=document.createElement('p');range.className='shensha-pillar-range';
+      range.textContent=t('Pillar dates (approx.): {start} – {end}',{start:formatter.format(group.start),end:formatter.format(group.end)});
+      section.dataset.start=dateKey(group.start);section.dataset.end=dateKey(group.end);section.append(range);
     }
-    const selected = items.some(([id])=>settings[id].enabled);
+    const badges=document.createElement('div');badges.className='shensha-matches';
+    appendMatches(badges,group.pillar,group.found,inactive);section.append(badges);
+    if(!group.found.length){const none=document.createElement('span');none.textContent='—';none.setAttribute('aria-label',t('No matches in this pillar.'));section.append(none);}
+    root.append(section);return section;
+  }
+  function appendHours(root,data) {
+    const foundHours=data.hours.filter(slot=>slot.found.length);
+    if(!foundHours.length)return;
+    const details=document.createElement('details');details.className='shensha-hour-list';
+    const summary=document.createElement('summary');summary.textContent=t('Hour encounters');details.append(summary);
+    for(const slot of foundHours) {
+      const row=document.createElement('div');row.className='shensha-hour-slot';
+      row.dataset.start=timeText(slot.startMinute);row.dataset.end=timeText(slot.endMinute);row.dataset.pillar=slot.pillar;
+      const heading=document.createElement('h4');heading.textContent=`${timeText(slot.startMinute)}–${timeText(slot.endMinute)} · ${slot.pillar}`;
+      const badges=document.createElement('div');badges.className='shensha-matches';
+      appendMatches(badges,slot.pillar,slot.found,data.wholeDayVoid || hasVoid(slot.found));row.append(heading,badges);details.append(row);
+    }
+    root.append(details);
+  }
+  function renderPeriod() {
+    if(!calendar)return;
+    const root=$('#shensha-period-results');root.hidden=!period;
+    const base=parseDate($('#shensha-reference').value);root.replaceChildren();
+    if(!base){setText('#shensha-period-status','Choose a reference date between 1901 and 2100.');return;}
     document.querySelectorAll('[data-shensha-period]').forEach(button=>{
       const [start,end]=bounds(base,Number(button.dataset.direction),button.dataset.shenshaPeriod);
       button.disabled=end<minDate||start>maxDate;
-      const active = Boolean(period && period.direction===Number(button.dataset.direction) && period.length===button.dataset.shenshaPeriod);
-      button.setAttribute('aria-pressed',String(active));
-      button.setAttribute('aria-expanded',String(active));
-      button.setAttribute('aria-controls','shensha-period-results');
+      const active=Boolean(period && period.direction===Number(button.dataset.direction) && period.length===button.dataset.shenshaPeriod);
+      button.setAttribute('aria-pressed',String(active));button.setAttribute('aria-expanded',String(active));button.setAttribute('aria-controls','shensha-period-results');
     });
-    $('#shensha-period-results').replaceChildren();
-    if (!selected) { setText('#shensha-period-status','Select Shensha targets in Settings first.'); return; }
-    if (!period) { setText('#shensha-period-status','Choose a period to list matching dates.'); return; }
+    if(!items.some(([id])=>settings[id].enabled)){setText('#shensha-period-status','Select Shensha targets in Settings first.');return;}
+    if(!period){setText('#shensha-period-status','Choose a period to list matching dates.');return;}
     let [start,end]=bounds(base,period.direction,period.length);
-    start=new Date(Math.max(start,minDate)); end=new Date(Math.min(end,maxDate));
-    const formatter=new Intl.DateTimeFormat(window.DaymarkI18n.locale,{year:'numeric',month:'short',day:'numeric'});
+    start=new Date(Math.max(start,minDate));end=new Date(Math.min(end,maxDate));
+    const formatter=dateFormatter(),longGroups={year:new Map(),month:new Map()},rows=document.createElement('ol');
     let count=0;
     for(let date=new Date(start);date<=end;date.setDate(date.getDate()+1)) {
-      const pillar=calendar.pillarForDate(date),found=matches(pillar);
-      if(!found.length)continue;
-      count++;
-      const inactive=found.some(([id])=>id==='kongwang');
+      const data=encounterData(date);
+      const matched=['year','month','day'].some(scope=>data.groups[scope].found.length)||data.hours.some(slot=>slot.found.length);
+      if(!matched)continue;count++;
+      for(const scope of ['year','month']) {
+        const group=data.groups[scope];if(!group.found.length)continue;
+        const key=dateKey(group.start);
+        if(!longGroups[scope].has(key))longGroups[scope].set(key,{group,states:new Set()});
+        longGroups[scope].get(key).states.add(data.state);
+      }
+      if(!data.groups.day.found.length && !data.hours.some(slot=>slot.found.length))continue;
       const row=document.createElement('li');row.dataset.date=dateKey(date);
-      const link=document.createElement('a');link.href=`#day=${dateKey(date)}`;
-      link.className='shensha-result-date';link.textContent=`${formatter.format(date)} · ${pillar}`;
-      const target=new Date(date);
-      link.addEventListener('click',event=>{
-        if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
-        event.preventDefault();calendar.openDay(target);window.scrollTo(0,0);
-      });
-      const badges=document.createElement('div');badges.className='shensha-matches';
-      appendMatches(badges,pillar,found,inactive);row.append(link,badges);
-      $('#shensha-period-results').append(row);
+      const link=document.createElement('a');link.href=`#day=${dateKey(date)}`;link.className='shensha-result-date';
+      link.textContent=`${formatter.format(date)} · ${data.groups.day.pillar}`;const target=new Date(date);
+      link.addEventListener('click',event=>{if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();calendar.openDay(target);window.scrollTo(0,0);});
+      row.append(link);
+      appendPillarGroup(row,'day',data.groups.day,data.wholeDayVoid,formatter,false);appendHours(row,data);rows.append(row);
     }
-    if(start>end) {setText('#shensha-period-status','No dates in the supported range.');return;}
-    setText('#shensha-period-status',count ? '{start} – {end}: {count} matching dates.' : '{start} – {end}: no matching dates.',
-      {start:formatter.format(start),end:formatter.format(end),count});
+    for(const scope of ['year','month'])for(const {group,states} of longGroups[scope].values()) {
+      const section=appendPillarGroup(root,scope,group,states.size===1&&states.has('inactive'),formatter,false);
+      if(states.has('partial')||states.size>1){const note=document.createElement('p');note.textContent=t('Inactive on some dates or hours; see the date details.');section.append(note);}
+    }
+    if(rows.children.length){const title=document.createElement('h3');title.textContent=t('Day and hour encounters');root.append(title,rows);}
+    if(start>end){setText('#shensha-period-status','No dates in the supported range.');return;}
+    setText('#shensha-period-status',count ? '{start} – {end}: {count} matching dates.' : '{start} – {end}: no matching dates.',{start:formatter.format(start),end:formatter.format(end),count});
   }
   $('#shensha-reference').addEventListener('change',renderPeriod);
   document.querySelectorAll('[data-shensha-period]').forEach(button=>button.addEventListener('click',()=>{
@@ -246,16 +291,28 @@
     period=period && period.direction===direction && period.length===length ? null : {direction,length};
     renderPeriod();
   }));
+  let selectedDate=null;
   function render() {
-    if (!dayPillar) return;
-    const selected = items.some(([id]) => settings[id].enabled);
-    $('#shensha-detail').hidden = !selected;
-    const found = matches(dayPillar), inactive = found.some(([id]) => id === 'kongwang');
-    $('#shensha-matches').replaceChildren();
-    appendMatches($('#shensha-matches'),dayPillar,found,inactive);
-    $('#shensha-empty').hidden = Boolean(found.length);
-    $('#shensha-inactive').hidden = !inactive;
+    if(!selectedDate || !calendar)return;
+    const selected=items.some(([id])=>settings[id].enabled);$('#shensha-detail').hidden=!selected;
+    const root=$('#shensha-matches');root.replaceChildren();
+    const minute=selectedMinute();
+    if(minute===null){setText('#shensha-empty','Choose a valid local time.');$('#shensha-empty').hidden=false;$('#shensha-inactive').hidden=true;return;}
+    const data=encounterData(selectedDate),hour=data.hours.find(slot=>minute>=slot.startMinute&&minute<slot.endMinute);
+    const inactive=data.wholeDayVoid||hasVoid(hour.found),formatter=dateFormatter();
+    for(const scope of ['year','month','day'])appendPillarGroup(root,scope,data.groups[scope],inactive,formatter);
+    const hourSection=appendPillarGroup(root,'hour',hour,inactive,formatter);
+    const hours=document.createElement('p');hours.textContent=`${timeText(hour.startMinute)}–${timeText(hour.endMinute)}`;hourSection.insertBefore(hours,hourSection.children[1]);
+    const scheduled=document.createElement('div');scheduled.dataset.pillarScope='hour-schedule';appendHours(scheduled,data);root.append(scheduled);
+    const any=['year','month','day'].some(scope=>data.groups[scope].found.length)||hour.found.length;
+    setText('#shensha-empty','No matches at the selected time.');$('#shensha-empty').hidden=Boolean(any);
+    const voidTimes=data.hours.filter(slot=>hasVoid(slot.found)).map(slot=>`${timeText(slot.startMinute)}–${timeText(slot.endMinute)}`).join(', ');
+    if(hourVoidAllDay && !data.baseVoid && voidTimes)
+      setText('#shensha-inactive','Hour-pillar Kongwang matched at {times}; all Shensha on this date are inactive.',{times:voidTimes});
+    else setText('#shensha-inactive',hourVoidAllDay ? 'Kongwang matched: all Shensha on this date are inactive.' : 'Kongwang matched: all Shensha are inactive at the selected time.');
+    $('#shensha-inactive').hidden=!inactive;
   }
+  $('#shensha-time').addEventListener('change',()=>{render();renderPeriod();});
   const pickers = new Map();
   for (const kind of ['shen','sha','custom']) {
     const group = document.createElement('fieldset');
@@ -363,7 +420,7 @@
     get pending() {return Boolean(accountId && pending);},
     get dirty() {return dirty;},
     get busy() {return syncRunning;},
-    show(pillar) { dayPillar = pillar; render(); },
+    show(date) { selectedDate=new Date(date);render(); },
     configure(api) { calendar=api; },
     context(date,hidden) {
       $('#shensha-period-panel').hidden=hidden;

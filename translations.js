@@ -1,5 +1,94 @@
 // English source messages with complete Chinese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Hour-pillar Kongwang matched at {times}; all Shensha on this date are inactive.": {
+    "zh": "时柱于{times}匹配空亡，当日所有神煞均不生效。",
+    "ru": "Кунван в столпе часа: {times}; все шэнь-ша этой даты неактивны.",
+    "fr": "Kongwang correspond au pilier horaire à {times} ; tous les Shen Sha de cette date sont inactifs."
+  },
+
+  "No matches at the selected time.": {
+    "zh": "所选时间无匹配。",
+    "ru": "В выбранное время совпадений нет.",
+    "fr": "Aucune correspondance à l’heure choisie."
+  },
+  "Kongwang matched: all Shensha are inactive at the selected time.": {
+    "zh": "逢空亡，所选时间的神煞均不生效。",
+    "ru": "Совпадение с Кунван: в выбранное время все шэнь-ша неактивны.",
+    "fr": "Kongwang correspond : tous les Shen Sha sont inactifs à l’heure choisie."
+  },
+  "Inactive on some dates or hours; see the date details.": {
+    "zh": "部分日期或时段不生效，详见日期详情。",
+    "ru": "Неактивно в некоторые даты или часы; см. сведения о дате.",
+    "fr": "Inactif à certaines dates ou heures ; consultez les détails du jour."
+  },
+  "Year, month, day, and hour encounters; remove Yuanchen and Kuigang.": {
+    "zh": "按年柱、月柱、日柱和时柱显示相遇，移除元辰与魁罡。",
+    "ru": "Совпадения по году, месяцу, дню и часу; удалены Юаньчэнь и Куйган.",
+    "fr": "Correspondances annuelles, mensuelles, quotidiennes et horaires ; retrait de Yuanchen et Kuigang."
+  }
+,
+
+  "Matches apply to year, month, day, and hour pillars.": {
+    "zh": "匹配适用于年柱、月柱、日柱和时柱。",
+    "ru": "Совпадения проверяются по столпам года, месяца, дня и часа.",
+    "fr": "Les correspondances s’appliquent aux piliers de l’année, du mois, du jour et de l’heure."
+  },
+  "Local time for hour matching": {
+    "zh": "时柱匹配的当地时间",
+    "ru": "Местное время для столпа часа",
+    "fr": "Heure locale pour le pilier de l’heure"
+  },
+  "Local clock time; the day changes at midnight.": {
+    "zh": "采用当地钟表时间，以午夜换日。",
+    "ru": "Используется местное время; день меняется в полночь.",
+    "fr": "Heure locale ; le jour change à minuit."
+  },
+  "Year pillar": {
+    "zh": "年柱",
+    "ru": "Столп года",
+    "fr": "Pilier de l’année"
+  },
+  "Month pillar": {
+    "zh": "月柱",
+    "ru": "Столп месяца",
+    "fr": "Pilier du mois"
+  },
+  "Hour pillar": {
+    "zh": "时柱",
+    "ru": "Столп часа",
+    "fr": "Pilier de l’heure"
+  },
+  "Pillar dates (approx.): {start} – {end}": {
+    "zh": "柱位日期（约）：{start}至{end}",
+    "ru": "Даты столпа (прибл.): {start} – {end}",
+    "fr": "Dates du pilier (approx.) : du {start} au {end}"
+  },
+  "Hour encounters": {
+    "zh": "时柱相遇",
+    "ru": "Часовые совпадения",
+    "fr": "Correspondances horaires"
+  },
+  "Day and hour encounters": {
+    "zh": "日柱与时柱相遇",
+    "ru": "Совпадения дня и часа",
+    "fr": "Correspondances du jour et de l’heure"
+  },
+  "Choose a valid local time.": {
+    "zh": "请选择有效的当地时间。",
+    "ru": "Выберите допустимое местное время.",
+    "fr": "Choisissez une heure locale valide."
+  },
+  "Year and month encounters remain listed for their whole pillar periods.": {
+    "zh": "年柱、月柱相遇按整段柱位期间列出。",
+    "ru": "Совпадения года и месяца указаны на весь период соответствующего столпа.",
+    "fr": "Les correspondances annuelles et mensuelles couvrent toute la période de leur pilier."
+  },
+  "No matches in this pillar.": {
+    "zh": "此柱无匹配。",
+    "ru": "В этом столпе совпадений нет.",
+    "fr": "Aucune correspondance dans ce pilier."
+  }
+,
 
   "Heavenly Virtue": {
     "zh": "天德",

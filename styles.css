@@ -284,3 +284,14 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
 
 .shensha-badge { max-width:100%; overflow-wrap:anywhere }
 .shensha-row > label:first-child > span { min-width:0; overflow-wrap:anywhere }
+
+#shensha-time { display:block; min-height:44px; max-width:100%; margin:8px 0; padding:8px; font:inherit; font-size:16px; border:1px solid #bac9bf; border-radius:6px }
+.shensha-pillar-group { padding:12px 0; border-top:1px solid var(--line) }
+.shensha-pillar-group h3 { margin:0 0 8px; font-size:17px }
+.shensha-pillar-group p { margin:6px 0 10px; color:var(--muted) }
+.shensha-hour-list summary { min-height:44px; padding:10px 0; cursor:pointer; font-weight:700 }
+.shensha-hour-slot { padding:10px 0; border-top:1px solid var(--line) }
+.shensha-hour-slot h4 { margin:0 0 8px }
+#shensha-period-results ol { padding:0; margin:0; list-style:none }
+
+#shensha-matches { display:block }
