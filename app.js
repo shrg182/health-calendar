@@ -302,12 +302,10 @@
       const dayPillar=document.createElement('span'); dayPillar.textContent=` · ${sexagenaryDay(date)}`;
       ganzhiEl.append(yearPillar,monthPillar,dayPillar);
       cell.append(row,lunarEl,ganzhiEl);
-      if(!cell.disabled)window.DaymarkShensha.appendCalendarCell(cell,date);
       frag.append(cell);
     }
     daysEl.replaceChildren(frag);
   }
-  window.addEventListener('daymark:shensha-changed', () => { if (!$('#calendar-page').hidden) render(); });
   window.addEventListener('daymark:notes', () => { if (!$('#calendar-page').hidden) render(); });
   $('#month-form').addEventListener('submit', event => {
     event.preventDefault();

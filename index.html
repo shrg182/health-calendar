@@ -251,6 +251,12 @@
         <button class="today-btn" type="button" data-direction="1" data-shensha-period="10" aria-pressed="false">Next 10 days</button>
         <button class="today-btn" type="button" data-direction="1" data-shensha-period="month" aria-pressed="false">Next month</button>
       </div>
+      <label class="shensha-display-choice" for="shensha-display">Encounter display
+        <select id="shensha-display">
+          <option value="calendar">Calendar cells</option>
+          <option value="cards">Detailed cards</option>
+        </select>
+      </label>
       <p id="shensha-period-status" role="status"></p>
       <nav id="shensha-result-pages" aria-label="Encounter result pages" hidden>
         <button class="today-btn" id="shensha-page-prev" type="button">Earlier dates</button>

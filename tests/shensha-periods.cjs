@@ -7,6 +7,7 @@ const assert=require('node:assert/strict');
  })));
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:8769/#day=2026-10-22');
+ await page.locator('#shensha-display').selectOption('cards');
  const cards=()=>page.locator('#shensha-period-results li.shensha-date-card');
  const dates=()=>cards().evaluateAll(rows=>rows.map(row=>row.dataset.date));
  async function range(start,end){await page.locator('#shensha-start').fill(start);await page.locator('#shensha-end').fill(end);await page.locator('#shensha-range-form button[type=submit]').click();}

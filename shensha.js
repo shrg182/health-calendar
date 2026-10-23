@@ -98,7 +98,7 @@
       picker.options.forEach((option,value)=>{option.checked=picker.selected.has(value);});
       picker.updateEnabled();
     }
-    render();renderPeriod();importVisibility();window.dispatchEvent(new Event('daymark:shensha-changed'));
+    render();renderPeriod();importVisibility();
   }
   function setAccount(user) {
     const previous=accountId;
@@ -269,6 +269,11 @@
     root.append(details);
   }
   let resultPage=0;
+  try {if(localStorage.getItem('daymark.shensha.display.v1')==='cards')$('#shensha-display').value='cards';} catch {}
+  $('#shensha-display').addEventListener('change',()=>{
+    try {localStorage.setItem('daymark.shensha.display.v1',$('#shensha-display').value);} catch {}
+    renderPeriod();
+  });
   const pageDays=31;
   function activeBounds(base) {
     return period.custom ? [parseDate(period.start),parseDate(period.end)] : bounds(base,period.direction,period.length);
@@ -300,13 +305,14 @@
     const last=new Date(first);last.setDate(last.getDate()+pageDays-1);if(last>end)last.setTime(end.getTime());
     const prev=$('#shensha-page-prev'),next=$('#shensha-page-next');prev.disabled=resultPage===0;next.disabled=last>=end;
     $('#shensha-result-pages').hidden=prev.disabled&&next.disabled;
-    const formatter=dateFormatter(),rows=document.createElement('ol');rows.className='shensha-date-cards';
+    const compact=$('#shensha-display').value==='calendar';
+    const formatter=dateFormatter(),rows=document.createElement('ol');rows.className=compact ? 'shensha-calendar-cells' : 'shensha-date-cards';
     let count=0;
     for(let date=new Date(first);date<=last;date.setDate(date.getDate()+1)) {
       const data=encounterData(date);
       const found=items.filter(([id])=>['year','month','day'].some(scope=>data.groups[scope].found.some(([matchId])=>matchId===id)));
       if(!found.length)continue;count++;
-      const row=document.createElement('li');row.className='shensha-date-card';row.dataset.date=dateKey(date);
+      const row=document.createElement('li');row.className=compact ? 'shensha-encounter-cell' : 'shensha-date-card';row.dataset.date=dateKey(date);
       const link=document.createElement('a');link.href=`#day=${dateKey(date)}`;link.className='shensha-result-date';
       const info=calendar.dateInfo(date);
       link.textContent=`${formatter.format(date)} · ${info.weekday}`;const target=new Date(date);
@@ -315,6 +321,11 @@
       const pillars=document.createElement('div');pillars.className='ganzhi';
       pillars.textContent=['year','month','day'].map(scope=>`${t(scopeNames[scope])} ${data.groups[scope].pillar}`).join(' · ');
       row.append(link,lunar,pillars);
+      if(compact) {
+        row.setAttribute('aria-label',link.textContent);
+        appendCalendarCell(row,date);
+        rows.append(row);continue;
+      }
       const badges=document.createElement('div');badges.className='shensha-matches';
       // One badge per item; a representative matching pillar supplies custom target text.
       for(const item of found) {
@@ -458,7 +469,7 @@
     } catch {
       setText('#shensha-status',accountId ? 'Could not save Shensha selections. Try again.' : 'Matching settings apply for this session only; browser storage is unavailable.');
     }
-    render(); renderPeriod();importVisibility();window.dispatchEvent(new Event('daymark:shensha-changed'));
+    render(); renderPeriod();importVisibility();
     if(accountId)window.dispatchEvent(new Event('daymark:shensha-save'));
   });
   window.addEventListener('daymark:language',()=>{
@@ -470,7 +481,7 @@
     render();renderPeriod();
   });
   window.DaymarkShensha = {
-    setAccount, sync:syncSelections, appendCalendarCell,
+    setAccount, sync:syncSelections,
     get pending() {return Boolean(accountId && pending);},
     get dirty() {return dirty;},
     get busy() {return syncRunning;},

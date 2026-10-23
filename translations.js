@@ -104,6 +104,10 @@ window.DAYMARK_TRANSLATIONS = {
   "Date range search and mobile-friendly Shensha calendar cards.": {"zh": "日期范围查询与适合手机的神煞日历卡片。", "ru": "Поиск по диапазону дат и удобные для телефона карточки календаря шэньша.", "fr": "Recherche par période et cartes de calendrier Shensha adaptées aux mobiles."},
   "{count} more": {"zh":"另{count}项","ru":"Ещё {count}","fr":"{count} de plus"},
   "Shensha encounter previews in calendar day cells.": {"zh":"月历日期格显示神煞相遇预览。","ru":"Предпросмотр совпадений шэньша в ячейках календаря.","fr":"Aperçu des rencontres Shensha dans les cases du calendrier."},
+  "Encounter display": {"zh":"相遇显示方式","ru":"Вид совпадений","fr":"Affichage des rencontres"},
+  "Calendar cells": {"zh":"日历日期格","ru":"Ячейки календаря","fr":"Cases du calendrier"},
+  "Detailed cards": {"zh":"详细卡片","ru":"Подробные карточки","fr":"Cartes détaillées"},
+  "Choose calendar cells or detailed cards in Shensha encounters; keep the regular calendar clear.": {"zh":"神煞相遇可选日期格或详细卡片，常规月历不再显示神煞。","ru":"Выбор ячеек календаря или подробных карточек в совпадениях шэньша; обычный календарь без шэньша.","fr":"Choix entre cases du calendrier et cartes détaillées pour les rencontres Shensha ; calendrier habituel sans Shensha."},
   "Heavenly Virtue": {
     "zh": "天德",
     "ru": "Небесная добродетель",

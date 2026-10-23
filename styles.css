@@ -327,3 +327,13 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
  .calendar-shensha-strength { font-size:8px; letter-spacing:-1px }
  .calendar-shensha-more { font-size:9px; overflow-wrap:anywhere }
 }
+
+.shensha-display-choice { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:16px }
+#shensha-display { min-height:44px; max-width:100%; padding:8px; font:inherit; font-size:16px; border:1px solid #bac9bf; border-radius:6px; background:var(--paper) }
+#shensha-period-results .shensha-calendar-cells { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; border-top:1px solid var(--line); border-left:1px solid var(--line); border-radius:10px; overflow:hidden }
+#shensha-period-results li.shensha-encounter-cell { min-width:0; padding:10px; border:0; border-right:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--paper) }
+.shensha-encounter-cell .shensha-result-date { display:block; font-size:14px }
+.shensha-encounter-cell .lunar { display:block; text-align:left; font-size:12px }
+.shensha-encounter-cell .ganzhi { display:block; font-size:10px; line-height:1.5; margin-top:6px }
+.shensha-encounter-cell .calendar-shensha .shensha-badge { font-size:12px }
+@media(max-width:760px) { #shensha-period-results .shensha-calendar-cells { grid-template-columns:repeat(2,minmax(0,1fr)) } }

@@ -8,6 +8,7 @@ const assert=require('node:assert/strict');
  await context.addInitScript(data=>localStorage.setItem('daymark.shensha.v1',JSON.stringify(data)),settings);
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:8769/#day=2026-10-16');
+ await page.locator('#shensha-display').selectOption('cards');
  const names={'yuede': 'Moon Virtue', 'tianyi': 'Heavenly Mentor', 'lushen': 'Emolument God', 'huagai': 'Splendor Canopy', 'tianyi-medical': 'Heavenly Doctor', 'jiesha': 'Robbery Evil', 'zaisha': 'Disaster Evil', 'kongwang': 'Empty Void', 'tianluodiwang': 'Heavenly Net'};
  await page.locator('#open-settings').click();
  for(const [id,name] of Object.entries(names))assert((await page.locator(`#shensha-${id}`).locator('..').innerText()).includes(name+'（'));
