@@ -174,8 +174,8 @@
       const rule = settings[id];
       const value = rule.targets.filter(value => [pillar[0],pillar[1],pillar].includes(value)).join('、');
       const title=itemName(id,label);
-      badge.textContent = `${kind === 'custom' ? value : title + ' ' + (kind === 'shen' ? '+' : '−') + (count>1 ? count : '')}${inactive ? ' · ' + t('Inactive') : ''}`;
-      if(kind !== 'custom')badge.setAttribute('aria-label',`${title} · ${kind==='shen'?'+':'−'}${count} · ${t(names[kind])}${inactive ? ' · ' + t('Inactive') : ''}`);
+      badge.textContent = `${kind === 'custom' ? value : title + ' ' + (kind === 'shen' ? '+' : '-').repeat(count)}${inactive ? ' · ' + t('Inactive') : ''}`;
+      if(kind !== 'custom')badge.setAttribute('aria-label',`${title} · ${(kind==='shen'?'+':'-').repeat(count)} · ${t(names[kind])}${inactive ? ' · ' + t('Inactive') : ''}`);
       container.append(badge);
     }
   }

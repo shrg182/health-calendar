@@ -209,4 +209,4 @@ The whole-date 空亡 rule remains in force for encounters. An isolated hour tar
 
 Run `tests/shensha-repeated-hours.cjs` for the repeated-item threshold and `tests/shensha-pillars.cjs` for the four groups, hour-table fixtures, period intervals, removed-entry migration, inactive handling, and responsive translations.
 
-Encounter signs follow the name (`Relay Horse（驿马） +`, repeated `+3` or `−3`). Counts represent matching year/month/day pillars, plus the matching hour in hour rows; separate hour intervals are not added together. Four matching pillars receive a strong green (Shen) or red (Sha) highlight. Inactive encounters stay gray.
+Encounter signs follow the name (`Relay Horse（驿马） +`, repeated `+++` or `---`). Counts represent matching year/month/day pillars, plus the matching hour in hour rows; separate hour intervals are not added together. Four matching pillars receive a strong green (Shen) or red (Sha) highlight. Inactive encounters stay gray.

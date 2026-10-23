@@ -91,6 +91,7 @@ window.DAYMARK_TRANSLATIONS = {
 ,
 
   "Shensha names aligned with section 18 translations.": {"zh":"神煞译名与第18节一致。","ru":"Названия шэньша приведены в соответствие с переводами раздела 18.","fr":"Noms des Shensha harmonisés avec les traductions de la section 18."},
+  "Repeated Shensha signs instead of numeric counts.": {"zh":"重复神煞以重复正负号显示。","ru":"Повторяющиеся знаки шэньша вместо числовых счётчиков.","fr":"Signes répétés pour les Shensha au lieu de nombres."},
   "Heavenly Virtue": {
     "zh": "天德",
     "ru": "Небесная добродетель",

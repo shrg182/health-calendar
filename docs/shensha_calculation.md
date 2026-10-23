@@ -386,6 +386,7 @@ https://fortunecloud.co/learn/shen-sha
 | 神 | 禄神 | yy mm dd hh |  | Emolument God |
 | 神 | 驿马 | yy mm dd hh |  | Relay Horse |
 | 神 | 华盖 | yy mm dd hh |  | Splendor Canopy |
+| 神 | 将星 | yy mm dd hh |  | General Star |
 | 神 | 金舆 | yy mm dd hh |  | Golden Carriage |
 | 神 | 天医 | yy mm dd hh |  | Heavenly Doctor |
 | 神 | 桃花 | yy mm dd hh |  | Peach Blossom |
@@ -417,7 +418,7 @@ https://fortunecloud.co/learn/shen-sha
 
 空亡仍使该日期所有神煞不生效；单独出现在某个时支、但未在年/月/日重复的空亡不构成相遇，也不会使所有日期失效。
 
-神煞名称后置正负号：单次 `+` / `−`，重复如 `+3` / `−3`。次数按同一项目匹配的年、月、日柱计数；时柱相遇显示这三柱加当前时柱的次数，不累加不同时间段，也不将同柱的多个目标重复计数。超过三次（四柱全遇）时，神用深绿底白字、煞用深红底白字突出显示。空亡下仍灰色不生效，自定义项保持无名粗体。
+神煞名称后置正负号：单次 `+` / `-`，重复如 `+++` / `---`。次数按同一项目匹配的年、月、日柱计数；时柱相遇显示这三柱加当前时柱的次数，不累加不同时间段，也不将同柱的多个目标重复计数。超过三次（四柱全遇）时，神用深绿底白字、煞用深红底白字突出显示。空亡下仍灰色不生效，自定义项保持无名粗体。
 
 ## 20 Help Page
 
