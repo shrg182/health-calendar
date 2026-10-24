@@ -287,7 +287,7 @@
       }
       cell.title = t('Open day details');
       cell.setAttribute('aria-label', t('{weekday}, {date}, {lunar}; traditional calendar markers {year}, {month}, {day}{today}', {weekday:weekdayFormatter.format(date),date:fmtDate(date),lunar:lunar.full,year:marker(pillars.year),month:marker(pillars.month),day:marker(sexagenaryDay(date)),today:isToday ? t(', today') : ''}));
-      cell.addEventListener('click', () => openDay(date));
+      cell.addEventListener('click', () => { window.DaymarkShensha.selectDay();openDay(date); });
       const row = document.createElement('div'); row.className='greg-row';
       const num = document.createElement('span'); num.className='greg-number'; num.textContent=date.getDate(); row.append(num);
       const indicator=document.createElement('span'); indicator.className='open-indicator'; indicator.setAttribute('aria-hidden','true'); indicator.textContent='↗';

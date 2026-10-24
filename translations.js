@@ -1,5 +1,7 @@
 // English source messages with complete Chinese, Japanese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Selecting a main-calendar date resets Shensha to the selected day.": {"zh":"点击主日历日期时，神煞切换为所选日期。","ja":"メインカレンダーの日付を選ぶと、神煞の表示が選択した日に切り替わります。","ru":"При выборе даты в основном календаре шэньша переключается на выбранный день.","fr":"Le choix d’une date dans le calendrier principal rétablit le jour sélectionné pour Shensha."},
+
   "No Shensha encounters.": {"zh":"无神煞相遇。","ja":"該当する神煞はありません。","ru":"Нет совпадений шэньша.","fr":"Aucune rencontre Shensha."},
   "Show every date in Shensha periods, including days without encounters.": {"zh":"神煞时段显示所有日期，包括没有相遇的日期。","ja":"該当する神煞がない日も含め、期間内のすべての日付を表示します。","ru":"Показаны все даты периода шэньша, включая дни без совпадений.","fr":"Affichage de toutes les dates de la période Shensha, même sans rencontre."},
 

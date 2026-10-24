@@ -469,6 +469,12 @@
     get busy() {return syncRunning;},
     show() { render(); },
     configure(api) { calendar=api; },
+    selectDay() {
+      period={direction:0,length:'day'};
+      $('#shensha-period').value='day';
+      $('#shensha-custom-range').hidden=true;
+      resultPage=0;
+    },
     context(date,hidden) {
       $('#shensha-period-panel').hidden=hidden;
       if(!referenceDate || dateKey(referenceDate)!==dateKey(date))resultPage=0;
