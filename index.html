@@ -9,19 +9,16 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Daymark">
-  <link rel="stylesheet" href="styles.css?v=0.1.0-dev.36">
+  <link rel="stylesheet" href="styles.css?v=0.1.0-dev.37">
 </head>
 <body>
   <main class="shell">
     <header class="topbar">
       <a class="calendar-logo" id="calendar-home" href="#calendar" aria-label="Calendar">
-        <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true" fill="none">
-          <rect x="5" y="8" width="30" height="28" rx="7" fill="currentColor"/>
-          <path d="M5 17h30" stroke="white" stroke-opacity=".6" stroke-width="1.5"/>
-          <path d="M13 5v7m14-7v7" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-          <path d="M13 23h2m6 0h2m-10 6h2m6 0h2" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-          <circle cx="29" cy="29" r="3" fill="#e5b568"/>
-        </svg>
+        <span class="calendar-date-logo" aria-hidden="true">
+          <span id="logo-month" class="calendar-logo-month"></span>
+          <strong id="logo-day" class="calendar-logo-day"></strong>
+        </span>
       </a>
       <div class="header-actions">
         <label class="sr-only" for="language-choice">Language</label>
@@ -265,15 +262,15 @@
       <div id="shensha-period-results"></div>
     </section>
   </main>
-  <script src="release.js?v=0.1.0-dev.36" defer></script>
-  <script src="translations.js?v=0.1.0-dev.36" defer></script>
-  <script src="i18n.js?v=0.1.0-dev.36" defer></script>
-  <script src="sync-config.js?v=0.1.0-dev.36" defer></script>
-  <script src="sync.js?v=0.1.0-dev.36" defer></script>
-  <script src="shensha.js?v=0.1.0-dev.36" defer></script>
-  <script src="notes.js?v=0.1.0-dev.36" defer></script>
-  <script src="app.js?v=0.1.0-dev.36" defer></script>
-  <script src="install.js?v=0.1.0-dev.36" defer></script>
-  <script src="updates.js?v=0.1.0-dev.36" defer></script>
+  <script src="release.js?v=0.1.0-dev.37" defer></script>
+  <script src="translations.js?v=0.1.0-dev.37" defer></script>
+  <script src="i18n.js?v=0.1.0-dev.37" defer></script>
+  <script src="sync-config.js?v=0.1.0-dev.37" defer></script>
+  <script src="sync.js?v=0.1.0-dev.37" defer></script>
+  <script src="shensha.js?v=0.1.0-dev.37" defer></script>
+  <script src="notes.js?v=0.1.0-dev.37" defer></script>
+  <script src="app.js?v=0.1.0-dev.37" defer></script>
+  <script src="install.js?v=0.1.0-dev.37" defer></script>
+  <script src="updates.js?v=0.1.0-dev.37" defer></script>
 </body>
 </html>

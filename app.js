@@ -226,7 +226,19 @@
     window.dispatchEvent(new CustomEvent('daymark:day', { detail:dateKey(date) }));
     if (focus) $('#detail-title').focus();
   }
+  function renderLogo() {
+    const date=new Date();
+    $('#logo-month').textContent=new Intl.DateTimeFormat(i18n.locale,{month:'short'}).format(date);
+    $('#logo-day').textContent=new Intl.NumberFormat(i18n.locale,{useGrouping:false}).format(date.getDate());
+    const label=t('Calendar · Today: {date}',{date:new Intl.DateTimeFormat(i18n.locale,{dateStyle:'full'}).format(date)});
+    $('#calendar-home').setAttribute('aria-label',label);
+    $('#calendar-home').title=label;
+  }
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderLogo();});
+  window.addEventListener('focus',renderLogo);
+  setInterval(renderLogo,60000);
   function renderPage(focusDetails = true) {
+    renderLogo();
     const settings = location.hash.match(/^#settings(?:-(account|sync|display|shensha|app))?$/);
     $('#settings-page').hidden = !settings;
     $('#open-settings').setAttribute('aria-expanded', String(Boolean(settings)));

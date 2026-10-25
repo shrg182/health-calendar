@@ -1,5 +1,8 @@
 // English source messages with complete Chinese, Japanese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Calendar · Today: {date}": {"zh":"日历 · 今天：{date}","ja":"カレンダー・今日：{date}","ru":"Календарь · Сегодня: {date}","fr":"Calendrier · Aujourd’hui : {date}"},
+  "Calendar logo shows today’s month and day.": {"zh":"日历标志显示今天的月份和日期。","ja":"カレンダーのロゴに今日の月と日を表示します。","ru":"Логотип календаря показывает текущие месяц и день.","fr":"Le logo du calendrier affiche le mois et le jour actuels."},
+
   "Signed-in selections sync to your account. Local selections stay in this browser. Kongwang reduces the strength of other Shensha on that date; only Kongwang is shown in grey.": {"zh": "登录后的选择会同步到您的账户。本地选择保留在此浏览器中。空亡会减弱当日其他神煞的力量；仅空亡显示为灰色。", "ja": "ログイン中の選択はアカウントに同期されます。ローカルの選択はこのブラウザーに保存されます。空亡はその日の他の神煞の力を弱めます。空亡のみ灰色で表示します。", "ru": "Выбор при входе синхронизируется с аккаунтом. Локальный выбор остаётся в браузере. Кунван ослабляет другие шэньша этого дня; только кунван показан серым.", "fr": "Les sélections connectées sont synchronisées avec votre compte. Les sélections locales restent dans ce navigateur. Kongwang atténue les autres Shensha du jour ; seul Kongwang apparaît en gris."},
   "Use plain Shensha names and grey only for Kongwang.": {"zh": "神煞仅显示名称，只有空亡使用灰色。", "ja": "神煞は名前のみを表示し、空亡だけを灰色にしました。", "ru": "Названия шэньша без дополнений; серый цвет только для кунван.", "fr": "Noms Shensha seuls et gris réservé à Kongwang."},
 
