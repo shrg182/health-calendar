@@ -6,8 +6,9 @@ const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');const assert
   await c.addInitScript(s=>localStorage.setItem('daymark.shensha.v1',JSON.stringify(s)),settings);
   const p=await c.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.clock.install({time:new Date('2026-10-24T12:00:00-04:00')});
   await p.goto('http://127.0.0.1:8769/#day=2026-10-26');assert.equal(await p.locator('#logo-day').innerText(),'24');assert.equal(await p.locator('#calendar-home').getAttribute('data-shensha'),kind);
-  const expected={none:'rgb(36, 93, 73)',shen:'rgb(35, 96, 67)',sha:'rgb(161, 38, 38)',kongwang:'rgb(96, 104, 98)'};
+  const expected={none:'rgb(255, 255, 255)',shen:'rgb(35, 96, 67)',sha:'rgb(161, 38, 38)',kongwang:'rgb(96, 104, 98)'};
   assert.equal(await p.locator('#logo-month').evaluate(el=>getComputedStyle(el).backgroundColor),expected[kind]);
+  if(kind==='none')assert.equal(await p.locator('.calendar-date-logo').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(255, 255, 255)');
   if(name)assert((await p.locator('#calendar-home').getAttribute('title')).includes(name));
   if(kind==='sha'){
    await p.locator('#open-settings').click();await p.locator('#shensha-yangren').uncheck();if(settings.kongwang)await p.locator('#shensha-kongwang').uncheck();await p.locator('#shensha-form button[type=submit]').click();

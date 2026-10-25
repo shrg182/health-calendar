@@ -1,5 +1,7 @@
 // English source messages with complete Chinese, Japanese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Use a neutral white calendar logo when no Shensha matches.": {"zh":"无神煞匹配时，日历标志使用中性白色。","ja":"該当する神煞がない場合は、カレンダーのロゴを白地の中立的な表示にします。","ru":"Если совпадений шэньша нет, логотип календаря отображается на нейтральном белом фоне.","fr":"Le logo du calendrier reste neutre sur fond blanc lorsqu’aucun Shensha ne correspond."},
+
   "Leading Shensha: {name}": {"zh":"首位神煞：{name}","ja":"先頭の神煞：{name}","ru":"Первое шэньша: {name}","fr":"Premier Shensha : {name}"},
   "Calendar logo uses the color of today’s first listed Shensha.": {"zh":"日历标志使用今天首位神煞的颜色。","ja":"カレンダーのロゴに今日の一覧で最初の神煞の色を使います。","ru":"Логотип календаря использует цвет первого шэньша в списке на сегодня.","fr":"Le logo du calendrier reprend la couleur du premier Shensha du jour."},
 
