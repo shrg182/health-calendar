@@ -254,7 +254,7 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
 .shensha-badge { border:1px solid currentColor; border-radius:8px; padding:6px 10px }
 .shensha-badge.shen { color:#236043; background:#eef8f0 }
 .shensha-badge.sha { color:#a12626; background:#fff0f0 }
-.shensha-badge.inactive { color:#606862; background:#f0f2f0 }
+.shensha-badge.kongwang { color:#606862; background:#f0f2f0 }
 #shensha-detail { margin-bottom:14px }
 @media(max-width:600px) { .shensha-row { grid-template-columns:1fr 1fr; padding-bottom:12px; border-bottom:1px solid var(--line) }.shensha-row input[type=text] { grid-column:1 / -1 } }
 

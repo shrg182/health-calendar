@@ -1,5 +1,8 @@
 // English source messages with complete Chinese, Japanese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Signed-in selections sync to your account. Local selections stay in this browser. Kongwang reduces the strength of other Shensha on that date; only Kongwang is shown in grey.": {"zh": "登录后的选择会同步到您的账户。本地选择保留在此浏览器中。空亡会减弱当日其他神煞的力量；仅空亡显示为灰色。", "ja": "ログイン中の選択はアカウントに同期されます。ローカルの選択はこのブラウザーに保存されます。空亡はその日の他の神煞の力を弱めます。空亡のみ灰色で表示します。", "ru": "Выбор при входе синхронизируется с аккаунтом. Локальный выбор остаётся в браузере. Кунван ослабляет другие шэньша этого дня; только кунван показан серым.", "fr": "Les sélections connectées sont synchronisées avec votre compte. Les sélections locales restent dans ce navigateur. Kongwang atténue les autres Shensha du jour ; seul Kongwang apparaît en gris."},
+  "Use plain Shensha names and grey only for Kongwang.": {"zh": "神煞仅显示名称，只有空亡使用灰色。", "ja": "神煞は名前のみを表示し、空亡だけを灰色にしました。", "ru": "Названия шэньша без дополнений; серый цвет только для кунван.", "fr": "Noms Shensha seuls et gris réservé à Kongwang."},
+
   "Selecting a main-calendar date resets Shensha to the selected day.": {"zh":"点击主日历日期时，神煞切换为所选日期。","ja":"メインカレンダーの日付を選ぶと、神煞の表示が選択した日に切り替わります。","ru":"При выборе даты в основном календаре шэньша переключается на выбранный день.","fr":"Le choix d’une date dans le calendrier principal rétablit le jour sélectionné pour Shensha."},
 
   "No Shensha encounters.": {"zh":"无神煞相遇。","ja":"該当する神煞はありません。","ru":"Нет совпадений шэньша.","fr":"Aucune rencontre Shensha."},

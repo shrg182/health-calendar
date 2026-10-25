@@ -35,11 +35,11 @@ const assert=require('node:assert/strict');
  assert(await card.locator('.ganzhi').isVisible());
  assert.match(await card.locator('.ganzhi').innerText(),/Year pillar 丙午.*Month pillar 戊戌.*Day pillar 己巳/);
  assert.equal(await card.locator(':scope > .shensha-matches [data-shensha=tiande]').count(),1);
- assert.equal(await card.locator(':scope > .shensha-matches [data-shensha=tiande]').innerText(),'Heavenly Virtue（天德） +++');
- assert.equal(await card.locator(':scope > .shensha-matches [data-shensha=tianyi]').innerText(),'Heavenly Mentor（天乙）');
+ assert.equal(await card.locator(':scope > .shensha-matches [data-shensha=tiande]').innerText(),'Heavenly Virtue +++');
+ assert.equal(await card.locator(':scope > .shensha-matches [data-shensha=tianyi]').innerText(),'Heavenly Mentor');
  assert.equal(await card.locator('details').getAttribute('open'),null);
  await card.locator('summary').click();assert(await card.locator('.intense').first().isVisible());
- await range('2026-10-17','2026-10-17');assert.match(await cards().innerText(),/Inactive/);assert.equal(await cards().locator('.intense').count(),0);
+ await range('2026-10-17','2026-10-17');assert.doesNotMatch(await cards().innerText(),/Inactive/);assert.equal(await cards().locator('[data-shensha=kongwang].kongwang').count(),1);assert((await cards().locator('.intense').count())>0);
  await range('2026-10-23','2026-10-21');assert.match(await page.locator('#shensha-period-status').innerText(),/end on or after/);assert.equal(await cards().count(),0);
  for(const [ref,dir,len,start,end,count] of [['2028-03-15',-1,'30','2028-02-14','2028-03-14',30],['2026-03-10',-1,'10','2026-02-28','2026-03-09',10],['2026-10-23',-1,'3','2026-10-20','2026-10-22',3],['2026-10-23',1,'3','2026-10-24','2026-10-26',3],['2026-10-28',1,'10','2026-10-29','2026-11-07',10],['2026-12-20',1,'30','2026-12-21','2027-01-19',30]]){
   await page.goto('http://127.0.0.1:8769/#calendar');
