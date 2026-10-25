@@ -230,7 +230,10 @@
     const date=new Date();
     $('#logo-month').textContent=new Intl.DateTimeFormat(i18n.locale,{month:'short'}).format(date);
     $('#logo-day').textContent=new Intl.NumberFormat(i18n.locale,{useGrouping:false}).format(date.getDate());
-    const label=t('Calendar · Today: {date}',{date:new Intl.DateTimeFormat(i18n.locale,{dateStyle:'full'}).format(date)});
+    const leading=window.DaymarkShensha.leading(date);
+    $('#calendar-home').dataset.shensha=leading?.kind || 'none';
+    let label=t('Calendar · Today: {date}',{date:new Intl.DateTimeFormat(i18n.locale,{dateStyle:'full'}).format(date)});
+    if(leading)label+=' · '+t('Leading Shensha: {name}',{name:leading.name});
     $('#calendar-home').setAttribute('aria-label',label);
     $('#calendar-home').title=label;
   }
@@ -402,7 +405,7 @@
     updateMonthNames(); updateWeekdays();
     try { renderPage(false); } catch { setText(summary,'Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'); }
   });
-  window.DaymarkShensha.configure({pillarForDate:sexagenaryDay,contextForDate:encounterPillars,dateInfo:date=>({lunar:lunarParts(date).full,weekday:weekdayFormatter.format(date)}),openDay});
+  window.DaymarkShensha.configure({pillarForDate:sexagenaryDay,contextForDate:encounterPillars,dateInfo:date=>({lunar:lunarParts(date).full,weekday:weekdayFormatter.format(date)}),openDay,updateLogo:renderLogo});
   try { lunarFormatter.format(todayDate); renderPage(); }
   catch (err) { setText(summary,'Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'); daysEl.replaceChildren(); }
 })();

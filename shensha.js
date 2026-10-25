@@ -284,6 +284,7 @@
   }
   function renderPeriod() {
     if(!calendar)return;
+    calendar.updateLogo?.();
     const root=$('#shensha-period-results');root.hidden=!period;root.replaceChildren();
     $('#shensha-close').hidden=!period;$('#shensha-result-pages').hidden=true;
     const base=referenceDate;
@@ -467,6 +468,12 @@
     get busy() {return syncRunning;},
     show() { render(); },
     configure(api) { calendar=api; },
+    leading(date) {
+      if(!calendar)return null;
+      const data=encounterData(date);
+      const item=items.find(([id,,kind])=>kind!=='custom' && Object.values(data.groups).some(group=>group.found.some(([matchId])=>matchId===id)));
+      return item ? {kind:item[0]==='kongwang' ? 'kongwang' : item[2],name:t(itemNames[item[0]])} : null;
+    },
     selectDay() {
       period={direction:0,length:'day'};
       $('#shensha-period').value='day';

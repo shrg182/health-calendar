@@ -340,6 +340,10 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
 /* Route focus announces the heading without outlining the entire row. */
 #detail-title:focus { outline:none }
 
-.calendar-date-logo { display:flex; flex-direction:column; width:38px; height:40px; border:1px solid var(--green); border-radius:7px; overflow:hidden; background:var(--paper); box-shadow:0 2px 3px #20372a12 }
-.calendar-logo-month { display:flex; align-items:center; justify-content:center; height:15px; flex-shrink:0; background:var(--green); color:white; font-size:10px; font-weight:700; line-height:1; white-space:nowrap }
-.calendar-logo-day { display:flex; align-items:center; justify-content:center; flex:1; color:var(--green); font-size:21px; line-height:1; font-variant-numeric:tabular-nums }
+.calendar-date-logo { display:flex; flex-direction:column; width:38px; height:40px; border:1px solid var(--logo-accent,var(--green)); border-radius:7px; overflow:hidden; background:var(--paper); box-shadow:0 2px 3px #20372a12 }
+.calendar-logo-month { display:flex; align-items:center; justify-content:center; height:15px; flex-shrink:0; background:var(--logo-accent,var(--green)); color:white; font-size:10px; font-weight:700; line-height:1; white-space:nowrap }
+.calendar-logo-day { display:flex; align-items:center; justify-content:center; flex:1; color:var(--logo-accent,var(--green)); font-size:21px; line-height:1; font-variant-numeric:tabular-nums }
+
+.calendar-logo[data-shensha="shen"] { --logo-accent:#236043 }
+.calendar-logo[data-shensha="sha"] { --logo-accent:#a12626 }
+.calendar-logo[data-shensha="kongwang"] { --logo-accent:#606862 }

@@ -1,5 +1,8 @@
 // English source messages with complete Chinese, Japanese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Leading Shensha: {name}": {"zh":"首位神煞：{name}","ja":"先頭の神煞：{name}","ru":"Первое шэньша: {name}","fr":"Premier Shensha : {name}"},
+  "Calendar logo uses the color of today’s first listed Shensha.": {"zh":"日历标志使用今天首位神煞的颜色。","ja":"カレンダーのロゴに今日の一覧で最初の神煞の色を使います。","ru":"Логотип календаря использует цвет первого шэньша в списке на сегодня.","fr":"Le logo du calendrier reprend la couleur du premier Shensha du jour."},
+
   "Calendar · Today: {date}": {"zh":"日历 · 今天：{date}","ja":"カレンダー・今日：{date}","ru":"Календарь · Сегодня: {date}","fr":"Calendrier · Aujourd’hui : {date}"},
   "Calendar logo shows today’s month and day.": {"zh":"日历标志显示今天的月份和日期。","ja":"カレンダーのロゴに今日の月と日を表示します。","ru":"Логотип календаря показывает текущие месяц и день.","fr":"Le logo du calendrier affiche le mois et le jour actuels."},
 
