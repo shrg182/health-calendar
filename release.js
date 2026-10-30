@@ -1,9 +1,9 @@
 // Bump this version and update these notes for every published development release.
 // Shared by the page and service worker so the offline cache has the same version.
 globalThis.DAYMARK_RELEASE = Object.freeze({
-  version: '0.1.0-dev.39',
-  date: '2026-10-24',
+  version: '0.1.0-dev.40',
+  date: '2026-10-29',
   changes: [
-    'Use a neutral white calendar logo when no Shensha matches.'
+    'Simplify the date logo and use it for browser and app icons.'
   ]
 });

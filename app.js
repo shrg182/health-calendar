@@ -226,12 +226,53 @@
     window.dispatchEvent(new CustomEvent('daymark:day', { detail:dateKey(date) }));
     if (focus) $('#detail-title').focus();
   }
+  let logoIconKey = '';
+  function renderLogoIcon(month, day, kind) {
+    const key = JSON.stringify([month, day, kind]);
+    if (key === logoIconKey) return;
+    const accent = {none:'#39433e', shen:'#236043', sha:'#a12626', kongwang:'#606862'}[kind];
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    // Keep the complete mark inside the safe area of home-screen icons.
+    ctx.fillStyle = '#f5f6f3';
+    ctx.fillRect(0, 0, 512, 512);
+    ctx.beginPath();
+    ctx.roundRect(64, 54, 384, 404, 64);
+    ctx.save();
+    ctx.clip();
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(64, 54, 384, 404);
+    ctx.fillStyle = kind === 'none' ? '#fff' : accent;
+    ctx.fillRect(64, 54, 384, 150);
+    ctx.fillStyle = kind === 'none' ? accent : '#fff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '700 96px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.fillText(month, 256, 132, 340);
+    ctx.fillStyle = accent;
+    ctx.font = '700 224px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.fillText(day, 256, 334, 350);
+    if (kind === 'none') {
+      ctx.fillStyle = '#dce1dd';
+      ctx.fillRect(64, 204, 384, 2);
+    }
+    ctx.restore();
+    ctx.strokeStyle = kind === 'none' ? '#929b95' : accent;
+    ctx.lineWidth = 8;
+    ctx.stroke();
+    $('#app-favicon').href = canvas.toDataURL('image/png');
+    logoIconKey = key;
+  }
   function renderLogo() {
     const date=new Date();
     $('#logo-month').textContent=new Intl.DateTimeFormat(i18n.locale,{month:'short'}).format(date);
     $('#logo-day').textContent=new Intl.NumberFormat(i18n.locale,{useGrouping:false}).format(date.getDate());
     const leading=window.DaymarkShensha.leading(date);
-    $('#calendar-home').dataset.shensha=leading?.kind || 'none';
+    const kind=leading?.kind || 'none';
+    $('#calendar-home').dataset.shensha=kind;
+    renderLogoIcon($('#logo-month').textContent, $('#logo-day').textContent, kind);
     let label=t('Calendar · Today: {date}',{date:new Intl.DateTimeFormat(i18n.locale,{dateStyle:'full'}).format(date)});
     if(leading)label+=' · '+t('Leading Shensha: {name}',{name:leading.name});
     $('#calendar-home').setAttribute('aria-label',label);
