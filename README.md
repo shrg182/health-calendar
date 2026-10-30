@@ -199,7 +199,7 @@ Named encounter badges use `+` for 神 and `−` for 煞 in every language, with
 
 ### Four encounter pillars (section 18)
 
-All 18 remaining named items and three custom slots apply to year/month/day/hour pillars as assigned in `docs/shensha_calculation.md` §18. Old 元辰/魁罡 selections are ignored; saving settings removes those entries without changing other targets. Date details group matches by pillar. **Local time for hour matching** selects the displayed hour pillar (default 12:00); **Hour encounters** expands matching time slots only for items already encountered in at least two of the year, month, and day pillars. Counts are per item, not per selected target. This also applies to Sha and custom items. 羊刃 is translated as Sheep Blade.
+All 18 remaining named items and three custom slots apply to year/month/day/hour pillars as assigned in `docs/shensha_calculation.md` §18. Old 元辰/魁罡 selections are ignored; saving settings removes those entries without changing other targets. Date details group matches by pillar. **Shensha time zone** in Settings selects the device or birth-place zone; **Hour encounters** expands matching time slots only for items already encountered in at least two of the year, month, and day pillars. Counts are per item, not per selected target. This also applies to Sha and custom items. 羊刃 is translated as Sheep Blade.
 
 Year/month ranges use the app’s existing approximate solar-term boundaries evaluated at local noon, so their displayed inclusive civil dates agree with the calendar markers. A term arriving after local noon first applies on the following date. Year changes use Beginning of Spring; month changes use the twelve existing jie boundaries. Period lists deduplicate year/month matches by effective interval and list daily/hourly matches under individual dates. Mixed inactive intervals receive a note instead of being marked inactive for their entire span.
 
@@ -216,3 +216,7 @@ The regular month calendar does not show Shensha. In **Shensha of the day**, cho
 Shensha display: badges in both Calendar cells and Detailed cards use localized names without appended Chinese references or “Inactive” text. Chinese remains the name in the Chinese interface. Kongwang alone is grey; other badges keep their usual colors and repeat-strength signs. Kongwang indicates reduced strength of other Shensha, rather than making them inactive.
 
 The calendar date logo and browser tab icon follow today’s date, app language, and leading Shensha color. The date digits have no underline. Installed home-screen icons use a static version of the same artwork; browsers do not provide daily updates for installed web-app icons.
+
+### Shensha time zone
+
+Settings → Shensha time zone selects the device zone (default) or a birth-place IANA city zone. This device preference is saved separately from account targets. The selected calendar date is interpreted as a civil date in that zone, and hourly ranges use its wall-clock time; the complete hourly list replaces the unused noon input. Shensha year/month boundaries use noon in the selected zone, with the existing midnight day change and repeated-item threshold. The main calendar and notes retain their device-local date behavior. This setting does not generate a birth chart or infer targets from birthplace.

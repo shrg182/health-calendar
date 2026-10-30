@@ -201,10 +201,48 @@
   const scopeNames={year:'Year pillar',month:'Month pillar',day:'Day pillar',hour:'Hour pillar'};
   // Hours amplify an item already encountered in at least two longer pillars.
   function timeText(minutes) {return `${String(Math.floor(minutes/60)).padStart(2,'0')}:${String(minutes%60).padStart(2,'0')}`;}
-  function selectedMinute() {
-    const value=$('#shensha-time').value;
-    return /^([01]\d|2[0-3]):[0-5]\d$/.test(value) ? Number(value.slice(0,2))*60+Number(value.slice(3)) : null;
+  const zoneKey = 'daymark.shensha.timezone.v1';
+  const deviceZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const validZone = value => {
+    try { return new Intl.DateTimeFormat('en', {timeZone:value}).resolvedOptions().timeZone; }
+    catch { return null; }
+  };
+  let zoneSource='device', birthplaceZone='';
+  try {
+    const saved=JSON.parse(localStorage.getItem(zoneKey));
+    if (saved?.source==='birthplace' && validZone(saved.zone)) {zoneSource='birthplace';birthplaceZone=validZone(saved.zone);}
+  } catch {}
+  const activeZone = () => zoneSource==='birthplace' ? birthplaceZone : deviceZone();
+  $('#shensha-zone-source').value=zoneSource;
+  $('#shensha-birthplace-zone').value=birthplaceZone;
+  const zones=Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : ['America/Detroit','Asia/Shanghai','Europe/London','UTC'];
+  for (const zone of new Set([...zones,deviceZone(),'UTC'])) {
+    const option=document.createElement('option');option.value=zone;$('#shensha-timezones').append(option);
   }
+  function showZoneField() {
+    const birth=$('#shensha-zone-source').value==='birthplace';
+    $('#shensha-birthplace-field').hidden=!birth;
+    $('#shensha-birthplace-zone').required=birth;
+    $('#shensha-birthplace-zone').setCustomValidity('');
+  }
+  showZoneField();
+  $('#shensha-zone-source').addEventListener('change',showZoneField);
+  $('#shensha-birthplace-zone').addEventListener('input',()=>$('#shensha-birthplace-zone').setCustomValidity(''));
+  $('#shensha-timezone-form').addEventListener('submit',event=>{
+    event.preventDefault();
+    const source=$('#shensha-zone-source').value;
+    const zone=validZone($('#shensha-birthplace-zone').value.trim());
+    if(source==='birthplace' && !zone) {
+      $('#shensha-birthplace-zone').setCustomValidity(t('Choose a valid city time zone.'));
+      $('#shensha-birthplace-zone').reportValidity();return;
+    }
+    zoneSource=source;birthplaceZone=zone||'';
+    try {
+      localStorage.setItem(zoneKey,JSON.stringify({source:zoneSource,zone:birthplaceZone}));
+      setText('#shensha-zone-status','Time zone saved on this device.');
+    } catch {setText('#shensha-zone-status','Time zone applies for this session only.');}
+    render();renderPeriod();
+  });
   function encounterData(date) {
     const context=calendar.contextForDate(date);
     const groups=Object.fromEntries(['year','month','day'].map(scope=>[scope,{...context[scope],found:matches(context[scope].pillar)}]));
@@ -354,11 +392,9 @@
     renderPeriod();
   });
   function render() {
-    const input=$('#shensha-time');
-    input.setCustomValidity(selectedMinute()===null ? t('Choose a valid local time.') : '');
+    for (const selector of ['#shensha-zone-summary','#shensha-zone-current'])
+      setText(selector,'Shensha time zone: {zone}. Hour slots use this zone’s clock time.',{zone:activeZone()});
   }
-  $('#shensha-time').addEventListener('input',render);
-  $('#shensha-time').addEventListener('change',()=>{render();renderPeriod();});
   const pickers = new Map();
   for (const kind of ['shen','sha','custom']) {
     const group = document.createElement('fieldset');
@@ -463,6 +499,7 @@
   });
   window.DaymarkShensha = {
     setAccount, sync:syncSelections,
+    get timeZone() {return activeZone();},
     get pending() {return Boolean(accountId && pending);},
     get dirty() {return dirty;},
     get busy() {return syncRunning;},

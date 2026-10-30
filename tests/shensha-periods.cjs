@@ -8,12 +8,8 @@ const assert=require('node:assert/strict');
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:8769/#day=2026-10-22');
  assert.equal(await page.locator('#shensha-detail').count(),0);
- assert(await page.locator('#shensha-time').isVisible());
- assert.equal(await page.locator('#shensha-time').getAttribute('type'),'text');
- for(const [time,valid] of [['00:00',true],['23:59',true],['24:00',false],['12:60',false],['12:00',true]]){
-  await page.locator('#shensha-time').fill(time);
-  assert.equal(await page.locator('#shensha-time').evaluate(input=>input.checkValidity()),valid);
- }
+ assert.equal(await page.locator('#shensha-time').count(),0);
+ assert.match(await page.locator('#shensha-zone-summary').innerText(),/America\/Detroit/);
  await page.locator('#shensha-display').selectOption('cards');
  assert.equal(await page.locator('#shensha-reference').count(),0);
  assert.equal(await page.locator('#shensha-period-title').innerText(),'Shensha of the day');

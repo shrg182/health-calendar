@@ -125,11 +125,24 @@
     if (!termCache.has(year)) termCache.set(year, jieTerms.map(term => ({ ...term, year, instant: solarTermInstant(year, term) })));
     return termCache.get(year);
   }
-  function timestampAtLocalNoon(date) {
+  function timestampAtLocalNoon(date, zone) {
+    if (zone) {
+      const target = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 12);
+      const formatter = new Intl.DateTimeFormat('en-GB', {timeZone:zone, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit', hourCycle:'h23'});
+      let instant = target;
+      for (let i=0; i<4; i++) {
+        const parts = Object.fromEntries(formatter.formatToParts(instant).map(part=>[part.type,part.value]));
+        const wall = Date.UTC(+parts.year,+parts.month-1,+parts.day,+parts.hour,+parts.minute,+parts.second);
+        const delta = target-wall;
+        instant += delta;
+        if (!delta) break;
+      }
+      return instant;
+    }
     return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12).getTime();
   }
-  function pillarsFor(date) {
-    const noon = timestampAtLocalNoon(date);
+  function pillarsFor(date, zone) {
+    const noon = timestampAtLocalNoon(date, zone);
     const terms = [];
     for (let year = date.getFullYear() - 1; year <= date.getFullYear() + 1; year++) terms.push(...termsForYear(year));
     const term = terms.filter(item => item.instant <= noon).sort((a,b) => b.instant - a.instant)[0];
@@ -143,14 +156,19 @@
     return { year: yearPillar, month: monthPillar, term };
   }
   // Keep encounter ranges consistent with the date cards' local-noon convention.
-  function effectiveTermDate(instant) {
-    const date=new Date(instant);
+  function effectiveTermDate(instant, zone) {
+    let date=new Date(instant);
+    if (zone) {
+      const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:zone,year:'numeric',month:'numeric',day:'numeric'}).formatToParts(instant).map(part=>[part.type,part.value]));
+      date=new Date(+parts.year,+parts.month-1,+parts.day,12);
+    }
     const result=new Date(date.getFullYear(),date.getMonth(),date.getDate(),12);
-    if(result.getTime()<instant)result.setDate(result.getDate()+1);
+    if(timestampAtLocalNoon(result,zone)<instant)result.setDate(result.getDate()+1);
     return result;
   }
   function encounterPillars(date) {
-    const noon=timestampAtLocalNoon(date),markers=pillarsFor(date);
+    const zone=window.DaymarkShensha.timeZone;
+    const noon=timestampAtLocalNoon(date,zone),markers=pillarsFor(date,zone);
     const terms=[];
     for(let y=date.getFullYear()-1;y<=date.getFullYear()+2;y++)terms.push(...termsForYear(y));
     terms.sort((a,b)=>a.instant-b.instant);
@@ -159,8 +177,8 @@
     const yearEnd=yearStarts.find(term=>term.instant>noon);
     const monthEnd=terms.find(term=>term.instant>noon);
     function interval(pillar,start,end) {
-      const last=effectiveTermDate(end.instant);last.setDate(last.getDate()-1);
-      return {pillar,start:effectiveTermDate(start.instant),end:last};
+      const last=effectiveTermDate(end.instant,zone);last.setDate(last.getDate()-1);
+      return {pillar,start:effectiveTermDate(start.instant,zone),end:last};
     }
     const day=sexagenaryDay(date),dayStem=stems.indexOf(day[0]);
     const hourStarts=[0,1,3,5,7,9,11,13,15,17,19,21,23];
@@ -283,7 +301,7 @@
   setInterval(renderLogo,60000);
   function renderPage(focusDetails = true) {
     renderLogo();
-    const settings = location.hash.match(/^#settings(?:-(account|sync|display|shensha|app))?$/);
+    const settings = location.hash.match(/^#settings(?:-(account|sync|display|time|shensha|app))?$/);
     $('#settings-page').hidden = !settings;
     $('#open-settings').setAttribute('aria-expanded', String(Boolean(settings)));
     const match = location.hash.match(/^#day=(\d{4}-\d{2}-\d{2})$/);

@@ -351,3 +351,6 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
 .calendar-logo[data-shensha="none"] { --logo-accent:#39433e }
 .calendar-logo[data-shensha="none"] .calendar-date-logo { background:#fff; border-color:#929b95; box-shadow:none }
 .calendar-logo[data-shensha="none"] .calendar-logo-month { background:#fff; color:#39433e; border-bottom:1px solid #dce1dd }
+
+#shensha-timezone-form label { display:block; margin:12px 0 6px }
+#shensha-timezone-form select, #shensha-timezone-form input { width:100%; max-width:100%; min-height:44px; padding:8px 10px; border:1px solid #bac9bf; border-radius:9px; background:var(--paper); color:var(--ink); font:inherit; font-size:16px }
