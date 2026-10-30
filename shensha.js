@@ -526,6 +526,7 @@
       renderPeriod();
     }
   };
+  render();
   if (adjusted) setText('#shensha-status','Unsupported saved targets were removed. Review and save your selections.');
   if (loadWarning) setText('#shensha-status','Saved matching settings could not be loaded. Please configure them again.');
 })();

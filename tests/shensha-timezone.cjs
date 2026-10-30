@@ -21,6 +21,7 @@ const base=process.env.TEST_BASE_URL||'http://127.0.0.1:8769/';
  await save('Pacific/Kiritimati');
  assert.equal(await page.evaluate(()=>DaymarkShensha.timeZone),'Pacific/Kiritimati');
  await page.reload();assert.equal(await page.locator('#shensha-zone-source').inputValue(),'birthplace');
+ assert.match(await page.locator('#shensha-zone-current').innerText(),/Pacific\/Kiritimati/);
  await page.goto(base+'#day=2026-02-03');
  await page.locator('#shensha-display').selectOption('cards');
  const east=await page.locator('.shensha-date-card .ganzhi').first().innerText();
