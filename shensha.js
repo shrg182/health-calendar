@@ -276,6 +276,22 @@
     const description=descriptions.join('; ');cell.title=description;
     cell.setAttribute('aria-label',cell.getAttribute('aria-label')+'; '+description);
   }
+  function appendWeekCell(cell,date) {
+    const list=document.createElement('div');list.className='week-shensha shensha-matches';
+    const hasTargets=items.some(([id])=>settings[id].enabled);
+    const data=encounterData(date);
+    const found=items.filter(([id])=>Object.values(data.groups).some(group=>group.found.some(([matchId])=>matchId===id)));
+    for(const item of found) {
+      const group=Object.values(data.groups).find(group=>group.found.some(([id])=>id===item[0]));
+      appendMatches(list,group.pillar,[item],group.counts);
+    }
+    if(!found.length) {
+      const empty=document.createElement('span');empty.className='shensha-no-encounters';
+      empty.textContent=t(hasTargets ? 'No Shensha encounters.' : 'Select Shensha targets in Settings first.');list.append(empty);
+    }
+    cell.append(list);
+    cell.setAttribute('aria-label',cell.getAttribute('aria-label')+'; '+list.textContent);
+  }
   function dateFormatter() {return new Intl.DateTimeFormat(window.DaymarkI18n.locale,{year:'numeric',month:'short',day:'numeric'});}
   function appendPillarGroup(root,scope,group,inactive,formatter,empty=true) {
     if(!empty && !group.found.length)return null;
@@ -323,6 +339,7 @@
   function renderPeriod() {
     if(!calendar)return;
     calendar.updateLogo?.();
+    calendar.updateWeek?.();
     const root=$('#shensha-period-results');root.hidden=!period;root.replaceChildren();
     $('#shensha-close').hidden=!period;$('#shensha-result-pages').hidden=true;
     const base=referenceDate;
@@ -498,7 +515,7 @@
     render();renderPeriod();
   });
   window.DaymarkShensha = {
-    setAccount, sync:syncSelections,
+    setAccount, sync:syncSelections, appendWeekCell,
     get timeZone() {return activeZone();},
     get pending() {return Boolean(accountId && pending);},
     get dirty() {return dirty;},

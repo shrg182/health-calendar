@@ -381,6 +381,7 @@
   document.querySelectorAll('.period-btn').forEach(button=>button.addEventListener('click',()=>setPeriod(button.dataset.period)));
   function render() {
     todayDate = new Date();
+    if (!$('#calendar-page').hidden) $('#shensha-period-panel').hidden = period === 'week';
     const weekStart = new Date(shown.getFullYear(), shown.getMonth(), shown.getDate()-shown.getDay(), 12);
     const weekEnd = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate()+6, 12);
     monthTitle.textContent = period === 'year' ? new Intl.DateTimeFormat(i18n.locale,{year:'numeric'}).format(shown)
@@ -400,7 +401,7 @@
     const thisLunar = lunarParts(todayDate);
     const todayPillars = pillarsFor(todayDate);
     summary.textContent = `${t('Today')} · ${fmtDate(todayDate)} · ${todayPillars.year} · ${thisLunar.full} · ${todayPillars.month} · ${sexagenaryDay(todayDate)}`;
-    $('#calendar-card').className = `calendar-card ${view === 'gregorian' ? 'greg-only' : ''} ${view === 'lunar' ? 'lunar-only' : ''}`;
+    $('#calendar-card').className = `calendar-card ${view === 'gregorian' ? 'greg-only' : ''} ${view === 'lunar' ? 'lunar-only' : ''} ${period === 'week' ? 'week-view' : ''}`;
     document.querySelectorAll('.view-btn').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.view === view)));
     if (period === 'year') { daysEl.replaceChildren(); renderYear(); return; }
     $('#year-months').replaceChildren();
@@ -444,6 +445,16 @@
       const dayPillar=document.createElement('span'); dayPillar.textContent=` · ${sexagenaryDay(date)}`;
       ganzhiEl.append(yearPillar,monthPillar,dayPillar);
       cell.append(row,lunarEl,ganzhiEl);
+      if (period === 'week' && !cell.disabled) {
+        window.DaymarkShensha.appendWeekCell(cell,date);
+        const text = window.DaymarkNotes?.savedText(cell.dataset.date);
+        if (text) {
+          const preview = document.createElement('div');preview.className='week-note-preview';
+          preview.textContent=text;
+          // The day button opens the complete note; the preview never renders note HTML.
+          cell.append(preview);
+        }
+      }
       frag.append(cell);
     }
     daysEl.replaceChildren(frag);
@@ -527,7 +538,7 @@
     updateMonthNames(); updateWeekdays();
     try { renderPage(false); } catch { setText(summary,'Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'); }
   });
-  window.DaymarkShensha.configure({pillarForDate:sexagenaryDay,contextForDate:encounterPillars,dateInfo:date=>({lunar:lunarParts(date).full,weekday:weekdayFormatter.format(date)}),openDay,updateLogo:renderLogo});
+  window.DaymarkShensha.configure({pillarForDate:sexagenaryDay,contextForDate:encounterPillars,dateInfo:date=>({lunar:lunarParts(date).full,weekday:weekdayFormatter.format(date)}),openDay,updateWeek:()=>{if(period==='week' && !$('#calendar-page').hidden)render();},updateLogo:renderLogo});
   try { lunarFormatter.format(todayDate); renderPage(); }
   catch (err) { setText(summary,'Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'); daysEl.replaceChildren(); }
 })();

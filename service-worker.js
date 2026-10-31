@@ -1,7 +1,7 @@
-importScripts('./release.js?v=0.1.0-dev.44');
+importScripts('./release.js?v=0.1.0-dev.46');
 const CACHE = `daymark-shell-${self.DAYMARK_RELEASE.version}`;
 // Match the versioned URLs in index.html so online and offline loads use the same assets.
-const ASSETS = ['./', './index.html', './styles.css?v=0.1.0-dev.44', './app.js?v=0.1.0-dev.44', './shensha.js?v=0.1.0-dev.44', './translations.js?v=0.1.0-dev.44', './i18n.js?v=0.1.0-dev.44', './notes.js?v=0.1.0-dev.44', './sync.js?v=0.1.0-dev.44', './sync-config.js?v=0.1.0-dev.44', './install.js?v=0.1.0-dev.44', './release.js?v=0.1.0-dev.44', './updates.js?v=0.1.0-dev.44', './manifest.webmanifest', './icons/calendar-192.png', './icons/calendar-512.png'];
+const ASSETS = ['./', './index.html', './styles.css?v=0.1.0-dev.46', './app.js?v=0.1.0-dev.46', './shensha.js?v=0.1.0-dev.46', './translations.js?v=0.1.0-dev.46', './i18n.js?v=0.1.0-dev.46', './notes.js?v=0.1.0-dev.46', './sync.js?v=0.1.0-dev.46', './sync-config.js?v=0.1.0-dev.46', './install.js?v=0.1.0-dev.46', './release.js?v=0.1.0-dev.46', './updates.js?v=0.1.0-dev.46', './manifest.webmanifest', './icons/calendar-192.png', './icons/calendar-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS.map(url=>new Request(url,{cache:'reload'})))));
 });

@@ -1,5 +1,7 @@
 // English source messages with complete Chinese, Japanese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Preview saved notes under each date in Week view.": {"zh": "周视图在每个日期下预览已保存的笔记。", "ja": "週表示で各日付の下に保存済みメモのプレビューを表示します。", "ru": "В недельном виде под каждой датой показан фрагмент сохранённой заметки.", "fr": "Un aperçu des notes enregistrées apparaît sous chaque date dans la vue hebdomadaire."},
+  "Show Shensha encounters under each date in Week view.": {"zh": "周视图在每个日期下显示神煞相遇。", "ja": "週表示で各日付の下に神煞の一致を表示します。", "ru": "В недельном виде совпадения шэньша отображаются под каждой датой.", "fr": "Les rencontres Shensha s’affichent sous chaque date dans la vue hebdomadaire."},
   "Calendar period": {"zh": "日历时段", "ja": "カレンダーの期間", "ru": "Период календаря", "fr": "Période du calendrier"},
   "Week": {"zh": "周", "ja": "週", "ru": "Неделя", "fr": "Semaine"},
   "Previous year": {"zh": "上一年", "ja": "前年", "ru": "Предыдущий год", "fr": "Année précédente"},

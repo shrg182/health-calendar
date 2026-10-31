@@ -2,7 +2,13 @@
   const $ = s => document.querySelector(s);
   const {t, setText} = window.DaymarkI18n;
   const dates = new Set();
-  window.DaymarkNotes = { dates };
+  window.DaymarkNotes = {
+    dates,
+    savedText(key) {
+      const note = records.get(key);
+      return note && !note.deleted ? note.text : '';
+    }
+  };
   const drafts = new Map();
   let current = null;
   let records = new Map();
