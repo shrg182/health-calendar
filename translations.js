@@ -1,5 +1,14 @@
 // English source messages with complete Chinese, Japanese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Calendar period": {"zh": "日历时段", "ja": "カレンダーの期間", "ru": "Период календаря", "fr": "Période du calendrier"},
+  "Week": {"zh": "周", "ja": "週", "ru": "Неделя", "fr": "Semaine"},
+  "Previous year": {"zh": "上一年", "ja": "前年", "ru": "Предыдущий год", "fr": "Année précédente"},
+  "Next year": {"zh": "下一年", "ja": "翌年", "ru": "Следующий год", "fr": "Année suivante"},
+  "Previous week": {"zh": "上一周", "ja": "前週", "ru": "Предыдущая неделя", "fr": "Semaine précédente"},
+  "Next week": {"zh": "下一周", "ja": "翌週", "ru": "Следующая неделя", "fr": "Semaine suivante"},
+  "Weekly calendar": {"zh": "周历", "ja": "週間カレンダー", "ru": "Недельный календарь", "fr": "Calendrier hebdomadaire"},
+  "Add year, month, and week calendar views.": {"zh": "新增年、月、周日历视图。", "ja": "年・月・週のカレンダー表示を追加しました。", "ru": "Добавлены годовой, месячный и недельный виды календаря.", "fr": "Ajout des vues annuelle, mensuelle et hebdomadaire du calendrier."},
+
   "Shensha time zone": {"zh": "神煞时区", "ja": "神煞のタイムゾーン", "ru": "Часовой пояс шэньша", "fr": "Fuseau horaire des Shensha"},
   "Time zone source": {"zh": "时区来源", "ja": "タイムゾーンの選択", "ru": "Источник часового пояса", "fr": "Choix du fuseau horaire"},
   "Device time zone": {"zh": "设备时区", "ja": "端末のタイムゾーン", "ru": "Часовой пояс устройства", "fr": "Fuseau de l’appareil"},
@@ -11,6 +20,7 @@ window.DAYMARK_TRANSLATIONS = {
   "Time zone saved on this device.": {"zh": "时区已保存在此设备。", "ja": "この端末にタイムゾーンを保存しました。", "ru": "Часовой пояс сохранён на этом устройстве.", "fr": "Fuseau enregistré sur cet appareil."},
   "Time zone applies for this session only.": {"zh": "时区仅在本次会话中生效。", "ja": "タイムゾーンはこのセッションのみ有効です。", "ru": "Часовой пояс действует только в этом сеансе.", "fr": "Le fuseau s’applique uniquement à cette session."},
   "Shensha time zone: {zone}. Hour slots use this zone’s clock time.": {"zh": "神煞时区：{zone}。时段按此时区的钟表时间显示。", "ja": "神煞のタイムゾーン：{zone}。時間帯はこの地域の時刻です。", "ru": "Часовой пояс шэньша: {zone}. Интервалы указаны по времени этого пояса.", "fr": "Fuseau des Shensha : {zone}. Les créneaux suivent l’heure de ce fuseau."},
+  "Use a date-free calendar icon for the installed app.": {"zh":"已安装应用使用不含日期的日历图标。","ja":"インストールしたアプリのアイコンを日付のないカレンダーに変更しました。","ru":"Для установленного приложения используется значок календаря без даты.","fr":"L’application installée utilise une icône de calendrier sans date."},
   "Move hourly Shensha time zone preferences to Settings.": {"zh": "将时柱神煞时区选项移至设置，可选择设备或出生地时区。", "ja": "神煞の時間帯設定を設定画面に移動しました。", "ru": "Настройки часового пояса шэньша перенесены в раздел настроек.", "fr": "Les préférences de fuseau horaire des Shensha sont déplacées dans les paramètres."},
   "Simplify the date logo and use it for browser and app icons.": {"zh":"简化日期标志，并将其用于浏览器和应用图标。","ja":"日付ロゴを簡素化し、ブラウザーとアプリのアイコンに使用します。","ru":"Упрощён логотип с датой для значков браузера и приложения.","fr":"Le logo de date est simplifié et utilisé pour les icônes du navigateur et de l’application."},
   "Use a neutral white calendar logo when no Shensha matches.": {"zh":"无神煞匹配时，日历标志使用中性白色。","ja":"該当する神煞がない場合は、カレンダーのロゴを白地の中立的な表示にします。","ru":"Если совпадений шэньша нет, логотип календаря отображается на нейтральном белом фоне.","fr":"Le logo du calendrier reste neutre sur fond blanc lorsqu’aucun Shensha ne correspond."},

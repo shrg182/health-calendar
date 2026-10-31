@@ -5,9 +5,11 @@
   const daysEl = $('#days');
   const monthTitle = $('#month-title');
   const summary = $('#date-summary');
-  const todayDate = new Date();
+  let todayDate = new Date();
+  let period = 'month';
+  try { const saved = localStorage.getItem('daymark.calendarPeriod'); if (['year','month','week'].includes(saved)) period = saved; } catch {}
   let selectedCalendarDate = new Date(todayDate);
-  let shown = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
+  let shown = new Date(todayDate);
   const MIN_YEAR = 1901;
   const MAX_YEAR = 2100;
   const VIEW_KEY = 'daymark.calendarView';
@@ -330,23 +332,84 @@
       }
     }
   }
+  function adjacentPeriod(direction) {
+    if (period === 'year') return new Date(shown.getFullYear()+direction, shown.getMonth(), 1, 12);
+    if (period === 'month') return new Date(shown.getFullYear(), shown.getMonth()+direction, 1, 12);
+    const date = new Date(shown.getFullYear(), shown.getMonth(), shown.getDate()-shown.getDay()+7*direction, 12);
+    // The first supported week can start in December of the preceding year.
+    if (date.getFullYear() < MIN_YEAR && new Date(date.getFullYear(),date.getMonth(),date.getDate()+6).getFullYear() === MIN_YEAR) return new Date(MIN_YEAR,0,1,12);
+    return date;
+  }
+  function renderYear() {
+    const months = document.createDocumentFragment();
+    const weekday = new Intl.DateTimeFormat(i18n.locale,{weekday:'narrow'});
+    for (let month=0; month<12; month++) {
+      const section = document.createElement('section'); section.className='mini-month';
+      const heading = document.createElement('h2');
+      const button = document.createElement('button'); button.type='button'; button.className='mini-month-title';
+      const first = new Date(shown.getFullYear(),month,1,12);
+      button.textContent = new Intl.DateTimeFormat(i18n.locale,{month:'long'}).format(first);
+      button.setAttribute('aria-label',monthFormatter.format(first));
+      button.addEventListener('click',()=>{shown=first;setPeriod('month');});
+      heading.append(button); section.append(heading);
+      const grid = document.createElement('div'); grid.className='mini-days';
+      for(let day=0;day<7;day++) { const label=document.createElement('span'); label.className='mini-weekday'; label.textContent=weekday.format(new Date(2026,0,4+day)); label.setAttribute('aria-hidden','true'); grid.append(label); }
+      for(let gap=0;gap<first.getDay();gap++) {const empty=document.createElement('span');empty.setAttribute('aria-hidden','true');grid.append(empty);}
+      const count = new Date(shown.getFullYear(),month+1,0).getDate();
+      for(let day=1;day<=count;day++) {
+        const date=new Date(shown.getFullYear(),month,day,12),key=dateKey(date);
+        const cell=document.createElement('button');cell.type='button';cell.className='mini-day';cell.dataset.date=key;
+        cell.textContent=new Intl.NumberFormat(i18n.locale,{useGrouping:false}).format(day);
+        cell.setAttribute('aria-label',new Intl.DateTimeFormat(i18n.locale,{dateStyle:'full'}).format(date));
+        if(key===dateKey(todayDate)){cell.classList.add('today');cell.setAttribute('aria-current','date');}
+        if(window.DaymarkNotes?.dates.has(key)){cell.classList.add('has-note');cell.setAttribute('aria-description',t('Has a saved note'));}
+        cell.addEventListener('click',()=>{shown=date;window.DaymarkShensha.selectDay();openDay(date);});grid.append(cell);
+      }
+      section.append(grid);months.append(section);
+    }
+    $('#year-months').replaceChildren(months);
+  }
+  function setPeriod(value) {
+    if (value === 'week' && period !== 'week') {
+      const date = selectedCalendarDate;
+      if (date.getFullYear() === shown.getFullYear() && date.getMonth() === shown.getMonth()) shown = new Date(date);
+    }
+    period=value;
+    try {localStorage.setItem('daymark.calendarPeriod',period);} catch {}
+    render();
+  }
+  document.querySelectorAll('.period-btn').forEach(button=>button.addEventListener('click',()=>setPeriod(button.dataset.period)));
   function render() {
-    monthTitle.textContent = monthFormatter.format(shown);
+    todayDate = new Date();
+    const weekStart = new Date(shown.getFullYear(), shown.getMonth(), shown.getDate()-shown.getDay(), 12);
+    const weekEnd = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate()+6, 12);
+    monthTitle.textContent = period === 'year' ? new Intl.DateTimeFormat(i18n.locale,{year:'numeric'}).format(shown)
+      : period === 'week' ? `${fmtDate(weekStart)} – ${fmtDate(weekEnd)}` : monthFormatter.format(shown);
     $('#jump-month').value = String(shown.getMonth());
     $('#jump-year').value = shown.getFullYear();
-    $('#prev').disabled = shown.getFullYear() === MIN_YEAR && shown.getMonth() === 0;
-    $('#next').disabled = shown.getFullYear() === MAX_YEAR && shown.getMonth() === 11;
+    const previous = adjacentPeriod(-1), next = adjacentPeriod(1);
+    $('#prev').disabled = previous.getFullYear() < MIN_YEAR;
+    $('#next').disabled = next.getFullYear() > MAX_YEAR;
+    $('#prev').setAttribute('aria-label',t({year:'Previous year',month:'Previous month',week:'Previous week'}[period]));
+    $('#next').setAttribute('aria-label',t({year:'Next year',month:'Next month',week:'Next week'}[period]));
+    document.querySelectorAll('.period-btn').forEach(btn => btn.setAttribute('aria-pressed',String(btn.dataset.period === period)));
+    daysEl.hidden = period === 'year';
+    $('.weekdays').hidden = period === 'year';
+    $('#year-months').hidden = period !== 'year';
+    daysEl.setAttribute('aria-label',t(period === 'week' ? 'Weekly calendar' : 'Monthly calendar'));
     const thisLunar = lunarParts(todayDate);
     const todayPillars = pillarsFor(todayDate);
     summary.textContent = `${t('Today')} · ${fmtDate(todayDate)} · ${todayPillars.year} · ${thisLunar.full} · ${todayPillars.month} · ${sexagenaryDay(todayDate)}`;
     $('#calendar-card').className = `calendar-card ${view === 'gregorian' ? 'greg-only' : ''} ${view === 'lunar' ? 'lunar-only' : ''}`;
     document.querySelectorAll('.view-btn').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.view === view)));
+    if (period === 'year') { daysEl.replaceChildren(); renderYear(); return; }
+    $('#year-months').replaceChildren();
     const first = new Date(shown.getFullYear(), shown.getMonth(), 1);
-    const start = new Date(first.getFullYear(), first.getMonth(), 1 - first.getDay());
+    const start = period === 'week' ? weekStart : new Date(first.getFullYear(), first.getMonth(), 1 - first.getDay());
     const frag = document.createDocumentFragment();
-    for (let i=0; i<42; i++) {
+    for (let i=0; i<(period === 'week' ? 7 : 42); i++) {
       const date = new Date(start.getFullYear(), start.getMonth(), start.getDate()+i, 12);
-      const outside = date.getMonth() !== shown.getMonth();
+      const outside = period === 'month' && date.getMonth() !== shown.getMonth();
       const isToday = date.getFullYear() === todayDate.getFullYear() && date.getMonth() === todayDate.getMonth() && date.getDate() === todayDate.getDate();
       const lunar = lunarParts(date);
       const pillars = pillarsFor(date);
@@ -403,12 +466,12 @@
     if (!event.currentTarget.reportValidity()) return;
     const date = dateFromKey($('#find-date').value);
     if (!date) return;
-    shown = new Date(date.getFullYear(), date.getMonth(), 1);
+    shown = new Date(date);
     openDay(date);
   });
-  $('#prev').addEventListener('click', () => { shown = new Date(shown.getFullYear(), shown.getMonth()-1, 1); render(); });
-  $('#next').addEventListener('click', () => { shown = new Date(shown.getFullYear(), shown.getMonth()+1, 1); render(); });
-  $('#today').addEventListener('click', () => { selectedCalendarDate=new Date(todayDate);$('#find-date').value=dateKey(selectedCalendarDate);window.DaymarkShensha.context(selectedCalendarDate,false);shown = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1); render(); });
+  $('#prev').addEventListener('click', () => { shown = adjacentPeriod(-1); render(); });
+  $('#next').addEventListener('click', () => { shown = adjacentPeriod(1); render(); });
+  $('#today').addEventListener('click', () => { todayDate=new Date();selectedCalendarDate=new Date(todayDate);$('#find-date').value=dateKey(selectedCalendarDate);window.DaymarkShensha.context(selectedCalendarDate,false);shown = new Date(todayDate); render(); });
   $('#back-to-calendar').addEventListener('click', () => {
     if (detailRouteAvailable && history.state?.fromCalendar) {
       activeDateKey = null;

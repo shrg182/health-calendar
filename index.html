@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#f5f5f2">
   <title>Daymark — Gregorian & Chinese Calendar</title>
   <link rel="manifest" href="manifest.webmanifest">
-  <link id="app-favicon" rel="icon" type="image/png" href="icons/icon-192.png">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link id="app-favicon" rel="icon" type="image/png" href="icons/calendar-192.png">
+  <link rel="apple-touch-icon" href="icons/calendar-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Daymark">
-  <link rel="stylesheet" href="styles.css?v=0.1.0-dev.42">
+  <link rel="stylesheet" href="styles.css?v=0.1.0-dev.44">
 </head>
 <body>
   <main class="shell">
@@ -165,6 +165,11 @@
     <button id="calendar-update" class="calendar-notice" type="button" data-open-settings="app" hidden>An update is ready. Review update</button>
     <section aria-label="Calendar controls">
       <div class="toolbar">
+        <div class="period-switch" role="group" aria-label="Calendar period">
+          <button class="period-btn" type="button" data-period="year" aria-pressed="false">Year</button>
+          <button class="period-btn" type="button" data-period="month" aria-pressed="true">Month</button>
+          <button class="period-btn" type="button" data-period="week" aria-pressed="false">Week</button>
+        </div>
         <div class="month-controls">
           <button class="icon-btn" id="prev" aria-label="Previous month">‹</button>
           <div class="month-title" id="month-title" aria-live="polite"></div>
@@ -179,6 +184,7 @@
       <div class="calendar-card" id="calendar-card">
         <div class="weekdays" aria-hidden="true"><div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div></div>
         <div class="days" id="days" aria-label="Monthly calendar"></div>
+        <div id="year-months" class="year-months" hidden></div>
         <div class="calendar-footer"><div class="legend"><span class="legend-item"><i class="dot"></i>Today</span><span class="legend-item"><i class="dot gold"></i>Chinese lunar date</span></div><span id="calendar-note">Dates shown in your device’s local time.</span></div>
       </div>
       <div class="date-navigation">
@@ -275,15 +281,15 @@
       <div id="shensha-period-results"></div>
     </section>
   </main>
-  <script src="release.js?v=0.1.0-dev.42" defer></script>
-  <script src="translations.js?v=0.1.0-dev.42" defer></script>
-  <script src="i18n.js?v=0.1.0-dev.42" defer></script>
-  <script src="sync-config.js?v=0.1.0-dev.42" defer></script>
-  <script src="sync.js?v=0.1.0-dev.42" defer></script>
-  <script src="shensha.js?v=0.1.0-dev.42" defer></script>
-  <script src="notes.js?v=0.1.0-dev.42" defer></script>
-  <script src="app.js?v=0.1.0-dev.42" defer></script>
-  <script src="install.js?v=0.1.0-dev.42" defer></script>
-  <script src="updates.js?v=0.1.0-dev.42" defer></script>
+  <script src="release.js?v=0.1.0-dev.44" defer></script>
+  <script src="translations.js?v=0.1.0-dev.44" defer></script>
+  <script src="i18n.js?v=0.1.0-dev.44" defer></script>
+  <script src="sync-config.js?v=0.1.0-dev.44" defer></script>
+  <script src="sync.js?v=0.1.0-dev.44" defer></script>
+  <script src="shensha.js?v=0.1.0-dev.44" defer></script>
+  <script src="notes.js?v=0.1.0-dev.44" defer></script>
+  <script src="app.js?v=0.1.0-dev.44" defer></script>
+  <script src="install.js?v=0.1.0-dev.44" defer></script>
+  <script src="updates.js?v=0.1.0-dev.44" defer></script>
 </body>
 </html>
