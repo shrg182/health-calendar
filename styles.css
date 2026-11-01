@@ -380,3 +380,8 @@ html:not([lang^="zh"]) .pillar-value { font-size:20px }
 .week-shensha .shensha-no-encounters { font-size:12px; font-weight:400; color:var(--muted); line-height:1.5 }
 
 .week-note-preview { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; line-clamp:3; overflow:hidden; white-space:pre-wrap; overflow-wrap:anywhere; margin-top:14px; text-align:left; font-size:13px; font-weight:400; line-height:1.5; color:var(--ink) }
+
+.days-view .days { width:max-content; min-width:0; align-items:stretch }
+.days-view .day:nth-child(7n) { border-right:1px solid var(--line) }
+.timeline-date { font-size:12px; color:var(--muted); font-weight:650; margin-bottom:12px }
+.days-view .calendar-grid-scroll { overflow-anchor:none }

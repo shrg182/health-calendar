@@ -1,5 +1,11 @@
 // English source messages with complete Chinese, Japanese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
+  "Days": {"zh": "多日", "ja": "日々", "ru": "Дни", "fr": "Jours"},
+  "Daily timeline": {"zh": "逐日日历", "ja": "日付のタイムライン", "ru": "Лента дней", "fr": "Calendrier continu"},
+  "Previous day": {"zh": "前一天", "ja": "前日", "ru": "Предыдущий день", "fr": "Jour précédent"},
+  "Next day": {"zh": "后一天", "ja": "翌日", "ru": "Следующий день", "fr": "Jour suivant"},
+  "Browse a continuous Days view starting at today.": {"zh": "新增从今天开始、可左右连续滚动的多日视图。", "ja": "今日から前後にスクロールできる連続した日付表示を追加しました。", "ru": "Добавлена непрерывная лента дней с началом на сегодняшней дате.", "fr": "Ajout d’une vue continue des jours commençant à la date d’aujourd’hui."},
+
   "Preview saved notes under each date in Week view.": {"zh": "周视图在每个日期下预览已保存的笔记。", "ja": "週表示で各日付の下に保存済みメモのプレビューを表示します。", "ru": "В недельном виде под каждой датой показан фрагмент сохранённой заметки.", "fr": "Un aperçu des notes enregistrées apparaît sous chaque date dans la vue hebdomadaire."},
   "Show Shensha encounters under each date in Week view.": {"zh": "周视图在每个日期下显示神煞相遇。", "ja": "週表示で各日付の下に神煞の一致を表示します。", "ru": "В недельном виде совпадения шэньша отображаются под каждой датой.", "fr": "Les rencontres Shensha s’affichent sous chaque date dans la vue hebdomadaire."},
   "Calendar period": {"zh": "日历时段", "ja": "カレンダーの期間", "ru": "Период календаря", "fr": "Période du calendrier"},

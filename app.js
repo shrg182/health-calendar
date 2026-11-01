@@ -7,7 +7,7 @@
   const summary = $('#date-summary');
   let todayDate = new Date();
   let period = 'month';
-  try { const saved = localStorage.getItem('daymark.calendarPeriod'); if (['year','month','week'].includes(saved)) period = saved; } catch {}
+  try { const saved = localStorage.getItem('daymark.calendarPeriod'); if (['year','month','week','days'].includes(saved)) period = saved; } catch {}
   let selectedCalendarDate = new Date(todayDate);
   let shown = new Date(todayDate);
   const MIN_YEAR = 1901;
@@ -332,7 +332,13 @@
       }
     }
   }
+  const timelineScroll = $('.calendar-grid-scroll');
+  let timelineStart = null;
+  let timelineOffset = 0;
+  let timelineProgrammatic = null;
+  const timelineWidth = 170;
   function adjacentPeriod(direction) {
+    if (period === 'days') return new Date(shown.getFullYear(),shown.getMonth(),shown.getDate()+direction,12);
     if (period === 'year') return new Date(shown.getFullYear()+direction, shown.getMonth(), 1, 12);
     if (period === 'month') return new Date(shown.getFullYear(), shown.getMonth()+direction, 1, 12);
     const date = new Date(shown.getFullYear(), shown.getMonth(), shown.getDate()-shown.getDay()+7*direction, 12);
@@ -374,6 +380,7 @@
       const date = selectedCalendarDate;
       if (date.getFullYear() === shown.getFullYear() && date.getMonth() === shown.getMonth()) shown = new Date(date);
     }
+    if (value === 'days') { shown=new Date(); timelineOffset=0; }
     period=value;
     try {localStorage.setItem('daymark.calendarPeriod',period);} catch {}
     render();
@@ -381,34 +388,46 @@
   document.querySelectorAll('.period-btn').forEach(button=>button.addEventListener('click',()=>setPeriod(button.dataset.period)));
   function render() {
     todayDate = new Date();
-    if (!$('#calendar-page').hidden) $('#shensha-period-panel').hidden = period === 'week';
+    if (!$('#calendar-page').hidden) $('#shensha-period-panel').hidden = (period === 'week' || period === 'days');
     const weekStart = new Date(shown.getFullYear(), shown.getMonth(), shown.getDate()-shown.getDay(), 12);
     const weekEnd = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate()+6, 12);
     monthTitle.textContent = period === 'year' ? new Intl.DateTimeFormat(i18n.locale,{year:'numeric'}).format(shown)
-      : period === 'week' ? `${fmtDate(weekStart)} – ${fmtDate(weekEnd)}` : monthFormatter.format(shown);
+      : period === 'days' ? fmtDate(shown) : period === 'week' ? `${fmtDate(weekStart)} – ${fmtDate(weekEnd)}` : monthFormatter.format(shown);
     $('#jump-month').value = String(shown.getMonth());
     $('#jump-year').value = shown.getFullYear();
     const previous = adjacentPeriod(-1), next = adjacentPeriod(1);
     $('#prev').disabled = previous.getFullYear() < MIN_YEAR;
     $('#next').disabled = next.getFullYear() > MAX_YEAR;
-    $('#prev').setAttribute('aria-label',t({year:'Previous year',month:'Previous month',week:'Previous week'}[period]));
-    $('#next').setAttribute('aria-label',t({year:'Next year',month:'Next month',week:'Next week'}[period]));
+    $('#prev').setAttribute('aria-label',t({year:'Previous year',month:'Previous month',week:'Previous week',days:'Previous day'}[period]));
+    $('#next').setAttribute('aria-label',t({year:'Next year',month:'Next month',week:'Next week',days:'Next day'}[period]));
     document.querySelectorAll('.period-btn').forEach(btn => btn.setAttribute('aria-pressed',String(btn.dataset.period === period)));
     daysEl.hidden = period === 'year';
-    $('.weekdays').hidden = period === 'year';
+    $('.weekdays').hidden = period === 'year' || period === 'days';
     $('#year-months').hidden = period !== 'year';
-    daysEl.setAttribute('aria-label',t(period === 'week' ? 'Weekly calendar' : 'Monthly calendar'));
+    daysEl.setAttribute('aria-label',t(period === 'days' ? 'Daily timeline' : period === 'week' ? 'Weekly calendar' : 'Monthly calendar'));
     const thisLunar = lunarParts(todayDate);
     const todayPillars = pillarsFor(todayDate);
     summary.textContent = `${t('Today')} · ${fmtDate(todayDate)} · ${todayPillars.year} · ${thisLunar.full} · ${todayPillars.month} · ${sexagenaryDay(todayDate)}`;
-    $('#calendar-card').className = `calendar-card ${view === 'gregorian' ? 'greg-only' : ''} ${view === 'lunar' ? 'lunar-only' : ''} ${period === 'week' ? 'week-view' : ''}`;
+    $('#calendar-card').className = `calendar-card ${view === 'gregorian' ? 'greg-only' : ''} ${view === 'lunar' ? 'lunar-only' : ''} ${period === 'week' || period === 'days' ? 'week-view' : ''} ${period === 'days' ? 'days-view' : ''}`;
     document.querySelectorAll('.view-btn').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.view === view)));
     if (period === 'year') { daysEl.replaceChildren(); renderYear(); return; }
     $('#year-months').replaceChildren();
     const first = new Date(shown.getFullYear(), shown.getMonth(), 1);
-    const start = period === 'week' ? weekStart : new Date(first.getFullYear(), first.getMonth(), 1 - first.getDay());
+    let start = period === 'week' ? weekStart : new Date(first.getFullYear(), first.getMonth(), 1 - first.getDay());
+    let count = period === 'week' ? 7 : 42;
+    if (period === 'days') {
+      start = new Date(shown.getFullYear(),shown.getMonth(),shown.getDate()-30,12);
+      if(start.getFullYear()<MIN_YEAR) start=new Date(MIN_YEAR,0,1,12);
+      const end = new Date(shown.getFullYear(),shown.getMonth(),shown.getDate()+30,12);
+      if(end.getFullYear()>MAX_YEAR) end.setTime(new Date(MAX_YEAR,11,31,12).getTime());
+      count=Math.round((Date.UTC(end.getFullYear(),end.getMonth(),end.getDate())-Date.UTC(start.getFullYear(),start.getMonth(),start.getDate()))/86400000)+1;
+      timelineStart=new Date(start);
+      daysEl.style.gridTemplateColumns=`repeat(${count},${timelineWidth}px)`;
+      daysEl.style.paddingRight=`${Math.max(0,timelineScroll.clientWidth-timelineWidth)}px`;
+    } else { daysEl.style.gridTemplateColumns='';daysEl.style.paddingRight=''; }
+
     const frag = document.createDocumentFragment();
-    for (let i=0; i<(period === 'week' ? 7 : 42); i++) {
+    for (let i=0; i<count; i++) {
       const date = new Date(start.getFullYear(), start.getMonth(), start.getDate()+i, 12);
       const outside = period === 'month' && date.getMonth() !== shown.getMonth();
       const isToday = date.getFullYear() === todayDate.getFullYear() && date.getMonth() === todayDate.getMonth() && date.getDate() === todayDate.getDate();
@@ -444,8 +463,13 @@
       const monthPillar=document.createElement('span'); monthPillar.textContent=` · ${pillars.month}`;
       const dayPillar=document.createElement('span'); dayPillar.textContent=` · ${sexagenaryDay(date)}`;
       ganzhiEl.append(yearPillar,monthPillar,dayPillar);
+      if (period === 'days') {
+        const heading=document.createElement('div');heading.className='timeline-date';
+        heading.textContent=new Intl.DateTimeFormat(i18n.locale,{weekday:'short',month:'short',day:'numeric'}).format(date);
+        cell.append(heading);
+      }
       cell.append(row,lunarEl,ganzhiEl);
-      if (period === 'week' && !cell.disabled) {
+      if ((period === 'week' || period === 'days') && !cell.disabled) {
         window.DaymarkShensha.appendWeekCell(cell,date);
         const text = window.DaymarkNotes?.savedText(cell.dataset.date);
         if (text) {
@@ -458,7 +482,33 @@
       frag.append(cell);
     }
     daysEl.replaceChildren(frag);
+    if (period === 'days') {
+      const index=Math.round((Date.UTC(shown.getFullYear(),shown.getMonth(),shown.getDate())-Date.UTC(start.getFullYear(),start.getMonth(),start.getDate()))/86400000);
+      timelineScroll.scrollLeft=index*timelineWidth+timelineOffset;
+      timelineProgrammatic=timelineScroll.scrollLeft;
+    } else { timelineOffset=0;timelineScroll.scrollLeft=0; }
   }
+  let timelineFrame=0;
+  timelineScroll.addEventListener('scroll',()=>{
+    if(period!=='days' || !timelineStart || timelineFrame)return;
+    timelineFrame=requestAnimationFrame(()=>{
+      timelineFrame=0;
+      if(period!=='days' || $('#calendar-page').hidden)return;
+      if(timelineProgrammatic!==null && Math.abs(timelineScroll.scrollLeft-timelineProgrammatic)<0.5) {timelineProgrammatic=null;return;}
+      timelineProgrammatic=null;
+      const index=Math.floor((timelineScroll.scrollLeft+0.5)/timelineWidth);
+      const cell=daysEl.children[index];if(!cell)return;
+      const date=dateFromKey(cell.dataset.date);if(!date)return;
+      shown=date;
+      timelineOffset=timelineScroll.scrollLeft-index*timelineWidth;
+      monthTitle.textContent=fmtDate(shown);
+      $('#jump-month').value=String(shown.getMonth());$('#jump-year').value=shown.getFullYear();
+      $('#prev').disabled=adjacentPeriod(-1).getFullYear()<MIN_YEAR;
+      $('#next').disabled=adjacentPeriod(1).getFullYear()>MAX_YEAR;
+      if((index<7 && timelineStart.getFullYear()>=MIN_YEAR && dateKey(timelineStart)!==`${MIN_YEAR}-01-01`)
+        || (index>daysEl.children.length-8 && daysEl.lastElementChild.dataset.date!==`${MAX_YEAR}-12-31`)) render();
+    });
+  });
   window.addEventListener('daymark:notes', () => { if (!$('#calendar-page').hidden) render(); });
   $('#month-form').addEventListener('submit', event => {
     event.preventDefault();
@@ -480,9 +530,9 @@
     shown = new Date(date);
     openDay(date);
   });
-  $('#prev').addEventListener('click', () => { shown = adjacentPeriod(-1); render(); });
-  $('#next').addEventListener('click', () => { shown = adjacentPeriod(1); render(); });
-  $('#today').addEventListener('click', () => { todayDate=new Date();selectedCalendarDate=new Date(todayDate);$('#find-date').value=dateKey(selectedCalendarDate);window.DaymarkShensha.context(selectedCalendarDate,false);shown = new Date(todayDate); render(); });
+  $('#prev').addEventListener('click', () => { shown = adjacentPeriod(-1); timelineOffset=0;render(); });
+  $('#next').addEventListener('click', () => { shown = adjacentPeriod(1); timelineOffset=0;render(); });
+  $('#today').addEventListener('click', () => { todayDate=new Date();selectedCalendarDate=new Date(todayDate);$('#find-date').value=dateKey(selectedCalendarDate);window.DaymarkShensha.context(selectedCalendarDate,false);shown = new Date(todayDate); timelineOffset=0;render(); });
   $('#back-to-calendar').addEventListener('click', () => {
     if (detailRouteAvailable && history.state?.fromCalendar) {
       activeDateKey = null;
@@ -538,7 +588,7 @@
     updateMonthNames(); updateWeekdays();
     try { renderPage(false); } catch { setText(summary,'Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'); }
   });
-  window.DaymarkShensha.configure({pillarForDate:sexagenaryDay,contextForDate:encounterPillars,dateInfo:date=>({lunar:lunarParts(date).full,weekday:weekdayFormatter.format(date)}),openDay,updateWeek:()=>{if(period==='week' && !$('#calendar-page').hidden)render();},updateLogo:renderLogo});
+  window.DaymarkShensha.configure({pillarForDate:sexagenaryDay,contextForDate:encounterPillars,dateInfo:date=>({lunar:lunarParts(date).full,weekday:weekdayFormatter.format(date)}),openDay,updateWeek:()=>{if((period==='week' || period==='days') && !$('#calendar-page').hidden)render();},updateLogo:renderLogo});
   try { lunarFormatter.format(todayDate); renderPage(); }
   catch (err) { setText(summary,'Your browser does not support Chinese calendar formatting. Try a recent version of Safari, Chrome, Firefox, or Edge.'); daysEl.replaceChildren(); }
 })();

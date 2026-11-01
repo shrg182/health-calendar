@@ -31,7 +31,7 @@ const http=require('node:http'), fs=require('node:fs'),path=require('node:path')
  await choose('year');await jump(2100,11);assert(await p.locator('#next').isDisabled());
  await choose('month');assert(await p.locator('#next').isDisabled());await choose('week');assert(await p.locator('#next').isDisabled()===false); // Dec 1 can advance
  await p.locator('#today').click();await choose('year');await p.reload();assert.equal(await p.locator('[data-period="year"]').getAttribute('aria-pressed'),'true');
- for(const lang of ['en','zh','ja','ru','fr']){await p.locator('#language-choice').selectOption(lang);for(const width of [320,390,1440]){await p.setViewportSize({width,height:900});for(const period of ['year','month','week']){await choose(period);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`${lang} ${width} ${period}`);}}}
+ for(const lang of ['en','zh','ja','ru','fr']){await p.locator('#language-choice').selectOption(lang);for(const width of [320,390,1440]){await p.setViewportSize({width,height:900});for(const period of ['year','month','week','days']){await choose(period);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`${lang} ${width} ${period}`);}}}
  await p.evaluate(()=>localStorage.setItem('daymark.shensha.v1',JSON.stringify({tiande:{enabled:true,targets:[...'甲乙丙丁戊己庚辛壬癸']},yuede:{enabled:true,targets:[...'甲乙丙丁戊己庚辛壬癸']},yangren:{enabled:true,targets:[...'子丑寅卯辰巳午未申酉戌亥']},kongwang:{enabled:true,targets:[...'子丑寅卯辰巳午未申酉戌亥']}})));
  await p.reload();await choose('week');
  assert.equal(await p.locator('#days .week-shensha').count(),7);
@@ -62,8 +62,28 @@ const http=require('node:http'), fs=require('node:fs'),path=require('node:path')
  await p.locator('#days [data-date="2026-10-30"]').click();await p.locator('#daily-note').fill('Updated saved note');await p.locator('#save-note').click();await p.waitForFunction(()=>window.DaymarkNotes.savedText('2026-10-30')==='Updated saved note');
  await p.locator('#calendar-home').click();assert.equal(await preview.textContent(),'Updated saved note');
  await p.locator('#days [data-date="2026-10-30"]').click();p.once('dialog',d=>d.accept());await p.locator('#delete-note').click();await p.waitForFunction(()=>!window.DaymarkNotes.dates.has('2026-10-30'));await p.locator('#calendar-home').click();assert.equal(await p.locator('.week-note-preview').count(),0);
+ await choose('days');
+ const firstVisible=()=>p.evaluate(()=>{const box=document.querySelector('.calendar-grid-scroll');return [...document.querySelectorAll('#days .day')].find(el=>el.getBoundingClientRect().right>box.getBoundingClientRect().left+2)?.dataset.date;});
+ assert.equal(await firstVisible(),'2026-10-30');
+ assert.equal(await p.locator('#days .day').count(),61);
+ assert.equal(await p.locator('#days .timeline-date').count(),61);
+ assert(await p.locator('.weekdays').isHidden());assert(await p.locator('#shensha-period-panel').isHidden());
+ await p.locator('#prev').click();assert.equal(await firstVisible(),'2026-10-29');await p.locator('#next').click();assert.equal(await firstVisible(),'2026-10-30');
+ await p.evaluate(()=>{document.querySelector('.calendar-grid-scroll').scrollLeft-=170*4;});await p.waitForTimeout(80);assert.equal(await firstVisible(),'2026-10-26');
+ for(let i=0;i<3;i++){await p.evaluate(()=>{document.querySelector('.calendar-grid-scroll').scrollLeft=0;});await p.waitForTimeout(100);assert.equal(await p.locator('#days .day').count(),61);}
+ const earlier=await firstVisible();assert(earlier<'2026-10-01');
+ for(let i=0;i<5;i++){await p.evaluate(()=>{const el=document.querySelector('.calendar-grid-scroll');el.scrollLeft=el.scrollWidth-el.clientWidth;});await p.waitForTimeout(100);assert.equal(await p.locator('#days .day').count(),61);}
+ assert((await firstVisible())>'2026-11-30');
+ await p.locator('#today').click();assert.equal(await firstVisible(),'2026-10-30');
+ await p.locator('#days [data-date="2026-10-30"]').click();await p.locator('#daily-note').fill('Timeline note');await p.locator('#save-note').click();await p.waitForFunction(()=>window.DaymarkNotes.savedText('2026-10-30')==='Timeline note');await p.locator('#calendar-home').click();
+ assert.equal(await p.locator('#days [data-date="2026-10-30"] .week-note-preview').innerText(),'Timeline note');assert.equal(await p.locator('#days [data-date="2026-10-30"] .shensha-badge').count(),3);
+ await p.reload();assert.equal(await firstVisible(),'2026-10-30');
+ await jump(1901,0);assert.equal(await firstVisible(),'1901-01-01');assert(await p.locator('#prev').isDisabled());
+ await jump(2100,11);for(let i=0;i<2;i++){await p.evaluate(()=>{const el=document.querySelector('.calendar-grid-scroll');el.scrollLeft=el.scrollWidth-el.clientWidth;});await p.waitForTimeout(100);}assert.equal(await firstVisible(),'2100-12-31');assert(await p.locator('#next').isDisabled());
+ await p.locator('#today').click();
+ await p.setViewportSize({width:390,height:844});await choose('days');await p.screenshot({path:'/tmp/daymark-days-view.png'});
  await p.locator('#language-choice').selectOption('en');await p.setViewportSize({width:1440,height:1000});await choose('year');await p.screenshot({path:'/tmp/daymark-year-view.png'});
  await p.setViewportSize({width:390,height:844});await choose('week');await p.screenshot({path:'/tmp/daymark-week-view.png'});
- assert.deepEqual(errors,[]);console.log('Passed: year/month/week navigation, leap year, DST, limits, date details, persistence, and five-language responsive layouts.');
+ assert.deepEqual(errors,[]);console.log('Passed: year/month/week/Days navigation, bidirectional timeline loading, today alignment, limits, saved-note previews, Shensha columns, persistence, and five-language responsive layouts.');
  }finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve));}
 })().catch(e=>{console.error(e);process.exit(1)});
