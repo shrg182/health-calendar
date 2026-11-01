@@ -228,3 +228,5 @@ Week view lists all matching Shensha beneath each date in that date’s column, 
 Week view also shows up to three lines of each saved note below its encounters, preserving line breaks and clipping longer notes with an ellipsis. Open the date to read or edit the full note. Unsaved drafts are not included in previews; dates without saved notes have no preview.
 
 **Days**, beside Week, opens a continuous horizontal timeline with today as the first visible column. Scroll left for earlier dates or right for later dates; additional dates load near either edge while keeping the rendered range bounded. Each column includes its weekday and month, Shensha encounters, and saved-note preview. The arrows move one day, Today returns to the current day, and selecting a date opens its full details. Dates remain limited to 1901–2100.
+
+Week opens on the current Sunday–Saturday week and scrolls horizontally between complete weeks with snapping. On narrow screens, scroll within the seven day columns first; a further horizontal gesture at an edge moves to the neighbouring week. Previous/Next and Today retain their week navigation behavior. The Chinese Days button is labelled 日.

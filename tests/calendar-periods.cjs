@@ -20,16 +20,28 @@ const http=require('node:http'), fs=require('node:fs'),path=require('node:path')
  await p.locator('#next').click();assert.equal((await dates())[0],'2026-11-01');
  await p.locator('#next').click();assert.equal((await dates())[0],'2026-11-08'); // DST transition
  await p.locator('#today').click();assert.equal((await dates())[0],'2026-10-25');
+ // Full-week paging in both directions, independent of the inner day-column scroller.
+ await p.setViewportSize({width:1440,height:900});
+ await p.evaluate(()=>{const el=document.querySelector('#week-pager');el.scrollLeft=el.clientWidth*2;});await p.waitForTimeout(450);
+ assert.equal((await dates())[0],'2026-11-01');
+ await p.evaluate(()=>{document.querySelector('#week-pager').scrollLeft=0;});await p.waitForTimeout(450);
+ assert.equal((await dates())[0],'2026-10-25');
+ await p.setViewportSize({width:390,height:844});
+ await p.evaluate(()=>{document.querySelector('.calendar-grid-scroll').scrollLeft=300;});await p.waitForTimeout(100);
+ assert.equal((await dates())[0],'2026-10-25');
+ await p.evaluate(()=>{const inner=document.querySelector('.calendar-grid-scroll');inner.scrollLeft=inner.scrollWidth-inner.clientWidth;inner.dispatchEvent(new WheelEvent('wheel',{deltaX:180,deltaY:0,bubbles:true,cancelable:true}));});await p.waitForTimeout(650);
+ assert.equal((await dates())[0],'2026-11-01');await p.locator('#today').click();
+
  await choose('year');assert.equal(await p.locator('.mini-month').count(),12);assert.equal(await p.locator('.mini-day').count(),365);
  await jump(2028,1);assert.equal(await p.locator('.mini-day').count(),366);
  await p.locator('[data-date="2028-02-29"]').click();assert.equal(new URL(p.url()).hash,'#day=2028-02-29');
  await p.locator('#calendar-home').click();assert.equal(await p.locator('[data-period="year"]').getAttribute('aria-pressed'),'true');
  await p.locator('.mini-month-title').nth(1).click();assert.equal(await p.locator('[data-period="month"]').getAttribute('aria-pressed'),'true');assert.match(await p.locator('#month-title').innerText(),/February 2028/);
  await jump(1901,0);assert(await p.locator('#prev').isDisabled());
- await choose('week');assert(await p.locator('#prev').isDisabled());assert(await p.locator('[data-date="1900-12-30"]').isDisabled());
+ await choose('week');await jump(1901,0);assert(await p.locator('#prev').isDisabled());assert(await p.locator('[data-date="1900-12-30"]').isDisabled());
  await p.locator('#next').click();assert.equal((await dates())[0],'1901-01-06');await p.locator('#prev').click();assert.equal((await dates())[0],'1900-12-30');
  await choose('year');await jump(2100,11);assert(await p.locator('#next').isDisabled());
- await choose('month');assert(await p.locator('#next').isDisabled());await choose('week');assert(await p.locator('#next').isDisabled()===false); // Dec 1 can advance
+ await choose('month');assert(await p.locator('#next').isDisabled());await choose('week');await jump(2100,11);assert(await p.locator('#next').isDisabled()===false); // Dec 1 can advance
  await p.locator('#today').click();await choose('year');await p.reload();assert.equal(await p.locator('[data-period="year"]').getAttribute('aria-pressed'),'true');
  for(const lang of ['en','zh','ja','ru','fr']){await p.locator('#language-choice').selectOption(lang);for(const width of [320,390,1440]){await p.setViewportSize({width,height:900});for(const period of ['year','month','week','days']){await choose(period);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`${lang} ${width} ${period}`);}}}
  await p.evaluate(()=>localStorage.setItem('daymark.shensha.v1',JSON.stringify({tiande:{enabled:true,targets:[...'甲乙丙丁戊己庚辛壬癸']},yuede:{enabled:true,targets:[...'甲乙丙丁戊己庚辛壬癸']},yangren:{enabled:true,targets:[...'子丑寅卯辰巳午未申酉戌亥']},kongwang:{enabled:true,targets:[...'子丑寅卯辰巳午未申酉戌亥']}})));
@@ -46,7 +58,7 @@ const http=require('node:http'), fs=require('node:fs'),path=require('node:path')
  for(const lang of ['en','zh','ja','ru','fr']) {await p.locator('#language-choice').selectOption(lang);await p.setViewportSize({width:320,height:844});assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.equal(await p.locator('#days .week-shensha .shensha-badge').count(),21);}
  await choose('month');assert.equal(await p.locator('#days .week-shensha').count(),0);assert(await p.locator('#shensha-period-panel').isVisible());
  await p.locator('#language-choice').selectOption('en');await choose('week');
- assert.equal(await p.locator('.week-note-preview').count(),0);
+ assert.equal(await p.locator('#days .week-note-preview').count(),0);
  await p.locator('#days [data-date="2026-10-30"]').click();
  const note='First line\nSecond line <b>plain text</b>\nThird line\nFourth line should be clipped\nFifth line';
  await p.locator('#daily-note').fill(note);await p.locator('#save-note').click();await p.waitForFunction(()=>window.DaymarkNotes.savedText('2026-10-30').includes('Fifth line'));
@@ -55,19 +67,19 @@ const http=require('node:http'), fs=require('node:fs'),path=require('node:path')
  assert.equal(await preview.textContent(),note);assert.equal(await preview.locator('b').count(),0);
  assert.equal(await preview.evaluate(el=>getComputedStyle(el).whiteSpace),'pre-wrap');
  assert(await preview.evaluate(el=>el.scrollHeight>el.clientHeight && el.clientHeight<=Math.ceil(parseFloat(getComputedStyle(el).lineHeight)*3)));
- assert.equal(await p.locator('.week-note-preview').count(),1);
+ assert.equal(await p.locator('#days .week-note-preview').count(),1);
  await p.reload();assert.equal(await preview.textContent(),note);
  await p.locator('#days [data-date="2026-10-30"]').click();assert.equal(await p.locator('#daily-note').inputValue(),note);
  await p.locator('#daily-note').fill('Unsaved draft');await p.locator('#calendar-home').click();assert.equal(await preview.textContent(),note);
  await p.locator('#days [data-date="2026-10-30"]').click();await p.locator('#daily-note').fill('Updated saved note');await p.locator('#save-note').click();await p.waitForFunction(()=>window.DaymarkNotes.savedText('2026-10-30')==='Updated saved note');
  await p.locator('#calendar-home').click();assert.equal(await preview.textContent(),'Updated saved note');
- await p.locator('#days [data-date="2026-10-30"]').click();p.once('dialog',d=>d.accept());await p.locator('#delete-note').click();await p.waitForFunction(()=>!window.DaymarkNotes.dates.has('2026-10-30'));await p.locator('#calendar-home').click();assert.equal(await p.locator('.week-note-preview').count(),0);
+ await p.locator('#days [data-date="2026-10-30"]').click();p.once('dialog',d=>d.accept());await p.locator('#delete-note').click();await p.waitForFunction(()=>!window.DaymarkNotes.dates.has('2026-10-30'));await p.locator('#calendar-home').click();assert.equal(await p.locator('#days .week-note-preview').count(),0);
  await choose('days');
  const firstVisible=()=>p.evaluate(()=>{const box=document.querySelector('.calendar-grid-scroll');return [...document.querySelectorAll('#days .day')].find(el=>el.getBoundingClientRect().right>box.getBoundingClientRect().left+2)?.dataset.date;});
  assert.equal(await firstVisible(),'2026-10-30');
  assert.equal(await p.locator('#days .day').count(),61);
  assert.equal(await p.locator('#days .timeline-date').count(),61);
- assert(await p.locator('.weekdays').isHidden());assert(await p.locator('#shensha-period-panel').isHidden());
+ assert(await p.locator('.calendar-grid-scroll > .weekdays').isHidden());assert(await p.locator('#shensha-period-panel').isHidden());
  await p.locator('#prev').click();assert.equal(await firstVisible(),'2026-10-29');await p.locator('#next').click();assert.equal(await firstVisible(),'2026-10-30');
  await p.evaluate(()=>{document.querySelector('.calendar-grid-scroll').scrollLeft-=170*4;});await p.waitForTimeout(80);assert.equal(await firstVisible(),'2026-10-26');
  for(let i=0;i<3;i++){await p.evaluate(()=>{document.querySelector('.calendar-grid-scroll').scrollLeft=0;});await p.waitForTimeout(100);assert.equal(await p.locator('#days .day').count(),61);}

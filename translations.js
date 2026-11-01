@@ -1,6 +1,7 @@
 // English source messages with complete Chinese, Japanese, Russian, and French translations.
 window.DAYMARK_TRANSLATIONS = {
-  "Days": {"zh": "多日", "ja": "日々", "ru": "Дни", "fr": "Jours"},
+  "Scroll Week view between complete weeks.": {"zh": "周视图支持按整周左右滚动。", "ja": "週表示で前後の週にスクロールできるようになりました。", "ru": "В недельном виде можно прокручивать целые недели.", "fr": "La vue hebdomadaire permet de faire défiler des semaines entières."},
+  "Days": {"zh": "日", "ja": "日々", "ru": "Дни", "fr": "Jours"},
   "Daily timeline": {"zh": "逐日日历", "ja": "日付のタイムライン", "ru": "Лента дней", "fr": "Calendrier continu"},
   "Previous day": {"zh": "前一天", "ja": "前日", "ru": "Предыдущий день", "fr": "Jour précédent"},
   "Next day": {"zh": "后一天", "ja": "翌日", "ru": "Следующий день", "fr": "Jour suivant"},
