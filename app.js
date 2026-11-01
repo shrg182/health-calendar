@@ -522,14 +522,21 @@
       shown=target;render();
     },160);
   });
+  let weekWheelClaimed=false, weekWheelIdleTimer=0;
+  // A mouse/trackpad gesture can keep emitting momentum after the page recenters.
+  // Hold its claim until the event stream pauses, including across render().
   // Narrow screens scroll within a week first, then advance a whole page at its edge.
   weekPager.addEventListener('wheel',event=>{
     if(period!=='week' || Math.abs(event.deltaX)<=Math.abs(event.deltaY))return;
+    clearTimeout(weekWheelIdleTimer);
+    weekWheelIdleTimer=setTimeout(()=>{weekWheelClaimed=false;},280);
+    if(weekWheelClaimed) {event.preventDefault();return;}
     const inner=event.target.closest('.calendar-grid-scroll,.adjacent-week');
     if(!inner)return;
     const atEdge=event.deltaX>0 ? inner.scrollLeft>=inner.scrollWidth-inner.clientWidth-1 : inner.scrollLeft<=1;
     if(!atEdge)return;
     event.preventDefault();
+    weekWheelClaimed=true;
     weekPager.scrollTo({left:(weekPageIndex+(event.deltaX>0?1:-1))*weekPager.clientWidth,behavior:'smooth'});
   },{passive:false});
   let weekTouch=null;

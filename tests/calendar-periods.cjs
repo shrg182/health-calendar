@@ -26,6 +26,12 @@ const http=require('node:http'), fs=require('node:fs'),path=require('node:path')
  assert.equal((await dates())[0],'2026-11-01');
  await p.evaluate(()=>{document.querySelector('#week-pager').scrollLeft=0;});await p.waitForTimeout(450);
  assert.equal((await dates())[0],'2026-10-25');
+ // Momentum continuing after recentering must not trigger a second week.
+ const wheelBurst=async(delta)=>{for(let i=0;i<16;i++){await p.locator('.calendar-grid-scroll').dispatchEvent('wheel',{deltaX:delta,deltaY:0,bubbles:true,cancelable:true});await p.waitForTimeout(70);}await p.waitForTimeout(600);};
+ await wheelBurst(130);assert.equal((await dates())[0],'2026-11-01');
+ await wheelBurst(130);assert.equal((await dates())[0],'2026-11-08');
+ await wheelBurst(-130);assert.equal((await dates())[0],'2026-11-01');
+ await p.locator('#today').click();
  await p.setViewportSize({width:390,height:844});
  await p.evaluate(()=>{document.querySelector('.calendar-grid-scroll').scrollLeft=300;});await p.waitForTimeout(100);
  assert.equal((await dates())[0],'2026-10-25');
